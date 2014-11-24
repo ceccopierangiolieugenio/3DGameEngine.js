@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>3DGameEngine.js</title>
+        <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+        <script type="text/javascript" src="js/Util.js"></script>
+    </head>
+    <body onload="main3DGameEngine();">
+        <canvas id="canvasGE" style="border: none;" width="500" height="300"></canvas>
+    </body>
+    <script>
+        Util.include("lib/webgl-utils.js");
+        Util.include("js/MainComponent.js");
+        Util.include("js/Time.js");
+        Util.include("js/Game.js");
+        
+        var gl;
+        
+        function initGL(canvas) {
+            try {
+                gl = canvas.getContext("experimental-webgl");
+                gl.viewportWidth = canvas.width;
+                gl.viewportHeight = canvas.height;
+            } catch (e) {
+            }
+            if (!gl) {
+                alert("Could not initialise WebGL, sorry :-(");
+            }
+        }
+        
+        function main3DGameEngine() {
+            var canvas = document.getElementById("canvasGE");
+            initGL(canvas);
+            var mainComponent = new MainComponent();
+            mainComponent.start();            
+        }
+    </script>
+</html>
