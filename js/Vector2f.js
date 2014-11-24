@@ -15,29 +15,94 @@
  */
 "use strict";
 
-function Vector2f(x,y)
+function Vector2f(x, y)
 {
     this.x = x || 0;
     this.y = y || 0;
-};
+}
+;
 
-Vector2f.prototype.toString = function()
+Vector2f.prototype.length = function ()
 {
-    return "(" + this.x + " " + this.y + ")" ;
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+}
+
+Vector2f.prototype.dot = function (r)
+{
+    return this.x * r.getX() + this.y * r.getY();
 };
 
-Vector2f.prototype.getX = function(){
+Vector2f.prototype.normalize = function ()
+{
+    var length = this.length();
+    this.x /= length;
+    this.y /= length;
+    return this;
+};
+
+Vector2f.prototype.rotate = function (angle)
+{
+    var rad = angle * Math.PI / 180;
+    var cos = Math.cos(rad);
+    var sin = Math.sin(rad);
+    return new Vector2f( (this.x*cos - this.y*sin) , (this.x*sin + this.y*cos) );
+};
+
+Vector2f.prototype.add = function (r)
+{
+    if (typeof r === 'number') {
+        return new Vector2f(this.x + r, this.y + r);
+    } else {
+        return new Vector2f(this.x + r.getX(), this.y + r.getY());
+    }
+};
+
+Vector2f.prototype.sub = function (r)
+{
+    if (typeof r === 'number') {
+        return new Vector2f(this.x - r, this.y - r);
+    } else {
+        return new Vector2f(this.x - r.getX(), this.y - r.getY());
+    }
+};
+
+Vector2f.prototype.mul = function (r)
+{
+    if (typeof r === 'number') {
+        return new Vector2f(this.x * r, this.y * r);
+    } else {
+        return new Vector2f(this.x * r.getX(), this.y * r.getY());
+    }
+};
+
+Vector2f.prototype.div = function (r)
+{
+    if (typeof r === 'number') {
+        return new Vector2f(this.x / r, this.y / r);
+    } else {
+        return new Vector2f(this.x / r.getX(), this.y / r.getY());
+    }
+};
+
+Vector2f.prototype.toString = function ()
+{
+    return "(" + this.x + " " + this.y + ")";
+};
+
+Vector2f.prototype.getX = function () {
     return this.x;
 };
 
-Vector2f.prototype.setX = function(x){
-    this.x = x || 0;;
+Vector2f.prototype.setX = function (x) {
+    this.x = x || 0;
+    ;
 };
 
-Vector2f.prototype.getY = function(){
+Vector2f.prototype.getY = function () {
     return this.y;
 };
 
-Vector2f.prototype.setY = function(y){
-    this.x = y || 0;;
+Vector2f.prototype.setY = function (y) {
+    this.y = y || 0;
+    ;
 };
