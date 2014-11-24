@@ -15,26 +15,29 @@
  */
 "use strict";
 
-function Game() {
-
-}
-
-Game.prototype.input = function () {
-    if (Input.getKeyDown(Input.KEY_UP))
-        console.log("We've just pressed up!");
-    if (Input.getKeyUp(Input.KEY_UP))
-        console.log("We've just released up!");
-    
-    if (Input.getMouseDown(1))
-        console.log("We've just right clicked at " + Input.getMousePosition().toString());
-    if (Input.getMouseUp(1))
-        console.log("We've just released right mouse button!");
+function Vector2f(x,y)
+{
+    this.x = x || 0;
+    this.y = y || 0;
 };
 
-Game.prototype.update = function () {
-
+Vector2f.prototype.toString = function()
+{
+    return "(" + this.x + " " + this.y + ")" ;
 };
 
-Game.prototype.render = function () {
+Vector2f.prototype.getX = function(){
+    return this.x;
+};
 
+Vector2f.prototype.setX = function(x){
+    this.x = x || 0;;
+};
+
+Vector2f.prototype.getY = function(){
+    return this.y;
+};
+
+Vector2f.prototype.setY = function(y){
+    this.x = y || 0;;
 };

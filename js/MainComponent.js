@@ -66,6 +66,7 @@ MainComponent.prototype.run = function () {
             unprocessedTime -= frameTime;
 
             Time.setDelta(frameTime);
+            Input.update();
 
             this.game.input();
             this.game.update();
