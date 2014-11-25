@@ -15,22 +15,29 @@
  */
 "use strict";
 
-var Util = Util || {};
-
-Util.include = function (filename)
-{
-    document.write('<script type="text/javascript" src="' + filename +
-            '"><' + '/script>');
+function Mesh(){
+    //this.vbo = gl.genBuffers();
+    this.vbo = gl.createBuffer();
 };
 
-Util.Vertices2Float32Array = function(vertices)
+Mesh.prototype.size = 0;
+
+Mesh.prototype.addVertices = function (vertices)
 {
-    var ret = new Float32Array(vertices.length * Vertex.SIZE);
-    for (var i=0 ; i < vertices.length ; i++)
-    {
-        ret[i*Vertex.SIZE+0] = vertices[i].getPos().getX();
-        ret[i*Vertex.SIZE+1] = vertices[i].getPos().getY();
-        ret[i*Vertex.SIZE+2] = vertices[i].getPos().getZ();
-    }
-    return ret;
+    this.size = vertices.length;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, Util.Vertices2Float32Array(vertices), gl.STATIC_DRAW);
+};
+
+Mesh.prototype.draw = function ()
+{
+    gl.enableVertexAttribArray(0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, Vertex.SIZE * 4, 0);
+
+    gl.drawArrays(gl.TRIANGLES, 0, this.size);
+
+    gl.disableVertexAttribArray(0);
 };

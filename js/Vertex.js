@@ -15,22 +15,20 @@
  */
 "use strict";
 
-var Util = Util || {};
-
-Util.include = function (filename)
+function Vertex(pos)
 {
-    document.write('<script type="text/javascript" src="' + filename +
-            '"><' + '/script>');
+    this.pos = pos;
+}
+
+Vertex.prototype.SIZE = 3;
+Vertex.SIZE = 3;
+
+Vertex.prototype.getPos = function ()
+{
+    return this.pos;
 };
 
-Util.Vertices2Float32Array = function(vertices)
+Vertex.prototype.setPos = function (pos)
 {
-    var ret = new Float32Array(vertices.length * Vertex.SIZE);
-    for (var i=0 ; i < vertices.length ; i++)
-    {
-        ret[i*Vertex.SIZE+0] = vertices[i].getPos().getX();
-        ret[i*Vertex.SIZE+1] = vertices[i].getPos().getY();
-        ret[i*Vertex.SIZE+2] = vertices[i].getPos().getZ();
-    }
-    return ret;
+    this.pos = pos;
 };

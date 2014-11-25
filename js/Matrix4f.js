@@ -15,10 +15,9 @@
  */
 "use strict";
 
-function Matrix4f()
-{
-    this.m = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
-}
+function Matrix4f() {}
+
+Matrix4f.prototype.m = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 
 Matrix4f.prototype.initIdentity = function ()
 {

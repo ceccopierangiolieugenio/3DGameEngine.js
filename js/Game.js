@@ -16,7 +16,15 @@
 "use strict";
 
 function Game() {
+    this.mesh = new Mesh();
 
+    var data = [
+        new Vertex(new Vector3f(-1, -1, 0)),
+        new Vertex(new Vector3f(0, 1, 0)),
+        new Vertex(new Vector3f(1, -1, 0))
+    ];
+
+    this.mesh.addVertices(data);
 }
 
 Game.prototype.input = function () {
@@ -36,5 +44,5 @@ Game.prototype.update = function () {
 };
 
 Game.prototype.render = function () {
-
+    this.mesh.draw();
 };
