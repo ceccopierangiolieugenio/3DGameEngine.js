@@ -17,6 +17,7 @@
 
 function Game() {
     this.mesh = new Mesh();
+    this.shader = new Shader();
 
     var data = [
         new Vertex(new Vector3f(-1, -1, 0)),
@@ -25,6 +26,10 @@ function Game() {
     ];
 
     this.mesh.addVertices(data);
+
+    this.shader.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
+    this.shader.addFragmentShader(ResourceLoader.loadShader("basicFragment.fs"));
+    this.shader.compileShader();
 }
 
 Game.prototype.input = function () {
@@ -44,5 +49,6 @@ Game.prototype.update = function () {
 };
 
 Game.prototype.render = function () {
+    this.shader.bind();
     this.mesh.draw();
 };

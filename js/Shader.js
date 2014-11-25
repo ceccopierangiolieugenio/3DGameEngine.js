@@ -32,29 +32,29 @@ Shader.prototype.bind = function ()
 
 Shader.prototype.addVertexShader = function (text)
 {
-    addProgram(text, gl.VERTEX_SHADER);
+    this.addProgram(text, gl.VERTEX_SHADER);
 };
 
 Shader.prototype.addGeometryShader = function (text)
 {
-    addProgram(text, gl.GEOMETRY_SHADER);
+    this.addProgram(text, gl.GEOMETRY_SHADER);
 };
 
 Shader.prototype.addFragmentShader = function (text)
 {
-    addProgram(text, gl.FRAGMENT_SHADER);
+    this.addProgram(text, gl.FRAGMENT_SHADER);
 };
 
 Shader.prototype.compileShader = function ()
 {
     gl.linkProgram(this.program);
-    if (!glGetProgram(this.program, gl.LINK_STATUS))
+    if (!gl.getProgramParameter(this.program, gl.LINK_STATUS))
     {
         throw new Error(gl.getProgramInfoLog(this.program, 1024));
     }
 
     gl.validateProgram(this.program);
-    if (!glGetProgram(this.program, gl.VALIDATE_STATUS))
+    if (!gl.getProgramParameter(this.program, gl.VALIDATE_STATUS))
     {
         throw new Error(gl.getProgramInfoLog(this.program, 1024));
     }
