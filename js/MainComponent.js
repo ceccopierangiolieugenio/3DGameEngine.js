@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 "use strict";
 
 function MainComponent() {
     this.FRAME_CAP = 5000;
     this.isRunning = false;
     
+    console.log(RenderUtil.getOpenGLVersion());
     RenderUtil.initGraphics();
     this.game = new Game();
 }

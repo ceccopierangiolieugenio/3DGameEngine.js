@@ -20,7 +20,9 @@
         Util.include("js/RenderUtil.js");
         Util.include("js/Vertex.js");
         Util.include("js/Mesh.js");
-
+        Util.include("js/ResourceLoader.js");
+        Util.include("js/Shader.js");
+        
         var gl;
 
         function initGL(canvas) {
@@ -36,6 +38,10 @@
         }
 
         function main3DGameEngine() {
+            Util.waitPendingAndStart(main3DGameEngine_start);
+        }
+        
+        function main3DGameEngine_start() {
             var canvas = document.getElementById("canvasGE");
             initGL(canvas);
             initShaders();

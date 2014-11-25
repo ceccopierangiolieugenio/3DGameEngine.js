@@ -15,12 +15,49 @@
  */
 "use strict";
 
-var Util = Util || {};
+var Util = Util || {
+    pending : 0,
+    files   : {},
+    startCallback : null
+};
 
 Util.include = function (filename)
 {
-    document.write('<script type="text/javascript" src="' + filename +
-            '"><' + '/script>');
+    document.write('<script type="text/javascript" src="' + filename + '"></script>');
+};
+
+Util.loadFile = function (filename,id)
+{
+    this.pending++;
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", filename);
+    rawFile.responseType = "text";
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                Util.files[id] = allText;
+                Util.pending--;
+                if (null!=Util.startCallback && Util.isAllLoaded())
+                    Util.startCallback();
+            }
+        }
+    }
+    rawFile.send(null);
+};
+
+Util.isAllLoaded = function()
+{
+    return this.pending == 0;
+};
+
+Util.waitPendingAndStart = function (cb)
+{
+    if ( Util.isAllLoaded()) cb();
+    else Util.startCallback = cb;
 };
 
 Util.Vertices2Float32Array = function(vertices)

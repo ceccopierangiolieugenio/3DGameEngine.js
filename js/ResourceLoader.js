@@ -15,29 +15,10 @@
  */
 "use strict";
 
-var RenderUtil = RenderUtil || {};
-    
-RenderUtil.clearScreen = function ()
+var ResourceLoader = ResourceLoader || {};
+
+ResourceLoader.loadShader = function(id)
 {
-    //TODO: Stencil Buffer
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    return Util.files[id];
 };
 
-RenderUtil.initGraphics = function ()
-{   
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
-    gl.frontFace(gl.CW);
-    gl.cullFace(gl.BACK);
-    gl.enable(gl.CULL_FACE);
-    gl.enable(gl.DEPTH_TEST);
-
-    //TODO: Depth clamp for later
-
-    //gl.enable(gl.FRAMEBUFFER_SRGB);
-};
-
-RenderUtil.getOpenGLVersion = function ()
-{
-    return gl.getParameter(gl.VERSION);
-};
