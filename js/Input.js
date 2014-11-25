@@ -17,16 +17,12 @@
 
 var Input = Input || {
     _getKey: [],
-    currentKeys: [],
-    downKeys: [],
-    upKeys: [],
     _getMouse: [],
-    currentMouse: [],
-    downMouse: [],
-    upMouse: [],
     _mousePos: {x: 0, y: 0},
+    
     NUM_KEYCODES: 256,
     NUM_MOUSEBUTTONS: 5,
+    
     KEY_CANCEL: 3,
     KEY_HELP: 6,
     KEY_BACK_SPACE: 8,
@@ -180,72 +176,53 @@ var Input = Input || {
     KEY_SELECT: 41,
     KEY_PRINT: 42,
     KEY_EXECUTE: 43,
-    KEY_SLEEP: 95
+    KEY_SLEEP: 95,
+    
+    LastKeys: [],
+    LastMouse: []
 };
 
 Input.update = function ()
 {
-    this.upMouse = [];
+    this.LastKeys = [];
 
-    for (var i = 0; i < this.NUM_MOUSEBUTTONS; i++)
-        if (!this.getMouse(i) && -1 != this.currentMouse.indexOf(i))
-            this.upMouse.push(i);
-
-    this.downMouse = [];
-
-    for (var i = 0; i < this.NUM_MOUSEBUTTONS; i++)
-        if (this.getMouse(i) && -1 == this.currentMouse.indexOf(i))
-            this.downMouse.push(i);
-
-    this.upKeys = [];
-
-    for (var i = 0; i < this.NUM_KEYCODES; i++)
-        if (!this.getKey(i) && (-1 != this.currentKeys.indexOf(i)))
-            this.upKeys.push(i);
-
-    this.downKeys = [];
-
-    for (var i = 0; i < this.NUM_KEYCODES; i++)
-        if (this.getKey(i) && (-1 == this.currentKeys.indexOf(i)))
-            this.downKeys.push(i);
-
-    this.currentKeys = [];
     for (var i = 0; i < this.NUM_KEYCODES; i++)
         if (this.getKey(i))
-            this.currentKeys.push(i);
+            this.LastKeys.push(i);
 
-    this.currentMouse = [];
+    this.LastMouse = [];
+
     for (var i = 0; i < this.NUM_MOUSEBUTTONS; i++)
         if (this.getMouse(i))
-            this.currentMouse.push(i);
+            this.LastMouse.push(i); 
 };
 
-Input.getKey = function (keycode) {
-    return this._getKey[keycode];
+Input.getKey = function (keyCode) {
+    return this._getKey[keyCode];
 };
 
-Input.getMouse = function (keycode) {
-    return this._getMouse[keycode];
+Input.getKeyDown = function (keyCode) {
+    return this.getKey(keyCode) && (-1 == this.LastKeys.indexOf(keyCode));
 };
 
-Input.getKeyDown = function (keycode) {
-    return (-1 != this.downKeys.indexOf(keycode));
+Input.getKeyUp = function (keyCode) {
+    return !this.getKey(keyCode) && (-1 != this.LastKeys.indexOf(keyCode));
 };
 
-Input.getKeyUp = function (keycode) {
-    return (-1 != this.upKeys.indexOf(keycode));
+Input.getMouse = function (keyCode) {
+    return this._getMouse[keyCode];
 };
 
-Input.getMouseDown = function (keycode) {
-    return (-1 != this.downMouse.indexOf(keycode));
+Input.getMouseDown = function (keyCode) {
+    return this.getMouse(keyCode) && (-1 == this.LastMouse.indexOf(keyCode));
 };
 
-Input.getMouseUp = function (keycode) {
-    return (-1 != this.upMouse.indexOf(keycode));
+Input.getMouseUp = function (keyCode) {
+    return !this.getMouse(keyCode) && (-1 != this.LastMouse.indexOf(keyCode));
 };
 
 Input.getMousePosition = function () {
-    return new Vector2f(this._mousePos.x,this._mousePos.y);
+    return new Vector2f(this._mousePos.x, this._mousePos.y);
 };
 
 Input.handleEvent = function (e) {

@@ -17,8 +17,10 @@
 "use strict";
 
 function MainComponent() {
-    this.isRunning = false;
     this.FRAME_CAP = 5000;
+    this.isRunning = false;
+    
+    RenderUtil.initGraphics();
     this.game = new Game();
 }
 
@@ -66,9 +68,10 @@ MainComponent.prototype.run = function () {
             unprocessedTime -= frameTime;
 
             Time.setDelta(frameTime);
-            Input.update();
 
             this.game.input();
+            Input.update();
+            
             this.game.update();
 
             if (frameCounter >= Time.SECOND) {
@@ -91,5 +94,6 @@ MainComponent.prototype.run = function () {
 };
 
 MainComponent.prototype.render = function () {
+    RenderUtil.clearScreen();
     this.game.render();
 };
