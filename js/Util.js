@@ -49,6 +49,17 @@ Util.loadFile = function (filename,id)
     rawFile.send(null);
 };
 
+Util.removeEmptyStrings = function (data)
+{
+    var result = [];
+
+    for (var i = 0; i < data.length; i++)
+        if (data[i].length !== 0)
+            result.push(data[i]);
+
+    return result;
+};
+
 Util.isAllLoaded = function()
 {
     return this.pending == 0;

@@ -16,23 +16,23 @@
 "use strict";
 
 function Game() {
-    this.mesh = new Mesh();
+    this.mesh = ResourceLoader.loadMesh("box.obj");//new Mesh();
     this.shader = new Shader();
     this.temp = 0.0;
 
-    var vertices = [
-        new Vertex(new Vector3f(-1, -1, 0)),
-        new Vertex(new Vector3f( 0,  1, 0)),
-        new Vertex(new Vector3f( 1, -1, 0)),
-        new Vertex(new Vector3f( 0, -1, 1))
-    ];
-
-    var indices = [ 0, 1, 3,
-                    3, 1, 2,
-                    2, 1, 0,
-                    0, 2, 3 ];
-
-    this.mesh.addVertices(vertices, indices);
+//    var vertices = [
+//        new Vertex(new Vector3f(-1, -1, 0)),
+//        new Vertex(new Vector3f( 0,  1, 0)),
+//        new Vertex(new Vector3f( 1, -1, 0)),
+//        new Vertex(new Vector3f( 0, -1, 1))
+//    ];
+//
+//    var indices = [ 0, 1, 3,
+//                    3, 1, 2,
+//                    2, 1, 0,
+//                    0, 2, 3 ];
+//
+//    this.mesh.addVertices(vertices, indices);
 
     this.transform = new Transform();
 
@@ -64,10 +64,11 @@ Game.prototype.update = function () {
     this.temp += Time.getDelta();
 
     var sinTemp = Math.sin(this.temp);
-		
+
     this.transform.setTranslation(sinTemp, 0, 0);
     this.transform.setRotation(0, sinTemp * 180, 0);
     //this.transform.setScale(sinTemp, sinTemp, sinTemp);
+    this.transform.setScale(0.7 * sinTemp, 0.7 * sinTemp, 0.7 * sinTemp);
 };
 
 Game.prototype.render = function () {

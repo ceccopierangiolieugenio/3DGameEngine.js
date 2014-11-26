@@ -17,8 +17,48 @@
 
 var ResourceLoader = ResourceLoader || {};
 
-ResourceLoader.loadShader = function(id)
+ResourceLoader.loadShader = function (id)
 {
     return Util.files[id];
+};
+
+ResourceLoader.loadMesh = function (id)
+{
+    if (id.match("\.obj$") == "\.obj") {
+
+        var vertices = [];
+        var indices = [];
+
+        var lines = Util.files[id].split("\n");
+        for (var i = 0; i < lines.length; i++)
+        {
+            var line = lines[i];
+            var tokens = line.split(" ");
+
+            tokens = Util.removeEmptyStrings(tokens);
+            if (tokens.length === 0 || tokens[0] === "#")
+                continue;
+            else if (tokens[0] === "v")
+            {
+                vertices.push(new Vertex(new Vector3f(
+                        parseFloat(tokens[1]),
+                        parseFloat(tokens[2]),
+                        parseFloat(tokens[3]))));
+            }
+            else if (tokens[0] === "f")
+            {
+                indices.push(parseInt(tokens[1].split("/")[0]) - 1);
+                indices.push(parseInt(tokens[2].split("/")[0]) - 1);
+                indices.push(parseInt(tokens[3].split("/")[0]) - 1);
+            }
+        }
+        var res = new Mesh();
+        res.addVertices(vertices, indices);
+        
+        return res;
+    } else {
+        throw new Error("Error: File format not supported for mesh data: " + id);
+    }
+
 };
 
