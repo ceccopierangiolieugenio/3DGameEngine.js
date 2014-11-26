@@ -27,12 +27,14 @@ function Game() {
     ];
 
     this.mesh.addVertices(data);
+    
+    this.transform = new Transform();
 
     this.shader.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
     this.shader.addFragmentShader(ResourceLoader.loadShader("basicFragment.fs"));
     this.shader.compileShader();
 
-    this.shader.addUniform("uniformFloat");
+    this.shader.addUniform("transform");
     /* Added a "bind()" here to avoid the warning:
      *       WebGL: UniformXXX: no program is currently bound
      * caused by calling any Uniform function before the first frame.
@@ -55,10 +57,13 @@ Game.prototype.input = function () {
 Game.prototype.update = function () {
     this.temp += Time.getDelta();
 
-    this.shader.setUniformf("uniformFloat", Math.abs(Math.sin(this.temp)));
+    this.transform.setTranslation(Math.sin(this.temp), 0, 0);
+    this.transform.setRotation(0, 0, Math.sin(this.temp) * 180);
 };
 
 Game.prototype.render = function () {
     this.shader.bind();
+    this.shader.setUniform("transform", this.transform.getTransformation());
+
     this.mesh.draw();
 };

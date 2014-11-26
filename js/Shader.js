@@ -106,8 +106,8 @@ Shader.prototype.setUniformf = function (uniformName, value)
 Shader.prototype.setUniform = function (uniformName, value)
 {
     if (value instanceof Vector3f)
-        gl.uniform3f(this.uniforms[uniformName], value.getX(), value.getY(), value.getZ());
+        gl.uniform3fv(this.uniforms[uniformName], value.getX(), value.getY(), value.getZ());
 
-    if (value instanceof Matrix4f)
-        gl.uniformMatrix4(this.uniforms[uniformName], true, Util.Matrix4f2Float32Array(value));
+    if (value instanceof Matrix4f) /* uniformMatrix4fv transpose parameter must be false in Opengl ES 2.0 */
+        gl.uniformMatrix4fv(this.uniforms[uniformName], false, Util.Matrix4f2Float32ArrayTransposed(value));
 };

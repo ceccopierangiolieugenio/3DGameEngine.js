@@ -42,7 +42,7 @@ Vector2f.prototype.normalize = function ()
 
 Vector2f.prototype.rotate = function (angle)
 {
-    var rad = angle * Math.PI / 180;
+    var rad = Util.toRadians(angle);
     var cos = Math.cos(rad);
     var sin = Math.sin(rad);
     return new Vector2f( (this.x*cos - this.y*sin) , (this.x*sin + this.y*cos) );

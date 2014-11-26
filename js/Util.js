@@ -72,11 +72,25 @@ Util.Vertices2Float32Array = function(vertices)
     return ret;
 };
 
-Util.Matrix4f2Float32Array = function(vertices)
+Util.Matrix4f2Float32Array = function(matrix)
 {
     var ret = new Float32Array( 4 * 4 );
     for (var i=0 ; i < 4 ; i++)
         for (var j=0 ; j < 4  ; j++)
-            ret[i*4+j] = value.get(i,j);
+            ret[i*4+j] = matrix.get(i,j);
     return ret;
+};
+
+Util.Matrix4f2Float32ArrayTransposed = function(matrix)
+{
+    var ret = new Float32Array( 4 * 4 );
+    for (var i=0 ; i < 4 ; i++)
+        for (var j=0 ; j < 4  ; j++)
+            ret[i*4+j] = matrix.get(j,i);
+    return ret;
+};
+
+Util.toRadians = function(x)
+{
+  return x * Math.PI / 180;  
 };
