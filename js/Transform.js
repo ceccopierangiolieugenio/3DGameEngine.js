@@ -18,7 +18,7 @@
 function Transform() {
     this.translation = new Vector3f(0, 0, 0);
     this.rotation = new Vector3f(0, 0, 0);
-    this.scale = new Vector3f(0, 0, 0);
+    this.scale = new Vector3f(1, 1, 1);
 }
 
 Transform.prototype.getTransformation = function ()
@@ -58,7 +58,7 @@ Transform.prototype.setRotation = function (rx, y, z)
 
 Transform.prototype.getScale = function ()
 {
-    return this.rotation;
+    return this.scale;
 };
 
 Transform.prototype.setScale = function (rx, y, z)

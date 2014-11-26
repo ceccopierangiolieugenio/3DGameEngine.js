@@ -20,14 +20,20 @@ function Game() {
     this.shader = new Shader();
     this.temp = 0.0;
 
-    var data = [
+    var vertices = [
         new Vertex(new Vector3f(-1, -1, 0)),
-        new Vertex(new Vector3f(0, 1, 0)),
-        new Vertex(new Vector3f(1, -1, 0))
+        new Vertex(new Vector3f( 0,  1, 0)),
+        new Vertex(new Vector3f( 1, -1, 0)),
+        new Vertex(new Vector3f( 0, -1, 1))
     ];
 
-    this.mesh.addVertices(data);
-    
+    var indices = [ 0, 1, 3,
+                    3, 1, 2,
+                    2, 1, 0,
+                    0, 2, 3 ];
+
+    this.mesh.addVertices(vertices, indices);
+
     this.transform = new Transform();
 
     this.shader.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
@@ -60,8 +66,8 @@ Game.prototype.update = function () {
     var sinTemp = Math.sin(this.temp);
 		
     this.transform.setTranslation(sinTemp, 0, 0);
-    this.transform.setRotation(0, 0, sinTemp * 180);
-    this.transform.setScale(sinTemp, sinTemp, sinTemp);
+    this.transform.setRotation(0, sinTemp * 180, 0);
+    //this.transform.setScale(sinTemp, sinTemp, sinTemp);
 };
 
 Game.prototype.render = function () {
