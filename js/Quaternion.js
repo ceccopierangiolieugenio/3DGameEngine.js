@@ -53,7 +53,8 @@ Quaternion.prototype.mul = function (r)
         var y_ = this.y * r.getW() + this.w * r.getY() + this.z * r.getX() - this.x * r.getZ();
         var z_ = this.z * r.getW() + this.w * r.getZ() + this.x * r.getY() - this.y * r.getX();
         return new Quaternion(x_, y_, z_, w_);
-    } else {
+    }
+    if (r instanceof Vector3f) {
         var w_ = -this.x * r.getX() - this.y * r.getY() - this.z * r.getZ();
         var x_ =  this.w * r.getX() + this.y * r.getZ() - this.z * r.getY();
         var y_ =  this.w * r.getY() + this.z * r.getX() - this.x * r.getZ();

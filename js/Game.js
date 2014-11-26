@@ -18,6 +18,7 @@
 function Game() {
     this.mesh = new Mesh();
     this.shader = new Shader();
+    this.temp = 0.0;
 
     var data = [
         new Vertex(new Vector3f(-1, -1, 0)),
@@ -30,6 +31,13 @@ function Game() {
     this.shader.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
     this.shader.addFragmentShader(ResourceLoader.loadShader("basicFragment.fs"));
     this.shader.compileShader();
+
+    this.shader.addUniform("uniformFloat");
+    /* Added a "bind()" here to avoid the warning:
+     *       WebGL: UniformXXX: no program is currently bound
+     * caused by calling any Uniform function before the first frame.
+     */
+    this.shader.bind();
 }
 
 Game.prototype.input = function () {
@@ -37,7 +45,7 @@ Game.prototype.input = function () {
         console.log("We've just pressed up!");
     if (Input.getKeyUp(Input.KEY_UP))
         console.log("We've just released up!");
-    
+
     if (Input.getMouseDown(1))
         console.log("We've just right clicked at " + Input.getMousePosition().toString());
     if (Input.getMouseUp(1))
@@ -45,7 +53,9 @@ Game.prototype.input = function () {
 };
 
 Game.prototype.update = function () {
+    this.temp += Time.getDelta();
 
+    this.shader.setUniformf("uniformFloat", Math.abs(Math.sin(this.temp)));
 };
 
 Game.prototype.render = function () {

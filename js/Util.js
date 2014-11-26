@@ -71,3 +71,12 @@ Util.Vertices2Float32Array = function(vertices)
     }
     return ret;
 };
+
+Util.Matrix4f2Float32Array = function(vertices)
+{
+    var ret = new Float32Array( 4 * 4 );
+    for (var i=0 ; i < 4 ; i++)
+        for (var j=0 ; j < 4  ; j++)
+            ret[i*4+j] = value.get(i,j);
+    return ret;
+};

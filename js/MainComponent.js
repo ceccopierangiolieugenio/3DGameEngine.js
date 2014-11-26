@@ -48,13 +48,7 @@ MainComponent.prototype.run = function () {
     var lastTime = Time.getTime();
     var unprocessedTime = 0;
 
-    var mainLoop = function () {
-        if (this.isRunning) {
-            requestAnimationFrame(mainLoop.bind(this));
-        } else {
-            return;
-        }
-
+    var mainLoop = function (timestamp) {
         var render = false;
         var startTime = Time.getTime();
         var passedTime = startTime - lastTime;
@@ -87,10 +81,14 @@ MainComponent.prototype.run = function () {
             // Sleep 1
             ;
         }
+        if (this.isRunning) {
+            requestAnimationFrame(mainLoop.bind(this));
+        } else {
+            return;
+        }
     };
 
-    mainLoop.call(this);
-    //this.cleanUp();
+    requestAnimationFrame(mainLoop.bind(this));
 };
 
 MainComponent.prototype.render = function () {

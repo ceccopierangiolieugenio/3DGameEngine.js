@@ -18,16 +18,29 @@
 function Shader()
 {
     this.program = gl.createProgram();
+    this.uniforms = {};
+
     if (!this.program)
     {
         throw new Error("Shader creation failed: Could not find valid memory location in constructor");
-    }
+    }  
 }
-
 
 Shader.prototype.bind = function ()
 {
     gl.useProgram(this.program);
+};
+
+Shader.prototype.addUniform = function (uniform)
+{
+    var uniformLocation = gl.getUniformLocation(this.program, uniform);
+
+    if (uniformLocation === 0xFFFFFFFF)
+    {
+        throw new Error("Error: Could not find uniform: " + uniform);
+    }
+
+    this.uniforms[uniform] = uniformLocation;
 };
 
 Shader.prototype.addVertexShader = function (text)
@@ -79,3 +92,22 @@ Shader.prototype.addProgram = function (text, type)
     gl.attachShader(this.program, shader);
 };
 
+
+Shader.prototype.setUniformi = function (uniformName, value)
+{
+    gl.uniform1i(this.uniforms[uniformName], value);
+};
+
+Shader.prototype.setUniformf = function (uniformName, value)
+{
+    gl.uniform1f(this.uniforms[uniformName], value);
+};
+
+Shader.prototype.setUniform = function (uniformName, value)
+{
+    if (value instanceof Vector3f)
+        gl.uniform3f(this.uniforms[uniformName], value.getX(), value.getY(), value.getZ());
+
+    if (value instanceof Matrix4f)
+        gl.uniformMatrix4(this.uniforms[uniformName], true, Util.Matrix4f2Float32Array(value));
+};
