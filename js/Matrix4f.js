@@ -34,6 +34,7 @@ Matrix4f.prototype.initTranslation = function (x, y, z)
     this.m[1][0] = 0;    this.m[1][1] = 1;    this.m[1][2] = 0;    this.m[1][3] = y;
     this.m[2][0] = 0;    this.m[2][1] = 0;    this.m[2][2] = 1;    this.m[2][3] = z;
     this.m[3][0] = 0;    this.m[3][1] = 0;    this.m[3][2] = 0;    this.m[3][3] = 1;
+
     return this;
 };
 
@@ -66,6 +67,17 @@ Matrix4f.prototype.initRotation = function (x,y,z)
 
     return this;
 };
+
+Matrix4f.prototype.initScale = function (x, y, z)
+{
+    this.m[0][0] = x;    this.m[0][1] = 0;    this.m[0][2] = 0;    this.m[0][3] = 0;
+    this.m[1][0] = 0;    this.m[1][1] = y;    this.m[1][2] = 0;    this.m[1][3] = 0;
+    this.m[2][0] = 0;    this.m[2][1] = 0;    this.m[2][2] = z;    this.m[2][3] = 0;
+    this.m[3][0] = 0;    this.m[3][1] = 0;    this.m[3][2] = 0;    this.m[3][3] = 1;
+
+    return this;
+};
+
 
 Matrix4f.prototype.mul = function (r)
 {

@@ -57,8 +57,11 @@ Game.prototype.input = function () {
 Game.prototype.update = function () {
     this.temp += Time.getDelta();
 
-    this.transform.setTranslation(Math.sin(this.temp), 0, 0);
-    this.transform.setRotation(0, 0, Math.sin(this.temp) * 180);
+    var sinTemp = Math.sin(this.temp);
+		
+    this.transform.setTranslation(sinTemp, 0, 0);
+    this.transform.setRotation(0, 0, sinTemp * 180);
+    this.transform.setScale(sinTemp, sinTemp, sinTemp);
 };
 
 Game.prototype.render = function () {

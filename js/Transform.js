@@ -18,14 +18,16 @@
 function Transform() {
     this.translation = new Vector3f(0, 0, 0);
     this.rotation = new Vector3f(0, 0, 0);
+    this.scale = new Vector3f(0, 0, 0);
 }
 
 Transform.prototype.getTransformation = function ()
 {
-     var translationMatrix = new Matrix4f().initTranslation(this.translation.getX(), this.translation.getY(), this.translation.getZ());
-     var rotationMatrix = new Matrix4f().initRotation(this.rotation.getX(), this.rotation.getY(), this.rotation.getZ());
-     
-     return translationMatrix.mul(rotationMatrix);
+    var translationMatrix = new Matrix4f().initTranslation(this.translation.getX(), this.translation.getY(), this.translation.getZ());
+    var rotationMatrix = new Matrix4f().initRotation(this.rotation.getX(), this.rotation.getY(), this.rotation.getZ());
+    var scaleMatrix = new Matrix4f().initScale(this.scale.getX(), this.scale.getY(), this.scale.getZ());
+
+    return translationMatrix.mul(rotationMatrix.mul(scaleMatrix));
 };
 
 Transform.prototype.getTranslation = function ()
@@ -52,4 +54,17 @@ Transform.prototype.setRotation = function (rx, y, z)
         this.rotation = rx;
     if (y !== undefined && z !== undefined)
         this.rotation = new Vector3f(rx, y, z);
+};
+
+Transform.prototype.getScale = function ()
+{
+    return this.rotation;
+};
+
+Transform.prototype.setScale = function (rx, y, z)
+{
+    if (y === undefined)
+        this.scale = rx;
+    if (y !== undefined && z !== undefined)
+        this.scale = new Vector3f(rx, y, z);
 };
