@@ -34,6 +34,7 @@ function Game() {
 //
 //    this.mesh.addVertices(vertices, indices);
 
+    Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
     this.transform = new Transform();
 
     this.shader.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
@@ -65,15 +66,15 @@ Game.prototype.update = function () {
 
     var sinTemp = Math.sin(this.temp);
 
-    this.transform.setTranslation(sinTemp, 0, 0);
+    this.transform.setTranslation(sinTemp, 0, 5);
     this.transform.setRotation(0, sinTemp * 180, 0);
     //this.transform.setScale(sinTemp, sinTemp, sinTemp);
-    this.transform.setScale(0.7 * sinTemp, 0.7 * sinTemp, 0.7 * sinTemp);
+    //this.transform.setScale(0.7 * sinTemp, 0.7 * sinTemp, 0.7 * sinTemp);
 };
 
 Game.prototype.render = function () {
     this.shader.bind();
-    this.shader.setUniform("transform", this.transform.getTransformation());
+    this.shader.setUniform("transform", this.transform.getProjectedTransformation());
 
     this.mesh.draw();
 };

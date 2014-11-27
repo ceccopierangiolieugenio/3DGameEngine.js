@@ -78,6 +78,19 @@ Matrix4f.prototype.initScale = function (x, y, z)
     return this;
 };
 
+Matrix4f.prototype.initProjection = function (fov, width, height, zNear, zFar)
+{
+    var ar = width / height;
+    var tanHalfFOV = Math.tan(Util.toRadians(fov / 2));
+    var zRange = zNear - zFar;
+
+    this.m[0][0] = 1.0 / (tanHalfFOV * ar); this.m[0][1] = 0;                   this.m[0][2] = 0;                           this.m[0][3] = 0;
+    this.m[1][0] = 0;                       this.m[1][1] = 1.0 / tanHalfFOV;    this.m[1][2] = 0;                           this.m[1][3] = 0;
+    this.m[2][0] = 0;                       this.m[2][1] = 0;                   this.m[2][2] = (-zNear - zFar) / zRange;    this.m[2][3] = 2 * zFar * zNear / zRange;
+    this.m[3][0] = 0;                       this.m[3][1] = 0;                   this.m[3][2] = 1;    this.m[3][3] = 0;
+
+    return this;
+};
 
 Matrix4f.prototype.mul = function (r)
 {
