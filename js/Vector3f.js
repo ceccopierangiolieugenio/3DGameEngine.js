@@ -26,7 +26,7 @@ function Vector3f(x, y, z)
 Vector3f.prototype.length = function ()
 {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-}
+};
 
 Vector3f.prototype.dot = function (r)
 {
@@ -68,9 +68,9 @@ Vector3f.prototype.rotate = function (angle, axis)
 
     var w = rotation.mul(this).mul(conjugate);
 
-    x = w.getX();
-    y = w.getY();
-    z = w.getZ();
+    this.x = w.getX();
+    this.y = w.getY();
+    this.z = w.getZ();
 
     return this;
 };

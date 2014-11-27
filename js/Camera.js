@@ -21,8 +21,8 @@ function Camera(pos, forward, up)
     if (pos === undefined)
     {
         this.pos = new Vector3f(0, 0, 0);
-        this.forward = new Vector3f(0, 0, 0);
-        this.up = new Vector3f(0, 0, 0);
+        this.forward = new Vector3f(0, 0, 1);
+        this.up = new Vector3f(0, 1, 0);
     }
     else
     {
@@ -41,13 +41,13 @@ Camera.prototype.input = function ()
     var rotAmt = 100 * Time.getDelta();
 
     if (Input.getKey(Input.KEY_W))
-        this.move(getForward(), movAmt);
+        this.move(this.getForward(), movAmt);
     if (Input.getKey(Input.KEY_S))
-        this.move(getForward(), -movAmt);
+        this.move(this.getForward(), -movAmt);
     if (Input.getKey(Input.KEY_A))
-        this.move(getLeft(), movAmt);
+        this.move(this.getLeft(), movAmt);
     if (Input.getKey(Input.KEY_D))
-        this.move(getRight(), movAmt);
+        this.move(this.getRight(), movAmt);
 
     if (Input.getKey(Input.KEY_UP))
         this.rotateX(-rotAmt);
