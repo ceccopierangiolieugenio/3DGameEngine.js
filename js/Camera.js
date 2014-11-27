@@ -35,6 +35,30 @@ function Camera(pos, forward, up)
     }
 }
 
+Camera.prototype.input = function ()
+{
+    var movAmt = 10 * Time.getDelta();
+    var rotAmt = 100 * Time.getDelta();
+
+    if (Input.getKey(Input.KEY_W))
+        this.move(getForward(), movAmt);
+    if (Input.getKey(Input.KEY_S))
+        this.move(getForward(), -movAmt);
+    if (Input.getKey(Input.KEY_A))
+        this.move(getLeft(), movAmt);
+    if (Input.getKey(Input.KEY_D))
+        this.move(getRight(), movAmt);
+
+    if (Input.getKey(Input.KEY_UP))
+        this.rotateX(-rotAmt);
+    if (Input.getKey(Input.KEY_DOWN))
+        this.rotateX(rotAmt);
+    if (Input.getKey(Input.KEY_LEFT))
+        this.rotateY(-rotAmt);
+    if (Input.getKey(Input.KEY_RIGHT))
+        this.rotateY(rotAmt);
+};
+
 Camera.prototype.move = function (dir, amt)
 {
     this.pos = this.pos.add(dir.mul(amt));

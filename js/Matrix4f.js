@@ -92,6 +92,25 @@ Matrix4f.prototype.initProjection = function (fov, width, height, zNear, zFar)
     return this;
 };
 
+Matrix4f.prototype.initCamera = function (forward, up)
+{
+    var f = forward;
+    f.normalize();
+
+    var r = up;
+    r.normalize();
+    r = r.cross(f);
+
+    var u = f.cross(r);
+    
+    this.m[0][0] = r.getX();    this.m[0][1] = r.getY();    this.m[0][2] = r.getZ();    this.m[0][3] = 0;
+    this.m[1][0] = u.getX();    this.m[1][1] = u.getY();    this.m[1][2] = u.getZ();    this.m[1][3] = 0;
+    this.m[2][0] = f.getX();    this.m[2][1] = f.getY();    this.m[2][2] = f.getZ();    this.m[2][3] = 0;
+    this.m[3][0] = 0;           this.m[3][1] = 0;           this.m[3][2] = 0;           this.m[3][3] = 1;
+    
+    return this;
+};
+
 Matrix4f.prototype.mul = function (r)
 {
     var res = new Matrix4f();
