@@ -38,16 +38,24 @@ Vector3f.prototype.cross = function (r)
     var _x = this.y * r.getZ() - this.z * r.getY();
     var _y = this.z * r.getX() - this.x * r.getZ();
     var _z = this.x * r.getY() - this.y * r.getX();
-    return new Vector3f(_x,_y,_z);
+
+    return new Vector3f(_x, _y, _z);
 };
 
 Vector3f.prototype.normalize = function ()
 {
     var length = this.length();
+
     this.x /= length;
     this.y /= length;
     this.z /= length;
+
     return this;
+};
+
+Vector3f.prototype.rotate = function (angle, axis)
+{
+    return null
 };
 
 Vector3f.prototype.add = function (r)

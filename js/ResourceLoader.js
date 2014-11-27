@@ -50,6 +50,13 @@ ResourceLoader.loadMesh = function (id)
                 indices.push(parseInt(tokens[1].split("/")[0]) - 1);
                 indices.push(parseInt(tokens[2].split("/")[0]) - 1);
                 indices.push(parseInt(tokens[3].split("/")[0]) - 1);
+                
+                if (tokens.length > 4)
+                {
+                    indices.push(parseInt(tokens[1].split("/")[0]) - 1);
+                    indices.push(parseInt(tokens[3].split("/")[0]) - 1);
+                    indices.push(parseInt(tokens[4].split("/")[0]) - 1);
+                }
             }
         }
         var res = new Mesh();
