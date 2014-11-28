@@ -35,12 +35,15 @@ Mesh.prototype.addVertices = function (vertices, indices)
 Mesh.prototype.draw = function ()
 {
     gl.enableVertexAttribArray(0);
+    gl.enableVertexAttribArray(1);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
     gl.vertexAttribPointer(0, 3, gl.FLOAT, false, Vertex.SIZE * 4, 0);
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, false, Vertex.SIZE * 4, 12);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
     gl.drawElements(gl.TRIANGLES, this.size, gl.UNSIGNED_SHORT, 0);
 
     gl.disableVertexAttribArray(0);
+    gl.disableVertexAttribArray(1);
 };

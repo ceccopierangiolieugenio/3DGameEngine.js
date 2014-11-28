@@ -69,8 +69,7 @@ Camera.prototype.rotateY = function (angle)
     var Haxis = this.yAxis.cross(this.forward);
     Haxis.normalize();
 
-    this.forward.rotate(angle, this.yAxis);
-    this.forward.normalize();
+    this.forward = this.forward.rotate(angle, this.yAxis).normalize();
 
     this.up = this.forward.cross(Haxis);
     this.up.normalize();
@@ -81,8 +80,7 @@ Camera.prototype.rotateX = function (angle)
     var Haxis = this.yAxis.cross(this.forward);
     Haxis.normalize();
 
-    this.forward.rotate(angle, Haxis);
-    this.forward.normalize();
+    this.forward = this.forward.rotate(angle, Haxis).normalize();
 
     this.up = this.forward.cross(Haxis);
     this.up.normalize();

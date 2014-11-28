@@ -17,6 +17,18 @@
 
 var ResourceLoader = ResourceLoader || {};
 
+ResourceLoader.loadTexture = function(imageName)
+{
+    var textureId = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, textureId);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, Util.images[imageName]);
+    /* OpenGL ES 2.0.24 spec section 3.8.2 */
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    return new Texture(textureId);
+};
+
 ResourceLoader.loadShader = function (id)
 {
     return Util.files[id];

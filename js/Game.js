@@ -16,24 +16,27 @@
 "use strict";
 
 function Game() {
-    this.mesh = ResourceLoader.loadMesh("box.obj");//new Mesh();
+    this.mesh = new Mesh();//ResourceLoader.loadMesh("box.obj");
+    this.texture = ResourceLoader.loadTexture("test.png");
     this.shader = new Shader();
     this.camera = new Camera();
     this.temp = 0.0;
 
-//    var vertices = [
-//        new Vertex(new Vector3f(-1, -1, 0)),
-//        new Vertex(new Vector3f( 0,  1, 0)),
-//        new Vertex(new Vector3f( 1, -1, 0)),
-//        new Vertex(new Vector3f( 0, -1, 1))
-//    ];
-//
-//    var indices = [ 0, 1, 3,
-//                    3, 1, 2,
-//                    2, 1, 0,
-//                    0, 2, 3 ];
-//
-//    this.mesh.addVertices(vertices, indices);
+    var vertices = [
+        new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),
+        new Vertex(new Vector3f(0, 1, 0), new Vector2f(0.5, 0)),
+        new Vertex(new Vector3f(1, -1, 0), new Vector2f(1.0, 0)),
+        new Vertex(new Vector3f(0, -1, 1), new Vector2f(0.5, 1.0))
+    ];
+
+    var indices = [
+        3, 1, 0,
+        2, 1, 3,
+        0, 1, 2,
+        0, 2, 3
+    ];
+
+    this.mesh.addVertices(vertices, indices);
 
     Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
     Transform.setCamera(this.camera);
@@ -78,6 +81,6 @@ Game.prototype.update = function () {
 Game.prototype.render = function () {
     this.shader.bind();
     this.shader.setUniform("transform", this.transform.getProjectedTransformation());
-
+    this.texture.bind();
     this.mesh.draw();
 };

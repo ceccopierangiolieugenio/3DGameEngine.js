@@ -16,15 +16,23 @@
 "use strict";
 
 var RenderUtil = RenderUtil || {};
-    
+
 RenderUtil.clearScreen = function ()
 {
     //TODO: Stencil Buffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 };
 
+RenderUtil.setTexture = function (enabled)
+{
+    if (enabled)
+        gl.enable(gl.TEXTURE_2D);
+    else
+        gl.disable(gl.TEXTURE_2D);
+};
+
 RenderUtil.initGraphics = function ()
-{   
+{
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     gl.frontFace(gl.CW);
@@ -34,6 +42,7 @@ RenderUtil.initGraphics = function ()
 
     //TODO: Depth clamp for later
 
+    //gl.enable(gl.TEXTURE_2D);
     //gl.enable(gl.FRAMEBUFFER_SRGB);
 };
 
