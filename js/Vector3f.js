@@ -26,7 +26,7 @@ function Vector3f(x, y, z)
 Vector3f.prototype.length = function ()
 {
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-}
+};
 
 Vector3f.prototype.dot = function (r)
 {
@@ -55,7 +55,24 @@ Vector3f.prototype.normalize = function ()
 
 Vector3f.prototype.rotate = function (angle, axis)
 {
-    return null
+    var sinHalfAngle = Math.sin(Util.toRadians(angle / 2));
+    var cosHalfAngle = Math.cos(Util.toRadians(angle / 2));
+
+    var rX = axis.getX() * sinHalfAngle;
+    var rY = axis.getY() * sinHalfAngle;
+    var rZ = axis.getZ() * sinHalfAngle;
+    var rW = cosHalfAngle;
+
+    var rotation = new Quaternion(rX, rY, rZ, rW);
+    var conjugate = rotation.conjugate();
+
+    var w = rotation.mul(this).mul(conjugate);
+
+    this.x = w.getX();
+    this.y = w.getY();
+    this.z = w.getZ();
+
+    return this;
 };
 
 Vector3f.prototype.add = function (r)

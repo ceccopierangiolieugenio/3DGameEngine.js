@@ -21,8 +21,8 @@ function Camera(pos, forward, up)
     if (pos === undefined)
     {
         this.pos = new Vector3f(0, 0, 0);
-        this.forward = new Vector3f(0, 0, 0);
-        this.up = new Vector3f(0, 0, 0);
+        this.forward = new Vector3f(0, 0, 1);
+        this.up = new Vector3f(0, 1, 0);
     }
     else
     {
@@ -34,6 +34,30 @@ function Camera(pos, forward, up)
         this.forward.normalize();
     }
 }
+
+Camera.prototype.input = function ()
+{
+    var movAmt = 10 * Time.getDelta();
+    var rotAmt = 100 * Time.getDelta();
+
+    if (Input.getKey(Input.KEY_W))
+        this.move(this.getForward(), movAmt);
+    if (Input.getKey(Input.KEY_S))
+        this.move(this.getForward(), -movAmt);
+    if (Input.getKey(Input.KEY_A))
+        this.move(this.getLeft(), movAmt);
+    if (Input.getKey(Input.KEY_D))
+        this.move(this.getRight(), movAmt);
+
+    if (Input.getKey(Input.KEY_UP))
+        this.rotateX(-rotAmt);
+    if (Input.getKey(Input.KEY_DOWN))
+        this.rotateX(rotAmt);
+    if (Input.getKey(Input.KEY_LEFT))
+        this.rotateY(-rotAmt);
+    if (Input.getKey(Input.KEY_RIGHT))
+        this.rotateY(rotAmt);
+};
 
 Camera.prototype.move = function (dir, amt)
 {

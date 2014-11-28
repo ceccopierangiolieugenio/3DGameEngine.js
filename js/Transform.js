@@ -21,6 +21,8 @@ function Transform() {
     this.scale = new Vector3f(1, 1, 1);
 }
 
+Transform.camera = null;
+
 Transform.zNear = 0;
 Transform.zFar = 0;
 Transform.width = 0;
@@ -41,7 +43,11 @@ Transform.prototype.getProjectedTransformation = function ()
     var transformationMatrix = this.getTransformation();
     var projectionMatrix = new Matrix4f().initProjection(Transform.fov, Transform.width, Transform.height, Transform.zNear, Transform.zFar);
 
-    return projectionMatrix.mul(transformationMatrix);
+    var cameraRotation = new Matrix4f().initCamera(Transform.camera.getForward(), Transform.camera.getUp());
+    var cameraTranslation = new Matrix4f().initTranslation(-Transform.camera.getPos().getX(), -Transform.camera.getPos().getY(), -Transform.camera.getPos().getZ());
+
+    //return projectionMatrix.mul(transformationMatrix);
+    return projectionMatrix.mul(cameraRotation.mul(cameraTranslation.mul(transformationMatrix)));
 };
 
 Transform.setProjection = function (fov, width, height, zNear, zFar)
@@ -90,4 +96,14 @@ Transform.prototype.setScale = function (rx, y, z)
         this.scale = rx;
     if (y !== undefined && z !== undefined)
         this.scale = new Vector3f(rx, y, z);
+};
+
+Transform.getCamera = function()
+{
+    return Transform.camera;
+};
+
+Transform.setCamera = function(camera)
+{
+    Transform.camera = camera;
 };

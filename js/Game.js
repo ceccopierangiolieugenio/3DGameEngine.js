@@ -18,6 +18,7 @@
 function Game() {
     this.mesh = ResourceLoader.loadMesh("box.obj");//new Mesh();
     this.shader = new Shader();
+    this.camera = new Camera();
     this.temp = 0.0;
 
 //    var vertices = [
@@ -35,6 +36,7 @@ function Game() {
 //    this.mesh.addVertices(vertices, indices);
 
     Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
+    Transform.setCamera(this.camera);
     this.transform = new Transform();
 
     this.shader.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
@@ -50,15 +52,16 @@ function Game() {
 }
 
 Game.prototype.input = function () {
-    if (Input.getKeyDown(Input.KEY_UP))
-        console.log("We've just pressed up!");
-    if (Input.getKeyUp(Input.KEY_UP))
-        console.log("We've just released up!");
-
-    if (Input.getMouseDown(1))
-        console.log("We've just right clicked at " + Input.getMousePosition().toString());
-    if (Input.getMouseUp(1))
-        console.log("We've just released right mouse button!");
+    this.camera.input();
+//    if (Input.getKeyDown(Input.KEY_UP))
+//        console.log("We've just pressed up!");
+//    if (Input.getKeyUp(Input.KEY_UP))
+//        console.log("We've just released up!");
+//
+//    if (Input.getMouseDown(1))
+//        console.log("We've just right clicked at " + Input.getMousePosition().toString());
+//    if (Input.getMouseUp(1))
+//        console.log("We've just released right mouse button!");
 };
 
 Game.prototype.update = function () {
