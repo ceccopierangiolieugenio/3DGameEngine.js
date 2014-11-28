@@ -96,6 +96,8 @@ Util.Vertices2Float32Array = function (vertices)
         ret[i * Vertex.SIZE + 0] = vertices[i].getPos().getX();
         ret[i * Vertex.SIZE + 1] = vertices[i].getPos().getY();
         ret[i * Vertex.SIZE + 2] = vertices[i].getPos().getZ();
+        ret[i * Vertex.SIZE + 3] = vertices[i].getTexCoord().getX();
+        ret[i * Vertex.SIZE + 4] = vertices[i].getTexCoord().getY();
     }
     return ret;
 };

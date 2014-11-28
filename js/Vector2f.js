@@ -20,12 +20,11 @@ function Vector2f(x, y)
     this.x = x || 0;
     this.y = y || 0;
 }
-;
 
 Vector2f.prototype.length = function ()
 {
     return Math.sqrt(this.x * this.x + this.y * this.y);
-}
+};
 
 Vector2f.prototype.dot = function (r)
 {
@@ -95,7 +94,6 @@ Vector2f.prototype.getX = function () {
 
 Vector2f.prototype.setX = function (x) {
     this.x = x || 0;
-    ;
 };
 
 Vector2f.prototype.getY = function () {
@@ -104,5 +102,4 @@ Vector2f.prototype.getY = function () {
 
 Vector2f.prototype.setY = function (y) {
     this.y = y || 0;
-    ;
 };

@@ -68,11 +68,7 @@ Vector3f.prototype.rotate = function (angle, axis)
 
     var w = rotation.mul(this).mul(conjugate);
 
-    this.x = w.getX();
-    this.y = w.getY();
-    this.z = w.getZ();
-
-    return this;
+    return new Vector3f(w.getX(), w.getY(), w.getZ());
 };
 
 Vector3f.prototype.add = function (r)
