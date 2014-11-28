@@ -21,6 +21,12 @@ function Transform() {
     this.scale = new Vector3f(1, 1, 1);
 }
 
+Transform.zNear = 0;
+Transform.zFar = 0;
+Transform.width = 0;
+Transform.height = 0;
+Transform.fov = 0;
+
 Transform.prototype.getTransformation = function ()
 {
     var translationMatrix = new Matrix4f().initTranslation(this.translation.getX(), this.translation.getY(), this.translation.getZ());
@@ -28,6 +34,23 @@ Transform.prototype.getTransformation = function ()
     var scaleMatrix = new Matrix4f().initScale(this.scale.getX(), this.scale.getY(), this.scale.getZ());
 
     return translationMatrix.mul(rotationMatrix.mul(scaleMatrix));
+};
+
+Transform.prototype.getProjectedTransformation = function ()
+{
+    var transformationMatrix = this.getTransformation();
+    var projectionMatrix = new Matrix4f().initProjection(Transform.fov, Transform.width, Transform.height, Transform.zNear, Transform.zFar);
+
+    return projectionMatrix.mul(transformationMatrix);
+};
+
+Transform.setProjection = function (fov, width, height, zNear, zFar)
+{
+    Transform.fov = fov;
+    Transform.width = width;
+    Transform.height = height;
+    Transform.zNear = zNear;
+    Transform.zFar = zFar;
 };
 
 Transform.prototype.getTranslation = function ()
