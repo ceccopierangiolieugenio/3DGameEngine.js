@@ -18,6 +18,9 @@
 function Camera(pos, forward, up)
 {
     this.yAxis = new Vector3f(0, 1, 0);
+    this.mouselooked = false;
+    this.centerPosition = new Vector2f(gl.viewportWidth / 2, gl.viewportHeight / 2);
+
     if (pos === undefined)
     {
         this.pos = new Vector3f(0, 0, 0);
@@ -27,18 +30,29 @@ function Camera(pos, forward, up)
     else
     {
         this.pos = pos;
-        this.forward = forward;
-        this.up = up;
-
-        this.up.normalize();
-        this.forward.normalize();
+        this.forward = forward.normalized();
+        this.up = up.normalized();
     }
 }
 
 Camera.prototype.input = function ()
 {
+    var sensitivity = 0.5;
     var movAmt = 10 * Time.getDelta();
-    var rotAmt = 100 * Time.getDelta();
+    //var rotAmt = 100 * Time.getDelta();
+
+
+    if (Input.getKey(Input.KEY_ESCAPE))
+    {
+        Input.setCursor(true);
+        this.mouseLocked = false;
+    }
+    if (Input.getMouseDown(1))
+    {
+        Input.setMousePosition(this.centerPosition);
+        Input.setCursor(false);
+        this.mouseLocked = true;
+    }
 
     if (Input.getKey(Input.KEY_W))
         this.move(this.getForward(), movAmt);
@@ -49,14 +63,29 @@ Camera.prototype.input = function ()
     if (Input.getKey(Input.KEY_D))
         this.move(this.getRight(), movAmt);
 
-    if (Input.getKey(Input.KEY_UP))
-        this.rotateX(-rotAmt);
-    if (Input.getKey(Input.KEY_DOWN))
-        this.rotateX(rotAmt);
-    if (Input.getKey(Input.KEY_LEFT))
-        this.rotateY(-rotAmt);
-    if (Input.getKey(Input.KEY_RIGHT))
-        this.rotateY(rotAmt);
+    if (this.mouseLocked)
+    {
+        var deltaPos = Input.getMousePosition().sub(this.centerPosition);
+
+        var rotY = deltaPos.getX() !== 0;
+        var rotX = deltaPos.getY() !== 0;
+
+        if (rotY)
+            this.rotateY(deltaPos.getX() * sensitivity);
+        if (rotX)
+            this.rotateX(-deltaPos.getY() * sensitivity);
+
+        if (rotY || rotX)
+            Input.setMousePosition(new Vector2f(gl.viewportWidth / 2, gl.viewportHeight / 2));
+    }
+//    if (Input.getKey(Input.KEY_UP))
+//        this.rotateX(-rotAmt);
+//    if (Input.getKey(Input.KEY_DOWN))
+//        this.rotateX(rotAmt);
+//    if (Input.getKey(Input.KEY_LEFT))
+//        this.rotateY(-rotAmt);
+//    if (Input.getKey(Input.KEY_RIGHT))
+//        this.rotateY(rotAmt);
 };
 
 Camera.prototype.move = function (dir, amt)
@@ -66,38 +95,30 @@ Camera.prototype.move = function (dir, amt)
 
 Camera.prototype.rotateY = function (angle)
 {
-    var Haxis = this.yAxis.cross(this.forward);
-    Haxis.normalize();
+    var Haxis = this.yAxis.cross(this.forward).normalized();
 
-    this.forward = this.forward.rotate(angle, this.yAxis).normalize();
+    this.forward = this.forward.rotate(angle, this.yAxis).normalized();
 
-    this.up = this.forward.cross(Haxis);
-    this.up.normalize();
+    this.up = this.forward.cross(Haxis).normalized();
 };
 
 Camera.prototype.rotateX = function (angle)
 {
-    var Haxis = this.yAxis.cross(this.forward);
-    Haxis.normalize();
+    var Haxis = this.yAxis.cross(this.forward).normalized();
 
-    this.forward = this.forward.rotate(angle, Haxis).normalize();
+    this.forward = this.forward.rotate(angle, Haxis).normalized();
 
-    this.up = this.forward.cross(Haxis);
-    this.up.normalize();
+    this.up = this.forward.cross(Haxis).normalized();
 };
 
 Camera.prototype.getLeft = function ()
 {
-    var left = this.forward.cross(this.up);
-    left.normalize();
-    return left;
+    return this.forward.cross(this.up).normalized();
 };
 
 Camera.prototype.getRight = function ()
 {
-    var right = this.up.cross(this.forward);
-    right.normalize();
-    return right;
+    return this.up.cross(this.forward).normalized();
 };
 
 Camera.prototype.getPos = function ()

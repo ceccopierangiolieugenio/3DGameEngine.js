@@ -19,10 +19,9 @@ var Input = Input || {
     _getKey: [],
     _getMouse: [],
     _mousePos: {x: 0, y: 0},
-    
+    _mouseSavedPos: {x: 0, y: 0},
     NUM_KEYCODES: 256,
     NUM_MOUSEBUTTONS: 5,
-    
     KEY_CANCEL: 3,
     KEY_HELP: 6,
     KEY_BACK_SPACE: 8,
@@ -177,24 +176,17 @@ var Input = Input || {
     KEY_PRINT: 42,
     KEY_EXECUTE: 43,
     KEY_SLEEP: 95,
-    
-    LastKeys: [],
-    LastMouse: []
+    lastKeys: [],
+    lastMouse: []
 };
 
 Input.update = function ()
 {
-    this.LastKeys = [];
-
     for (var i = 0; i < this.NUM_KEYCODES; i++)
-        if (this.getKey(i))
-            this.LastKeys.push(i);
-
-    this.LastMouse = [];
+        this.lastKeys[i] = this.getKey(i);
 
     for (var i = 0; i < this.NUM_MOUSEBUTTONS; i++)
-        if (this.getMouse(i))
-            this.LastMouse.push(i); 
+        this.lastMouse[i] = this.getMouse(i);
 };
 
 Input.getKey = function (keyCode) {
@@ -202,35 +194,51 @@ Input.getKey = function (keyCode) {
 };
 
 Input.getKeyDown = function (keyCode) {
-    return this.getKey(keyCode) && (-1 == this.LastKeys.indexOf(keyCode));
+    return this.getKey(keyCode) && !this.lastKeys[keyCode];
 };
 
 Input.getKeyUp = function (keyCode) {
-    return !this.getKey(keyCode) && (-1 != this.LastKeys.indexOf(keyCode));
+    return !this.getKey(keyCode) && !this.lastKeys[keyCode];
 };
 
 Input.getMouse = function (keyCode) {
     return this._getMouse[keyCode];
 };
 
-Input.getMouseDown = function (keyCode) {
-    return this.getMouse(keyCode) && (-1 == this.LastMouse.indexOf(keyCode));
+Input.getMouseDown = function (mouseButton) {
+    return this.getMouse(mouseButton) && !this.lastMouse[mouseButton];
 };
 
-Input.getMouseUp = function (keyCode) {
-    return !this.getMouse(keyCode) && (-1 != this.LastMouse.indexOf(keyCode));
+Input.getMouseUp = function (mouseButton) {
+    return !this.getMouse(mouseButton) && this.lastMouse[mouseButton];
 };
 
 Input.getMousePosition = function () {
-    return new Vector2f(this._mousePos.x, this._mousePos.y);
+    return new Vector2f(this._mousePos.x - this._mouseSavedPos.x, this._mousePos.y - this._mouseSavedPos.y);
+};
+
+Input.setMousePosition = function (pos)
+{
+    //Element.setMousePosition(pos.getX(), pos.getY());
+    //console.log("TBD: Mouse Position - x:" + pos.getX() + " y:" + pos.getY());
+    this._mouseSavedPos.x = this._mousePos.x - pos.getX();
+    this._mouseSavedPos.y = this._mousePos.y - pos.getY();
+};
+
+Input.setCursor = function (enabled)
+{
+    if (enabled)
+        console.log("TBD: Mouse Enabled");//Element.unlockMouse();
+    else
+        console.log("TBD: Mouse Disabled");//Element.lockMouse();
 };
 
 Input.handleEvent = function (e) {
     if (e.type == "mousemove") {
-        this._mousePos.x = 0 | e.clientX || e.pageX ;
-        this._mousePos.y = 0 | e.clientY || e.pageY ;
+        this._mousePos.x = 0 | e.clientX || e.pageX;
+        this._mousePos.y = 0 | e.clientY || e.pageY;
     } else {
-        var code = 0 | e.keyCode | e.which ;
+        var code = 0 | e.keyCode | e.which;
         if (e.type == "keydown") {
             this._getKey[code] = true;
         } else if (e.type == "keyup") {

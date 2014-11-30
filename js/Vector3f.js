@@ -42,15 +42,11 @@ Vector3f.prototype.cross = function (r)
     return new Vector3f(_x, _y, _z);
 };
 
-Vector3f.prototype.normalize = function ()
+Vector3f.prototype.normalized = function ()
 {
     var length = this.length();
 
-    this.x /= length;
-    this.y /= length;
-    this.z /= length;
-
-    return this;
+    return new Vector3f(this.x / length, this.y / length, this.z / length);
 };
 
 Vector3f.prototype.rotate = function (angle, axis)
@@ -110,6 +106,11 @@ Vector3f.prototype.div = function (r)
 Vector3f.prototype.toString = function ()
 {
     return "(" + this.x + " " + this.y + " " + this.z + ")";
+};
+
+Vector3f.prototype.abs = function ()
+{
+    return new Vector3f(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
 };
 
 Vector3f.prototype.getX = function () {

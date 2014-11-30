@@ -31,12 +31,10 @@ Vector2f.prototype.dot = function (r)
     return this.x * r.getX() + this.y * r.getY();
 };
 
-Vector2f.prototype.normalize = function ()
+Vector2f.prototype.normalized = function ()
 {
     var length = this.length();
-    this.x /= length;
-    this.y /= length;
-    return this;
+    return new Vector2f(this.x / length, this.y / length);
 };
 
 Vector2f.prototype.rotate = function (angle)
@@ -44,7 +42,7 @@ Vector2f.prototype.rotate = function (angle)
     var rad = Util.toRadians(angle);
     var cos = Math.cos(rad);
     var sin = Math.sin(rad);
-    return new Vector2f( (this.x*cos - this.y*sin) , (this.x*sin + this.y*cos) );
+    return new Vector2f((this.x * cos - this.y * sin), (this.x * sin + this.y * cos));
 };
 
 Vector2f.prototype.add = function (r)
@@ -81,6 +79,11 @@ Vector2f.prototype.div = function (r)
     } else {
         return new Vector2f(this.x / r.getX(), this.y / r.getY());
     }
+};
+
+Vector2f.prototype.abs = function ()
+{
+    return new Vector2f(Math.abs(this.x), Math.abs(this.y));
 };
 
 Vector2f.prototype.toString = function ()

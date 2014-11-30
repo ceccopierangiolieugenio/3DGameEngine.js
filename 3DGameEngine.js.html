@@ -9,6 +9,32 @@
         <canvas id="canvasGE" style="border: solid;" width="400" height="300"></canvas>
     </body>
     <script type="text/javascript">
+        function initGL(canvas) {
+            try {
+                gl = canvas.getContext("webgl");
+                gl.viewportWidth = canvas.width;
+                gl.viewportHeight = canvas.height;
+            } catch (e) {
+            }
+            if (!gl) {
+                alert("Could not initialise WebGL, sorry :-(");
+            }
+        }
+        
+        var gl;
+        var canvas = document.getElementById("canvasGE");
+
+        initGL(document.getElementById("canvasGE"));
+
+        function main3DGameEngine() {
+            Util.waitPendingAndStart(main3DGameEngine_start);
+        }
+
+        function main3DGameEngine_start() {
+            var mainComponent = new MainComponent();
+            mainComponent.start();
+        }
+
         Util.include("js/MainComponent.js");
         Util.include("js/Time.js");
         Util.include("js/Game.js");
@@ -25,34 +51,10 @@
         Util.include("js/Transform.js");
         Util.include("js/Camera.js");
         Util.include("js/Texture.js");
+        Util.include("js/BasicShader.js")
         Util.loadFile("shaders/basicFragment.fs", "basicFragment.fs");
         Util.loadFile("shaders/basicVertex.vs", "basicVertex.vs");
         Util.loadFile("models/box.obj", "box.obj");
         Util.loadTextures("textures/test.png", "test.png");
-
-        var gl;
-
-        function initGL(canvas) {
-            try {
-                gl = canvas.getContext("webgl");
-                gl.viewportWidth = canvas.width;
-                gl.viewportHeight = canvas.height;
-            } catch (e) {
-            }
-            if (!gl) {
-                alert("Could not initialise WebGL, sorry :-(");
-            }
-        }
-
-        function main3DGameEngine() {
-            Util.waitPendingAndStart(main3DGameEngine_start);
-        }
-
-        function main3DGameEngine_start() {
-            var canvas = document.getElementById("canvasGE");
-            initGL(canvas);
-            var mainComponent = new MainComponent();
-            mainComponent.start();
-        }
     </script>
 </html>
