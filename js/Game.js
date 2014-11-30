@@ -21,6 +21,9 @@ function Game() {
     this.shader = new Shader();
     this.camera = new Camera();
     this.temp = 0.0;
+    
+    /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
+    this.mesh.setShader(this.shader);
 
     var vertices = [
         new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),

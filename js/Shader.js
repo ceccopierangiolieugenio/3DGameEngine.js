@@ -111,3 +111,9 @@ Shader.prototype.setUniform = function (uniformName, value)
     if (value instanceof Matrix4f) /* uniformMatrix4fv transpose parameter must be false in Opengl ES 2.0 */
         gl.uniformMatrix4fv(this.uniforms[uniformName], false, Util.Matrix4f2Float32ArrayTransposed(value));
 };
+
+/* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
+Shader.prototype.getAttribLocation = function(name)
+{
+    return gl.getAttribLocation(this.program,name);
+};
