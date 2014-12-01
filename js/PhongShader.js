@@ -15,21 +15,22 @@
  */
 "use strict";
 
-function BasicShader()
+function PhongShader()
 {
     Shader.apply(this, arguments);
-    
-    this.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
-    this.addFragmentShader(ResourceLoader.loadShader("basicFragment.fs"));
+
+    this.addVertexShader(ResourceLoader.loadShader("phongVertex.vs"));
+    this.addFragmentShader(ResourceLoader.loadShader("phongFragment.fs"));
     this.compileShader();
 
     this.addUniform("transform");
-    this.addUniform("color");
+    this.addUniform("baseColor");
+    this.addUniform("ambientLight");
 }
 
-BasicShader.prototype = new Shader();
+PhongShader.prototype = new Shader();
 
-BasicShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
+PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
 {
     if (material.getTexture() !== null)
         material.getTexture().bind();
@@ -37,12 +38,23 @@ BasicShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
         RenderUtil.unbindTextures();
 
     this.setUniform("transform", projectedMatrix);
-    this.setUniform("color", material.getColor());
+    this.setUniform("baseColor", material.getColor());
+    this.setUniform("ambientLight", PhongShader.ambientLight);
 };
 
-BasicShader.instance = new BasicShader();
+PhongShader.getAmbientLight = function ()
+{
+    return PhongShader.ambientLight;
+};
 
-BasicShader.getInstance = function () 
+PhongShader.setAmbientLight = function (ambientLight)
+{
+    PhongShader.ambientLight = ambientLight;
+};
+
+PhongShader.instance = new PhongShader();
+
+PhongShader.getInstance = function ()
 {
     return this.instance;
 };

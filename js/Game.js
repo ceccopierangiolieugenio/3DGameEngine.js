@@ -18,8 +18,10 @@
 function Game() {
     this.mesh = new Mesh();//ResourceLoader.loadMesh("box.obj");
     this.material = new Material(ResourceLoader.loadTexture("test.png"), new Vector3f(0, 1, 1));
-    this.shader = BasicShader.getInstance();
+    this.shader = PhongShader.getInstance();
     this.camera = new Camera();
+        this.transform = new Transform();
+
     this.temp = 0.0;
 
     /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
@@ -43,8 +45,9 @@ function Game() {
 
     Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
     Transform.setCamera(this.camera);
-    this.transform = new Transform();
-
+    
+    PhongShader.setAmbientLight(new Vector3f(0.1, 0.1, 0.1));
+    
     /* Added a "bind()" here to avoid the warning:
      *       WebGL: UniformXXX: no program is currently bound
      * caused by calling any Uniform function before the first frame.
