@@ -31,6 +31,16 @@ RenderUtil.setTexture = function (enabled)
         gl.disable(gl.TEXTURE_2D);
 };
 
+RenderUtil.unbindTextures = function ()
+{
+    gl.bindTexture(GL_TEXTURE_2D, 0);
+};
+
+RenderUtil.setClearColor = function (color)
+{
+    gl.clearColor(color.getX(), color.getY(), color.getZ(), 1.0);
+};
+
 RenderUtil.initGraphics = function ()
 {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);

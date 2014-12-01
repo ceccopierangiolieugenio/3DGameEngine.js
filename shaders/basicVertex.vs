@@ -5,7 +5,6 @@ attribute vec3 position;
 attribute vec2 texCoord;
 
 // Variable to be used in the Fragment Shader
-varying vec4 color;
 varying vec2 texCoord0;
 
 uniform mat4 transform;

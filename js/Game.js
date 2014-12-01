@@ -17,11 +17,11 @@
 
 function Game() {
     this.mesh = new Mesh();//ResourceLoader.loadMesh("box.obj");
-    this.texture = ResourceLoader.loadTexture("test.png");
-    this.shader = new Shader();
+    this.material = new Material(ResourceLoader.loadTexture("test.png"), new Vector3f(0, 1, 1));
+    this.shader = BasicShader.getInstance();
     this.camera = new Camera();
     this.temp = 0.0;
-    
+
     /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
     this.mesh.setShader(this.shader);
 
@@ -45,11 +45,6 @@ function Game() {
     Transform.setCamera(this.camera);
     this.transform = new Transform();
 
-    this.shader.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
-    this.shader.addFragmentShader(ResourceLoader.loadShader("basicFragment.fs"));
-    this.shader.compileShader();
-
-    this.shader.addUniform("transform");
     /* Added a "bind()" here to avoid the warning:
      *       WebGL: UniformXXX: no program is currently bound
      * caused by calling any Uniform function before the first frame.
@@ -82,8 +77,8 @@ Game.prototype.update = function () {
 };
 
 Game.prototype.render = function () {
+    RenderUtil.setClearColor(Transform.getCamera().getPos().div(2048).abs());
     this.shader.bind();
-    this.shader.setUniform("transform", this.transform.getProjectedTransformation());
-    this.texture.bind();
+    this.shader.updateUniforms(this.transform.getTransformation(), this.transform.getProjectedTransformation(), this.material);
     this.mesh.draw();
 };

@@ -40,6 +40,7 @@ ResourceLoader.loadMesh = function (id)
 
         var vertices = [];
         var indices = [];
+        var textCoords = [];
 
         var lines = Util.files[id].split("\n");
         for (var i = 0; i < lines.length; i++)
@@ -56,6 +57,17 @@ ResourceLoader.loadMesh = function (id)
                         parseFloat(tokens[1]),
                         parseFloat(tokens[2]),
                         parseFloat(tokens[3]))));
+            }
+            else if (tokens[0] === "vt")
+            {
+                /* TODO: At the current stage of the Tutorial
+                 * it is not possible to use this information (vt)
+                 * because the texture coordinate should not be
+                 * included in the Vertex object but int the face definition.
+                 */
+                textCoords.push(new Vector2f(
+                        parseFloat(tokens[1]),
+                        parseFloat(tokens[2])));
             }
             else if (tokens[0] === "f")
             {

@@ -21,22 +21,22 @@ function Material(texture, color)
     this.color = color;
 }
 
-Texture.prototype.getTexture = function ()
+Material.prototype.getTexture = function ()
 {
     return this.texture;
 };
 
-Texture.prototype.setTexture = function (texture)
+Material.prototype.setTexture = function (texture)
 {
     this.texture = texture;
 };
 
-Texture.prototype.getColor = function ()
+Material.prototype.getColor = function ()
 {
     return this.color;
 };
 
-Texture.prototype.setColor = function (color)
+Material.prototype.setColor = function (color)
 {
     this.color = color;
 };

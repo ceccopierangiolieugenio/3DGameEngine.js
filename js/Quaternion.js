@@ -32,12 +32,7 @@ Quaternion.prototype.normalize = function ()
 {
     var length = this.length();
 
-    this.x /= length;
-    this.y /= length;
-    this.z /= length;
-    this.w /= length;
-
-    return this;
+    return new Quaternion(this.x / length, this.y / length, this.z / length, this.w / length);
 };
 
 Quaternion.prototype.conjugate = function ()

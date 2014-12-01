@@ -73,7 +73,7 @@ Camera.prototype.input = function ()
         if (rotY)
             this.rotateY(deltaPos.getX() * sensitivity);
         if (rotX)
-            this.rotateX(-deltaPos.getY() * sensitivity);
+            this.rotateX(deltaPos.getY() * sensitivity);
 
         if (rotY || rotX)
             Input.setMousePosition(new Vector2f(gl.viewportWidth / 2, gl.viewportHeight / 2));

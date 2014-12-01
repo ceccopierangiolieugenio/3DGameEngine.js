@@ -43,5 +43,5 @@ BasicShader.instance = new BasicShader();
 
 BasicShader.getInstance = function () 
 {
-    return this.instace;
+    return this.instance;
 };

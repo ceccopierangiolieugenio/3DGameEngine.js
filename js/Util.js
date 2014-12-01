@@ -19,7 +19,18 @@ var Util = Util || {
     pending: 0,
     files: {},
     images: {},
-    startCallback: null
+    startCallback: null,
+    postLoadCallback: []
+};
+
+Util.addPostLoadCallback = function (cb) {
+    Util.postLoadCallback.push(cb);
+};
+
+Util.postLoad = function (cb) {
+    for (var i = 0; i < Util.postLoadCallback.length; i++)
+        Util.postLoadCallback[i]();
+    cb();
 };
 
 Util.include = function (filename)
@@ -43,7 +54,7 @@ Util.loadFile = function (filename, id)
                 Util.files[id] = allText;
                 Util.pending--;
                 if (null !== Util.startCallback && Util.isAllLoaded())
-                    Util.startCallback();
+                    Util.postLoad(Util.startCallback);
             }
         }
     };
@@ -52,10 +63,10 @@ Util.loadFile = function (filename, id)
 
 Util.loadTextures = function (filename, fileId)
 {
-    this.pending++;    
+    this.pending++;
     var image = new Image();
     image.fileId = fileId;
-    image.onload = function (a,b,c,d,e,f,g) {
+    image.onload = function () {
         Util.images[this.fileId] = this;
         Util.pending--;
         if (null !== Util.startCallback && Util.isAllLoaded())
@@ -83,7 +94,7 @@ Util.isAllLoaded = function ()
 Util.waitPendingAndStart = function (cb)
 {
     if (Util.isAllLoaded())
-        cb();
+        Util.postLoad(cb);
     else
         Util.startCallback = cb;
 };
