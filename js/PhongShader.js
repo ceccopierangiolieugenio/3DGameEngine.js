@@ -31,6 +31,10 @@ function PhongShader()
     this.addUniform("baseColor");
     this.addUniform("ambientLight");
 
+    this.addUniform("specularIntensity");
+    this.addUniform("specularPower");
+    this.addUniform("eyePos");
+
     this.addUniform("directionalLight.base.color");
     this.addUniform("directionalLight.base.intensity");
     this.addUniform("directionalLight.direction");
@@ -50,6 +54,11 @@ PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
     this.setUniform("baseColor", material.getColor());
     this.setUniform("ambientLight", PhongShader.ambientLight);
     this.setUniform("directionalLight", PhongShader.directionalLight);
+
+    this.setUniformf("specularIntensity", material.getSpecularIntensity());
+    this.setUniformf("specularPower", material.getSpecularPower());
+
+    this.setUniform("eyePos", Transform.getCamera().getPos());
 };
 
 PhongShader.getAmbientLight = function ()
@@ -80,7 +89,9 @@ PhongShader.prototype.setUniform = function (uniformName, light)
     }
 };
 
-Util.addPostLoadCallback(function(){PhongShader.instance = new PhongShader();});
+Util.addPostLoadCallback(function () {
+    PhongShader.instance = new PhongShader();
+});
 
 PhongShader.getInstance = function ()
 {

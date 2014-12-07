@@ -15,13 +15,24 @@
  */
 "use strict";
 
-function Material(texture, color)
+function Material(texture, color, specularIntensity, specularPower)
 {
     this.texture = texture;
-    if (color !== undefined)
-        this.color = color;
-    else
+
+    if (color === undefined)
         this.color = new Vector3f(1, 1, 1);
+    else
+        this.color = color;
+
+    if (specularIntensity === undefined)
+        this.specularIntensity = 2;
+    else
+        this.specularIntensity = specularIntensity;
+
+    if (specularPower === undefined)
+        this.specularPower = 32;
+    else
+        this.specularPower = specularPower;
 }
 
 Material.prototype.getTexture = function ()
@@ -42,4 +53,24 @@ Material.prototype.getColor = function ()
 Material.prototype.setColor = function (color)
 {
     this.color = color;
+};
+
+Material.prototype.getSpecularIntensity = function ()
+{
+    return this.specularIntensity;
+};
+
+Material.prototype.setSpecularIntensity = function (specularIntensity)
+{
+    this.specularIntensity = specularIntensity;
+};
+
+Material.prototype.getSpecularPower = function ()
+{
+    return this.specularPower;
+};
+
+Material.prototype.setSpecularPower = function (specularPower)
+{
+    this.specularPower = specularPower;
 };

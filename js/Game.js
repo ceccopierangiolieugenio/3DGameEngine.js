@@ -20,7 +20,7 @@ function Game() {
     this.material = new Material(ResourceLoader.loadTexture("test.png"), new Vector3f(0, 1, 1));
     this.shader = PhongShader.getInstance();
     this.camera = new Camera();
-        this.transform = new Transform();
+    this.transform = new Transform();
 
     this.temp = 0.0;
 
@@ -54,7 +54,7 @@ function Game() {
         2, 3, 0,
         1, 2, 0];
 
-this.mesh.addVertices(vertices, indices, true);
+    this.mesh.addVertices(vertices, indices, true);
 
     Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
     Transform.setCamera(this.camera);
