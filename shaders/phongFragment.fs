@@ -46,10 +46,10 @@ vec4 calcLight(BaseLight base, vec3 direction, vec3 normal)
         vec3 reflectDirection = normalize(reflect(direction, normal));
         
         float specularFactor = dot(directionToEye, reflectDirection);
-        specularFactor = pow(specularFactor, specularPower);
-        
+                
         if(specularFactor > 0.0)
         {
+            specularFactor = pow(specularFactor, specularPower);
             specularColor = vec4(base.color, 1.0) * specularIntensity * specularFactor;
         }
     }
