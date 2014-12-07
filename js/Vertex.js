@@ -15,16 +15,22 @@
  */
 "use strict";
 
-function Vertex(pos, texCoord)
+function Vertex(pos, texCoord, normal)
 {
     this.pos = pos;
+    
     if (texCoord === undefined)
         this.texCoord = new Vector2f(0, 0);
     else
         this.texCoord = texCoord;
+    
+    if (normal === undefined)
+        this.normal = new Vector3f(0, 0, 0);
+    else
+        this.normal = normal;
 }
 
-Vertex.SIZE = 5;
+Vertex.SIZE = 8;
 
 Vertex.prototype.getPos = function ()
 {
@@ -44,4 +50,14 @@ Vertex.prototype.getTexCoord = function ()
 Vertex.prototype.setTexCoord = function (texCoord)
 {
     this.texCoord = texCoord;
+};
+
+Vertex.prototype.getNormal = function ()
+{
+    return this.normal;
+};
+
+Vertex.prototype.setNormal = function (normal)
+{
+    this.normal = normal;
 };

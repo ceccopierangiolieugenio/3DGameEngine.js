@@ -15,31 +15,28 @@
  */
 "use strict";
 
-function Material(texture, color)
+function DirectionalLight(base, direction)
 {
-    this.texture = texture;
-    if (color !== undefined)
-        this.color = color;
-    else
-        this.color = new Vector3f(1, 1, 1);
+    this.base = base;
+    this.direction = direction.normalized();
 }
 
-Material.prototype.getTexture = function ()
+DirectionalLight.prototype.getBase = function ()
 {
-    return this.texture;
+    return this.base;
 };
 
-Material.prototype.setTexture = function (texture)
+DirectionalLight.prototype.setBase = function (base)
 {
-    this.texture = texture;
+    this.base = base;
 };
 
-Material.prototype.getColor = function ()
+DirectionalLight.prototype.getDirection = function ()
 {
-    return this.color;
+    return this.direction;
 };
 
-Material.prototype.setColor = function (color)
+DirectionalLight.prototype.setDirection = function (direction)
 {
-    this.color = color;
+    this.direction = direction;
 };

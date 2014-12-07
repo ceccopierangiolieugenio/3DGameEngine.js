@@ -15,31 +15,28 @@
  */
 "use strict";
 
-function Material(texture, color)
+function BaseLight(color, intensity)
 {
-    this.texture = texture;
-    if (color !== undefined)
-        this.color = color;
-    else
-        this.color = new Vector3f(1, 1, 1);
+    this.color = color;
+    this.intensity = intensity;
 }
 
-Material.prototype.getTexture = function ()
-{
-    return this.texture;
-};
-
-Material.prototype.setTexture = function (texture)
-{
-    this.texture = texture;
-};
-
-Material.prototype.getColor = function ()
+BaseLight.prototype.getColor = function ()
 {
     return this.color;
 };
 
-Material.prototype.setColor = function (color)
+BaseLight.prototype.setColor = function (color)
 {
     this.color = color;
+};
+
+BaseLight.prototype.getIntensity = function ()
+{
+    return this.intensity;
+};
+
+BaseLight.prototype.setIntensity = function (intensity)
+{
+    this.intensity = intensity;
 };

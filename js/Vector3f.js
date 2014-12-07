@@ -113,6 +113,11 @@ Vector3f.prototype.abs = function ()
     return new Vector3f(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
 };
 
+Vector3f.prototype.toString = function ()
+{
+    return "(" + this.x + " " + this.y + " " + this.z + ")";
+};
+
 Vector3f.prototype.getX = function () {
     return this.x;
 };

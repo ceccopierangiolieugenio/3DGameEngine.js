@@ -19,13 +19,21 @@ function PhongShader()
 {
     Shader.apply(this, arguments);
 
+    this.ambientLight = new Vector3f(0.1, 0.1, 0.1);
+    this.directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 0), 0), new Vector3f(0, 0, 0));
+
     this.addVertexShader(ResourceLoader.loadShader("phongVertex.vs"));
     this.addFragmentShader(ResourceLoader.loadShader("phongFragment.fs"));
     this.compileShader();
 
     this.addUniform("transform");
+    this.addUniform("transformProjected");
     this.addUniform("baseColor");
     this.addUniform("ambientLight");
+
+    this.addUniform("directionalLight.base.color");
+    this.addUniform("directionalLight.base.intensity");
+    this.addUniform("directionalLight.direction");
 }
 
 PhongShader.prototype = new Shader();
@@ -37,9 +45,11 @@ PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
     else
         RenderUtil.unbindTextures();
 
-    this.setUniform("transform", projectedMatrix);
+    this.setUniform("transformProjected", projectedMatrix);
+    this.setUniform("transform", worldMatrix);
     this.setUniform("baseColor", material.getColor());
     this.setUniform("ambientLight", PhongShader.ambientLight);
+    this.setUniform("directionalLight", PhongShader.directionalLight);
 };
 
 PhongShader.getAmbientLight = function ()
@@ -52,7 +62,25 @@ PhongShader.setAmbientLight = function (ambientLight)
     PhongShader.ambientLight = ambientLight;
 };
 
-PhongShader.instance = new PhongShader();
+PhongShader.setDirectionalLight = function (directionalLight)
+{
+    PhongShader.directionalLight = directionalLight;
+};
+
+PhongShader.prototype.setUniform = function (uniformName, light)
+{
+    if (light instanceof BaseLight) {
+        this.setUniform(uniformName + ".color", light.getColor());
+        this.setUniformf(uniformName + ".intensity", light.getIntensity());
+    } else if (light instanceof DirectionalLight) {
+        this.setUniform(uniformName + ".base", light.getBase());
+        this.setUniform(uniformName + ".direction", light.getDirection());
+    } else {
+        Shader.prototype.setUniform.apply(this, arguments);
+    }
+};
+
+Util.addPostLoadCallback(function(){PhongShader.instance = new PhongShader();});
 
 PhongShader.getInstance = function ()
 {

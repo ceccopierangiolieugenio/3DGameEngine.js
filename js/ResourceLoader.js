@@ -84,7 +84,7 @@ ResourceLoader.loadMesh = function (id)
             }
         }
         var res = new Mesh();
-        res.addVertices(vertices, indices);
+        res.addVertices(vertices, indices, true);
         
         return res;
     } else {

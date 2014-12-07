@@ -27,27 +27,41 @@ function Game() {
     /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
     this.mesh.setShader(this.shader);
 
+//    var vertices = [
+//        new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),
+//        new Vertex(new Vector3f(0, 1, 0), new Vector2f(0.5, 0)),
+//        new Vertex(new Vector3f(1, -1, 0), new Vector2f(1.0, 0)),
+//        new Vertex(new Vector3f(0, -1, 1), new Vector2f(0.5, 1.0))
+//    ];
+//
+//    var indices = [
+//        3, 1, 0,
+//        2, 1, 3,
+//        0, 1, 2,
+//        0, 2, 3
+//    ];
+
     var vertices = [
-        new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),
-        new Vertex(new Vector3f(0, 1, 0), new Vector2f(0.5, 0)),
-        new Vertex(new Vector3f(1, -1, 0), new Vector2f(1.0, 0)),
-        new Vertex(new Vector3f(0, -1, 1), new Vector2f(0.5, 1.0))
+        new Vertex(new Vector3f(-1.0, -1.0, 0.5773), new Vector2f(0.0, 0.0)),
+        new Vertex(new Vector3f(0.0, -1.0, -1.15475), new Vector2f(0.5, 0.0)),
+        new Vertex(new Vector3f(1.0, -1.0, 0.5773), new Vector2f(1.0, 0.0)),
+        new Vertex(new Vector3f(0.0, 1.0, 0.0), new Vector2f(0.5, 1.0))
     ];
 
     var indices = [
-        3, 1, 0,
-        2, 1, 3,
-        0, 1, 2,
-        0, 2, 3
-    ];
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        1, 2, 0];
 
-    this.mesh.addVertices(vertices, indices);
+this.mesh.addVertices(vertices, indices, true);
 
     Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
     Transform.setCamera(this.camera);
-    
+
     PhongShader.setAmbientLight(new Vector3f(0.1, 0.1, 0.1));
-    
+    PhongShader.setDirectionalLight(new DirectionalLight(new BaseLight(new Vector3f(1, 1, 1), 0.8), new Vector3f(1, 1, 1)));
+
     /* Added a "bind()" here to avoid the warning:
      *       WebGL: UniformXXX: no program is currently bound
      * caused by calling any Uniform function before the first frame.
@@ -73,7 +87,7 @@ Game.prototype.update = function () {
 
     var sinTemp = Math.sin(this.temp);
 
-    this.transform.setTranslation(sinTemp, 0, 5);
+    this.transform.setTranslation(0, 0, 5);
     this.transform.setRotation(0, sinTemp * 180, 0);
     //this.transform.setScale(sinTemp, sinTemp, sinTemp);
     //this.transform.setScale(0.7 * sinTemp, 0.7 * sinTemp, 0.7 * sinTemp);
