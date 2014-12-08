@@ -19,8 +19,10 @@ function PhongShader()
 {
     Shader.apply(this, arguments);
 
-    this.ambientLight = new Vector3f(0.1, 0.1, 0.1);
-    this.directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 0), 0), new Vector3f(0, 0, 0));
+    PhongShader.MAX_POINT_LIGHTS = PhongShader.MAX_POINT_LIGHTS || 4;
+    PhongShader.ambientLight = PhongShader.ambientLight || new Vector3f(0.1, 0.1, 0.1);
+    PhongShader.directionalLight = PhongShader.directionalLight || new DirectionalLight(new BaseLight(new Vector3f(0, 0, 0), 0), new Vector3f(0, 0, 0));
+    PhongShader.pointLights = PhongShader.pointLights || [];
 
     this.addVertexShader(ResourceLoader.loadShader("phongVertex.vs"));
     this.addFragmentShader(ResourceLoader.loadShader("phongFragment.fs"));
@@ -38,6 +40,16 @@ function PhongShader()
     this.addUniform("directionalLight.base.color");
     this.addUniform("directionalLight.base.intensity");
     this.addUniform("directionalLight.direction");
+    
+    for (var i = 0; i < PhongShader.MAX_POINT_LIGHTS; i++)
+    {
+        this.addUniform("pointLights[" + i + "].base.color");
+        this.addUniform("pointLights[" + i + "].base.intensity");
+        this.addUniform("pointLights[" + i + "].atten.constant");
+        this.addUniform("pointLights[" + i + "].atten.linear");
+        this.addUniform("pointLights[" + i + "].atten.exponent");
+        this.addUniform("pointLights[" + i + "].position");
+    }
 }
 
 PhongShader.prototype = new Shader();
@@ -54,6 +66,9 @@ PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
     this.setUniform("baseColor", material.getColor());
     this.setUniform("ambientLight", PhongShader.ambientLight);
     this.setUniform("directionalLight", PhongShader.directionalLight);
+
+    for (var i = 0; i < PhongShader.pointLights.length; i++)
+        this.setUniform("pointLights[" + i + "]", PhongShader.pointLights[i]);
 
     this.setUniformf("specularIntensity", material.getSpecularIntensity());
     this.setUniformf("specularPower", material.getSpecularPower());
@@ -76,6 +91,17 @@ PhongShader.setDirectionalLight = function (directionalLight)
     PhongShader.directionalLight = directionalLight;
 };
 
+PhongShader.setPointLight = function (pointLights)
+{
+    if (pointLights.length > PhongShader.MAX_POINT_LIGHTS)
+    {
+        throw new Error("Error: You passed in too many point lights. Max allowed is " + PhongShader.MAX_POINT_LIGHTS + ", you passed in " + pointLights.length);
+
+    }
+
+    PhongShader.pointLights = pointLights;
+};
+
 PhongShader.prototype.setUniform = function (uniformName, light)
 {
     if (light instanceof BaseLight) {
@@ -84,6 +110,12 @@ PhongShader.prototype.setUniform = function (uniformName, light)
     } else if (light instanceof DirectionalLight) {
         this.setUniform(uniformName + ".base", light.getBase());
         this.setUniform(uniformName + ".direction", light.getDirection());
+    } else if (light instanceof PointLight) {
+        this.setUniform(uniformName + ".base", light.getBaseLight());
+        this.setUniformf(uniformName + ".atten.constant", light.getAtten().getConstant());
+        this.setUniformf(uniformName + ".atten.linear", light.getAtten().getLinear());
+        this.setUniformf(uniformName + ".atten.exponent", light.getAtten().getExponent());
+        this.setUniform(uniformName + ".position", light.getPosition());
     } else {
         Shader.prototype.setUniform.apply(this, arguments);
     }

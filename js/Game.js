@@ -17,10 +17,13 @@
 
 function Game() {
     this.mesh = new Mesh();//ResourceLoader.loadMesh("box.obj");
-    this.material = new Material(ResourceLoader.loadTexture("test.png"), new Vector3f(0, 1, 1));
+    this.material = new Material(ResourceLoader.loadTexture("test.png"), new Vector3f(1, 1, 1), 1, 8);
     this.shader = PhongShader.getInstance();
     this.camera = new Camera();
     this.transform = new Transform();
+
+    this.pLight1 = new PointLight(new BaseLight(new Vector3f(1, 0.5, 0), 0.8), new Attenuation(0, 0, 1), new Vector3f(-2, 0, 5));
+    this.pLight2 = new PointLight(new BaseLight(new Vector3f(0, 0.5, 1), 0.8), new Attenuation(0, 0, 1), new Vector3f(2, 0, 7));
 
     this.temp = 0.0;
 
@@ -41,18 +44,33 @@ function Game() {
 //        0, 2, 3
 //    ];
 
+//    var vertices = [
+//        new Vertex(new Vector3f(-1.0, -1.0, 0.5773), new Vector2f(0.0, 0.0)),
+//        new Vertex(new Vector3f(0.0, -1.0, -1.15475), new Vector2f(0.5, 0.0)),
+//        new Vertex(new Vector3f(1.0, -1.0, 0.5773), new Vector2f(1.0, 0.0)),
+//        new Vertex(new Vector3f(0.0, 1.0, 0.0), new Vector2f(0.5, 1.0))
+//    ];
+//
+//    var indices = [
+//        0, 3, 1,
+//        1, 3, 2,
+//        2, 3, 0,
+//        1, 2, 0];
+
+    var fieldDepth = 10.0;
+    var fieldWidth = 10.0;
+
     var vertices = [
-        new Vertex(new Vector3f(-1.0, -1.0, 0.5773), new Vector2f(0.0, 0.0)),
-        new Vertex(new Vector3f(0.0, -1.0, -1.15475), new Vector2f(0.5, 0.0)),
-        new Vertex(new Vector3f(1.0, -1.0, 0.5773), new Vector2f(1.0, 0.0)),
-        new Vertex(new Vector3f(0.0, 1.0, 0.0), new Vector2f(0.5, 1.0))
+        new Vertex(new Vector3f(-fieldWidth, 0.0, -fieldDepth), new Vector2f(0.0, 0.0)),
+        new Vertex(new Vector3f(-fieldWidth, 0.0, fieldDepth * 3), new Vector2f(0.0, 1.0)),
+        new Vertex(new Vector3f(fieldWidth * 3, 0.0, -fieldDepth), new Vector2f(1.0, 0.0)),
+        new Vertex(new Vector3f(fieldWidth * 3, 0.0, fieldDepth * 3), new Vector2f(1.0, 1.0))
     ];
 
     var indices = [
-        0, 3, 1,
-        1, 3, 2,
-        2, 3, 0,
-        1, 2, 0];
+        0, 1, 2,
+        2, 1, 3
+    ];
 
     this.mesh.addVertices(vertices, indices, true);
 
@@ -60,7 +78,9 @@ function Game() {
     Transform.setCamera(this.camera);
 
     PhongShader.setAmbientLight(new Vector3f(0.1, 0.1, 0.1));
-    PhongShader.setDirectionalLight(new DirectionalLight(new BaseLight(new Vector3f(1, 1, 1), 0.8), new Vector3f(1, 1, 1)));
+    //PhongShader.setDirectionalLight(new DirectionalLight(new BaseLight(new Vector3f(1, 1, 1), 0.8), new Vector3f(1, 1, 1)));
+    
+    PhongShader.setPointLight([this.pLight1, this.pLight2]);
 
     /* Added a "bind()" here to avoid the warning:
      *       WebGL: UniformXXX: no program is currently bound
@@ -87,9 +107,12 @@ Game.prototype.update = function () {
 
     var sinTemp = Math.sin(this.temp);
 
-    this.transform.setTranslation(0, 0, 5);
-    this.transform.setRotation(0, sinTemp * 180, 0);
-    //this.transform.setScale(sinTemp, sinTemp, sinTemp);
+    this.transform.setTranslation(0, -1, 5);
+    //this.transform.setRotation(0, sinTemp * 180, 0);
+
+    this.pLight1.setPosition(new Vector3f(3, 0, 8.0 * (Math.sin(this.temp) + 1.0 / 2.0) + 10));
+    this.pLight2.setPosition(new Vector3f(7, 0, 8.0 * (Math.cos(this.temp) + 1.0 / 2.0) + 10));
+
     //this.transform.setScale(0.7 * sinTemp, 0.7 * sinTemp, 0.7 * sinTemp);
 };
 

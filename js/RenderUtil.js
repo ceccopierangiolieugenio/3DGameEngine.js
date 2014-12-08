@@ -50,10 +50,9 @@ RenderUtil.initGraphics = function ()
     gl.enable(gl.CULL_FACE);
     gl.enable(gl.DEPTH_TEST);
 
-    //TODO: Depth clamp for later
+    //gl.enable(gl.DEPTH_CLAMP);
 
     //gl.enable(gl.TEXTURE_2D);
-    //gl.enable(gl.FRAMEBUFFER_SRGB);
 };
 
 RenderUtil.getOpenGLVersion = function ()
