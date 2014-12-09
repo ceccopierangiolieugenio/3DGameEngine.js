@@ -40,15 +40,24 @@ function PhongShader()
     this.addUniform("directionalLight.base.color");
     this.addUniform("directionalLight.base.intensity");
     this.addUniform("directionalLight.direction");
-    
+
     for (var i = 0; i < PhongShader.MAX_POINT_LIGHTS; i++)
     {
-        this.addUniform("pointLights[" + i + "].base.color");
-        this.addUniform("pointLights[" + i + "].base.intensity");
-        this.addUniform("pointLights[" + i + "].atten.constant");
-        this.addUniform("pointLights[" + i + "].atten.linear");
-        this.addUniform("pointLights[" + i + "].atten.exponent");
-        this.addUniform("pointLights[" + i + "].position");
+        // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+        //this.addUniform("pointLights[" + i + "].base.color");
+        //this.addUniform("pointLights[" + i + "].base.intensity");
+        //this.addUniform("pointLights[" + i + "].atten.constant");
+        //this.addUniform("pointLights[" + i + "].atten.linear");
+        //this.addUniform("pointLights[" + i + "].atten.exponent");
+        //this.addUniform("pointLights[" + i + "].position");
+        { // HACK
+            this.addUniform("pointLights" + i + ".base.color");
+            this.addUniform("pointLights" + i + ".base.intensity");
+            this.addUniform("pointLights" + i + ".atten.constant");
+            this.addUniform("pointLights" + i + ".atten.linear");
+            this.addUniform("pointLights" + i + ".atten.exponent");
+            this.addUniform("pointLights" + i + ".position");
+        }
     }
 }
 
@@ -67,8 +76,13 @@ PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
     this.setUniform("ambientLight", PhongShader.ambientLight);
     this.setUniform("directionalLight", PhongShader.directionalLight);
 
-    for (var i = 0; i < PhongShader.pointLights.length; i++)
-        this.setUniform("pointLights[" + i + "]", PhongShader.pointLights[i]);
+    // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+    //for (var i = 0; i < PhongShader.pointLights.length; i++)
+    //    this.setUniform("pointLights[" + i + "]", PhongShader.pointLights[i]);
+    { // HACK
+        for (var i = 0; i < PhongShader.pointLights.length; i++)
+            this.setUniform("pointLights" + i, PhongShader.pointLights[i]);
+    }
 
     this.setUniformf("specularIntensity", material.getSpecularIntensity());
     this.setUniformf("specularPower", material.getSpecularPower());

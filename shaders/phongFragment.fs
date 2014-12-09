@@ -1,3 +1,5 @@
+#version 100
+
 #ifdef GL_ES
 precision highp float;
 #endif
@@ -44,7 +46,14 @@ uniform float specularIntensity;
 uniform float specularPower;
 
 uniform DirectionalLight directionalLight;
-uniform PointLight pointLights[MAX_POINT_LIGHTS];
+// This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+//     uniform PointLight pointLights[MAX_POINT_LIGHTS];
+// The array is divided in 4 different variables:
+   uniform PointLight pointLights0;
+   uniform PointLight pointLights1;
+   uniform PointLight pointLights2;
+   uniform PointLight pointLights3;
+
 
 vec4 calcLight(BaseLight base, vec3 direction, vec3 normal)
 {
@@ -105,8 +114,15 @@ void main(void) {
 
     totalLight += calcDirectionalLight(directionalLight, normal);
 
-    for(int i = 0; i < MAX_POINT_LIGHTS; i++)
-        totalLight += calcPointLight(pointLights[i], normal);
-    
+    // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+    //    for(int i = 0; i < MAX_POINT_LIGHTS; i++)
+    //        totalLight += calcPointLight(pointLights[i], normal);
+    // The array is divided in 4 different variables:
+          totalLight += calcPointLight(pointLights0, normal);
+          totalLight += calcPointLight(pointLights1, normal);    
+          totalLight += calcPointLight(pointLights2, normal);    
+          totalLight += calcPointLight(pointLights3, normal);    
+
     gl_FragColor = color * totalLight;
 }
+
