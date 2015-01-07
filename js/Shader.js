@@ -48,6 +48,21 @@ Shader.prototype.addUniform = function (uniform)
     this.uniforms[uniform] = uniformLocation;
 };
 
+Shader.prototype.addVertexShaderFromFile = function (text)
+{
+    this.addProgram(this.loadShader(text), gl.VERTEX_SHADER);
+};
+
+Shader.prototype.addGeometryShaderFromFile = function (text)
+{
+    this.addProgram(this.loadShader(text), gl.GEOMETRY_SHADER);
+};
+
+Shader.prototype.addFragmentShaderFromFile = function (text)
+{
+    this.addProgram(this.loadShader(text), gl.FRAGMENT_SHADER);
+};
+
 Shader.prototype.addVertexShader = function (text)
 {
     this.addProgram(text, gl.VERTEX_SHADER);
@@ -97,6 +112,10 @@ Shader.prototype.addProgram = function (text, type)
     gl.attachShader(this.program, shader);
 };
 
+Shader.prototype.loadShader = function (id)
+{
+    return Util.files[id];
+};
 
 Shader.prototype.setUniformi = function (uniformName, value)
 {

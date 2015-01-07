@@ -26,8 +26,8 @@ function PhongShader()
     PhongShader.pointLights = PhongShader.pointLights || [];
     PhongShader.spotLights = PhongShader.spotLights || [];
 
-    this.addVertexShader(ResourceLoader.loadShader("phongVertex.vs"));
-    this.addFragmentShader(ResourceLoader.loadShader("phongFragment.fs"));
+    this.addVertexShaderFromFile("phongVertex.vs");
+    this.addFragmentShaderFromFile("phongFragment.fs");
     this.compileShader();
 
     this.addUniform("transform");

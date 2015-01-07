@@ -15,17 +15,33 @@
  */
 "use strict";
 
-function Mesh() {
+function Mesh(arg0, indices, calcNormals) {
+    if (indices === undefined && calcNormals === undefined) {
+        var fileName = arg0;
+        this.initMeshData();
+        this.loadMesh(filename);
+    } else {
+        var vertices = arg0;
+        if (calcNormals === undefined) {
+            calcNormals = false;
+        }
+        this.initMeshData();
+        this.addVertices(vertices,indices,calcNormals);
+    }
+}
+
+Mesh.prototype.initMeshData = function ()
+{
     this.vbo = gl.createBuffer();
     this.ibo = gl.createBuffer();
     this.size = 0;
     /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
     this.shader = null;
-}
+};
 
 Mesh.prototype.addVertices = function (vertices, indices, calcNormals)
 {
-    if (calcNormals !== undefined && calcNormals)
+    if (calcNormals)
     {
         this.calcNormals(vertices, indices);
     }
@@ -81,6 +97,65 @@ Mesh.prototype.calcNormals = function (vertices, indices)
 
     for (var i = 0; i < vertices.length; i++)
         vertices[i].setNormal(vertices[i].getNormal().normalized());
+};
+
+Mesh.prototype.loadMesh = function (id)
+{
+    if (id.match("\.obj$") == "\.obj") {
+
+        var vertices = [];
+        var indices = [];
+        var textCoords = [];
+
+        var lines = Util.files[id].split("\n");
+        for (var i = 0; i < lines.length; i++)
+        {
+            var line = lines[i];
+            var tokens = line.split(" ");
+
+            tokens = Util.removeEmptyStrings(tokens);
+            if (tokens.length === 0 || tokens[0] === "#")
+                continue;
+            else if (tokens[0] === "v")
+            {
+                vertices.push(new Vertex(new Vector3f(
+                        parseFloat(tokens[1]),
+                        parseFloat(tokens[2]),
+                        parseFloat(tokens[3]))));
+            }
+            else if (tokens[0] === "vt")
+            {
+                /* TODO: At the current stage of the Tutorial
+                 * it is not possible to use this information (vt)
+                 * because the texture coordinate should not be
+                 * included in the Vertex object but int the face definition.
+                 */
+                textCoords.push(new Vector2f(
+                        parseFloat(tokens[1]),
+                        parseFloat(tokens[2])));
+            }
+            else if (tokens[0] === "f")
+            {
+                indices.push(parseInt(tokens[1].split("/")[0]) - 1);
+                indices.push(parseInt(tokens[2].split("/")[0]) - 1);
+                indices.push(parseInt(tokens[3].split("/")[0]) - 1);
+                
+                if (tokens.length > 4)
+                {
+                    indices.push(parseInt(tokens[1].split("/")[0]) - 1);
+                    indices.push(parseInt(tokens[3].split("/")[0]) - 1);
+                    indices.push(parseInt(tokens[4].split("/")[0]) - 1);
+                }
+            }
+        }
+        var res = new Mesh();
+        res.addVertices(vertices, indices, true);
+        
+        return res;
+    } else {
+        throw new Error("Error: File format not supported for mesh data: " + id);
+    }
+
 };
 
 /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */

@@ -16,8 +16,8 @@
 "use strict";
 
 function Game() {
-    this.mesh = new Mesh();//ResourceLoader.loadMesh("box.obj");
-    this.material = new Material(ResourceLoader.loadTexture("test.png"), new Vector3f(1, 1, 1), 1, 8);
+    //ResourceLoader.loadMesh("box.obj");
+    this.material = new Material(new Texture("test.png"), new Vector3f(1, 1, 1), 1, 8);
     this.shader = PhongShader.getInstance();
     this.camera = new Camera();
     this.transform = new Transform();
@@ -28,9 +28,6 @@ function Game() {
     this.sLight1 = new SpotLight(new PointLight(new BaseLight(new Vector3f(0,1,1), 0.8), new Attenuation(0,0,0.1), new Vector3f(-2,0,5), 30), new Vector3f(1,1,1), 0.7);
     
     this.temp = 0.0;
-
-    /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-    this.mesh.setShader(this.shader);
 
 //    var vertices = [
 //        new Vertex(new Vector3f(-1, -1, 0), new Vector2f(0, 0)),
@@ -74,15 +71,17 @@ function Game() {
         2, 1, 3
     ];
 
-    this.mesh.addVertices(vertices, indices, true);
+    this.mesh = new Mesh(vertices, indices, true);
+    /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
+    this.mesh.setShader(this.shader);
 
     Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
     Transform.setCamera(this.camera);
 
     PhongShader.setAmbientLight(new Vector3f(0.1, 0.1, 0.1));
-    //PhongShader.setDirectionalLight(new DirectionalLight(new BaseLight(new Vector3f(1, 1, 1), 0.8), new Vector3f(1, 1, 1)));
+    PhongShader.setDirectionalLight(new DirectionalLight(new BaseLight(new Vector3f(1, 1, 1), 0.1), new Vector3f(1, 1, 1)));
     
-    //PhongShader.setPointLight([this.pLight1, this.pLight2]);
+    PhongShader.setPointLight([this.pLight1, this.pLight2]);
     PhongShader.setSpotLights([this.sLight1]);
 
     /* Added a "bind()" here to avoid the warning:

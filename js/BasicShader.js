@@ -19,8 +19,8 @@ function BasicShader()
 {
     Shader.apply(this, arguments);
     
-    this.addVertexShader(ResourceLoader.loadShader("basicVertex.vs"));
-    this.addFragmentShader(ResourceLoader.loadShader("basicFragment.fs"));
+    this.addVertexShaderFromFile("basicVertex.vs");
+    this.addFragmentShaderFromFile("basicFragment.fs");
     this.compileShader();
 
     this.addUniform("transform");

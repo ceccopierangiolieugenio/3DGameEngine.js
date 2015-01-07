@@ -15,9 +15,9 @@
  */
 "use strict";
 
-function Texture(id)
+function Texture(fileName)
 {
-    this.id = id;
+    this.loadTexture(fileName);
 }
 
 Texture.prototype.bind = function ()
@@ -28,4 +28,16 @@ Texture.prototype.bind = function ()
 Texture.prototype.getId = function()
 {
     return this.id;
+};
+
+Texture.prototype.loadTexture = function(imageName)
+{
+    this.id = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this.id);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, Util.images[imageName]);
+    /* OpenGL ES 2.0.24 spec section 3.8.2 */
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    return;
 };
