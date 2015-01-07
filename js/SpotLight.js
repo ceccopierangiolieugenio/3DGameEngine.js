@@ -15,28 +15,39 @@
  */
 "use strict";
 
-function DirectionalLight(base, direction)
+function SpotLight(pointLight, direction, cutoff)
 {
-    this.base = base;
-    this.direction = direction.normalized();
+    this.pointLight = pointLight;
+    this.direction = direction;
+    this.cutoff = cutoff;
 }
 
-DirectionalLight.prototype.getBase = function ()
+SpotLight.prototype.getPointLight = function ()
 {
-    return this.base;
+    return this.pointLight;
 };
 
-DirectionalLight.prototype.setBase = function (base)
+SpotLight.prototype.setPointLight = function (pointLight)
 {
-    this.base = base;
+    this.pointLight = pointLight;
 };
 
-DirectionalLight.prototype.getDirection = function ()
+SpotLight.prototype.getDirection = function ()
 {
     return this.direction;
 };
 
-DirectionalLight.prototype.setDirection = function (direction)
+SpotLight.prototype.setDirection = function (direction)
 {
-    this.direction = direction.normalized();
+    this.direction = direction;
+};
+
+SpotLight.prototype.getCutoff = function ()
+{
+    return this.cutoff;
+};
+
+SpotLight.prototype.setCutoff = function (cutoff)
+{
+    this.cutoff = cutoff;
 };

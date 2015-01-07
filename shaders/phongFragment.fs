@@ -5,6 +5,7 @@ precision highp float;
 #endif
 
 const int MAX_POINT_LIGHTS = 4;
+const int MAX_SPOT_LIGHTS = 4;
 
 // Input color coming from the Vertex Shader
 varying vec2 texCoord0;
@@ -32,9 +33,19 @@ struct Attenuation
 
 struct PointLight
 {
+    // The position is here because of a (glsl compilation?) issue I have with Chrome
+    vec3 position;
     BaseLight base;
     Attenuation atten;
-    vec3 position;
+    // vec3 position;
+    float range;
+};
+
+struct SpotLight
+{
+    PointLight pointLight;
+    vec3 direction;
+    float cutoff;
 };
 
 uniform vec3 baseColor;
@@ -54,6 +65,12 @@ uniform DirectionalLight directionalLight;
    uniform PointLight pointLights2;
    uniform PointLight pointLights3;
 
+//     uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
+// The array is divided in 4 different variables:
+   uniform SpotLight spotLights0;
+   uniform SpotLight spotLights1;
+   uniform SpotLight spotLights2;
+   uniform SpotLight spotLights3;
 
 vec4 calcLight(BaseLight base, vec3 direction, vec3 normal)
 {
@@ -90,6 +107,8 @@ vec4 calcPointLight(PointLight pointLight, vec3 normal)
 {
     vec3 lightDirection = worldPos0 - pointLight.position;
     float distanceToPoint = length(lightDirection);
+    if(distanceToPoint > pointLight.range)
+        return vec4(0,0,0,0);
     lightDirection = normalize(lightDirection);
     
     vec4 color = calcLight(pointLight.base, lightDirection, normal);
@@ -100,6 +119,22 @@ vec4 calcPointLight(PointLight pointLight, vec3 normal)
                          0.0001;
                          
     return color / attenuation;
+}
+
+vec4 calcSpotLight(SpotLight spotLight, vec3 normal)
+{
+    vec3 lightDirection = normalize(worldPos0 - spotLight.pointLight.position);
+    float spotFactor = dot(lightDirection, spotLight.direction);
+    
+    vec4 color = vec4(0,0,0,0);
+    
+    if(spotFactor > spotLight.cutoff)
+    {
+        color = calcPointLight(spotLight.pointLight, normal) *
+                (1.0 - (1.0 - spotFactor)/(1.0 - spotLight.cutoff));
+    }
+    
+    return color;
 }
 
 void main(void) {
@@ -116,12 +151,31 @@ void main(void) {
 
     // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
     //    for(int i = 0; i < MAX_POINT_LIGHTS; i++)
-    //        totalLight += calcPointLight(pointLights[i], normal);
+    //        if(pointLights[i].base.intensity > 0.0)
+    //            totalLight += calcPointLight(pointLights[i], normal);
     // The array is divided in 4 different variables:
-          totalLight += calcPointLight(pointLights0, normal);
-          totalLight += calcPointLight(pointLights1, normal);    
-          totalLight += calcPointLight(pointLights2, normal);    
-          totalLight += calcPointLight(pointLights3, normal);    
+        if(pointLights0.base.intensity > 0.0)
+            totalLight += calcPointLight(pointLights0, normal);
+        if(pointLights1.base.intensity > 0.0)
+            totalLight += calcPointLight(pointLights1, normal);
+        if(pointLights2.base.intensity > 0.0)
+            totalLight += calcPointLight(pointLights2, normal);
+        if(pointLights3.base.intensity > 0.0)
+            totalLight += calcPointLight(pointLights3, normal);
+
+    // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+    //    for(int i = 0; i < MAX_SPOT_LIGHTS; i++)
+    //        if(spotLights[i].pointLight.base.intensity > 0.0)
+    //            totalLight += calcSpotLight(spotLights[i], normal);
+    // The array is divided in 4 different variables:
+        if(spotLights0.pointLight.base.intensity > 0.0)
+            totalLight += calcSpotLight(spotLights0, normal);
+        if(spotLights1.pointLight.base.intensity > 0.0)
+            totalLight += calcSpotLight(spotLights1, normal);
+        if(spotLights2.pointLight.base.intensity > 0.0)
+            totalLight += calcSpotLight(spotLights2, normal);
+        if(spotLights3.pointLight.base.intensity > 0.0)
+            totalLight += calcSpotLight(spotLights3, normal);
 
     gl_FragColor = color * totalLight;
 }

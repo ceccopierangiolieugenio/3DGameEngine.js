@@ -15,12 +15,12 @@
  */
 "use strict";
 
-
-function PointLight(baseLight, atten, position)
+function PointLight(baseLight, atten, position, range)
 {
     this.baseLight = baseLight;
     this.atten = atten;
     this.position = position;
+    this.range = range;
 }
 
 PointLight.prototype.getBaseLight = function ()
@@ -52,3 +52,13 @@ PointLight.prototype.setPosition = function (position)
 {
     this.position = position;
 };
+
+PointLight.prototype.getRange = function ()
+{
+    return this.range;
+};
+
+PointLight.prototype.setRange = function (range)
+{
+    this.range = range;
+}

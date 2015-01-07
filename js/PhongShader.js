@@ -20,9 +20,11 @@ function PhongShader()
     Shader.apply(this, arguments);
 
     PhongShader.MAX_POINT_LIGHTS = PhongShader.MAX_POINT_LIGHTS || 4;
+    PhongShader.MAX_SPOT_LIGHTS = PhongShader.MAX_SPOT_LIGHTS || 4;
     PhongShader.ambientLight = PhongShader.ambientLight || new Vector3f(0.1, 0.1, 0.1);
     PhongShader.directionalLight = PhongShader.directionalLight || new DirectionalLight(new BaseLight(new Vector3f(0, 0, 0), 0), new Vector3f(0, 0, 0));
     PhongShader.pointLights = PhongShader.pointLights || [];
+    PhongShader.spotLights = PhongShader.spotLights || [];
 
     this.addVertexShader(ResourceLoader.loadShader("phongVertex.vs"));
     this.addFragmentShader(ResourceLoader.loadShader("phongFragment.fs"));
@@ -50,6 +52,7 @@ function PhongShader()
         //this.addUniform("pointLights[" + i + "].atten.linear");
         //this.addUniform("pointLights[" + i + "].atten.exponent");
         //this.addUniform("pointLights[" + i + "].position");
+        //this.addUniform("pointLights[" + i + "].range");
         { // HACK
             this.addUniform("pointLights" + i + ".base.color");
             this.addUniform("pointLights" + i + ".base.intensity");
@@ -57,6 +60,32 @@ function PhongShader()
             this.addUniform("pointLights" + i + ".atten.linear");
             this.addUniform("pointLights" + i + ".atten.exponent");
             this.addUniform("pointLights" + i + ".position");
+            this.addUniform("pointLights" + i + ".range");
+        }
+    }
+    
+    for (var i = 0; i < PhongShader.MAX_SPOT_LIGHTS; i++)
+    {
+        // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+        //this.addUniform("spotLights[" + i + "].pointLight.base.color");
+        //this.addUniform("spotLights[" + i + "].pointLight.base.intensity");
+        //this.addUniform("spotLights[" + i + "].pointLight.atten.constant");
+        //this.addUniform("spotLights[" + i + "].pointLight.atten.linear");
+        //this.addUniform("spotLights[" + i + "].pointLight.atten.exponent");
+        //this.addUniform("spotLights[" + i + "].pointLight.position");
+        //this.addUniform("spotLights[" + i + "].pointLight.range");
+        //this.addUniform("spotLights[" + i + "].direction");
+        //this.addUniform("spotLights[" + i + "].cutoff");
+        { // HACK
+            this.addUniform("spotLights" + i + ".pointLight.base.color");
+            this.addUniform("spotLights" + i + ".pointLight.base.intensity");
+            this.addUniform("spotLights" + i + ".pointLight.atten.constant");
+            this.addUniform("spotLights" + i + ".pointLight.atten.linear");
+            this.addUniform("spotLights" + i + ".pointLight.atten.exponent");
+            this.addUniform("spotLights" + i + ".pointLight.position");
+            this.addUniform("spotLights" + i + ".pointLight.range");
+            this.addUniform("spotLights" + i + ".direction");
+            this.addUniform("spotLights" + i + ".cutoff");            
         }
     }
 }
@@ -82,6 +111,14 @@ PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
     { // HACK
         for (var i = 0; i < PhongShader.pointLights.length; i++)
             this.setUniform("pointLights" + i, PhongShader.pointLights[i]);
+    }
+
+    // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+    //for (var i = 0; i < PhongShader.spotLights.length; i++)
+    //    this.setUniform("spotLights[" + i + "]", PhongShader.spotLights[i]);
+    { // HACK
+        for (var i = 0; i < PhongShader.spotLights.length; i++)
+            this.setUniform("spotLights" + i, PhongShader.spotLights[i]);
     }
 
     this.setUniformf("specularIntensity", material.getSpecularIntensity());
@@ -110,10 +147,19 @@ PhongShader.setPointLight = function (pointLights)
     if (pointLights.length > PhongShader.MAX_POINT_LIGHTS)
     {
         throw new Error("Error: You passed in too many point lights. Max allowed is " + PhongShader.MAX_POINT_LIGHTS + ", you passed in " + pointLights.length);
-
     }
 
     PhongShader.pointLights = pointLights;
+};
+
+PhongShader.setSpotLights = function (spotLights)
+{
+    if (spotLights.length > PhongShader.MAX_SPOT_LIGHTS)
+    {
+        throw new Error("Error: You passed in too many spot lights. Max allowed is " + PhongShader.MAX_SPOT_LIGHTS + ", you passed in " + spotLights.length);
+    }
+
+    PhongShader.spotLights = spotLights;
 };
 
 PhongShader.prototype.setUniform = function (uniformName, light)
@@ -130,6 +176,11 @@ PhongShader.prototype.setUniform = function (uniformName, light)
         this.setUniformf(uniformName + ".atten.linear", light.getAtten().getLinear());
         this.setUniformf(uniformName + ".atten.exponent", light.getAtten().getExponent());
         this.setUniform(uniformName + ".position", light.getPosition());
+        this.setUniformf(uniformName + ".range", light.getRange());
+    } else if (light instanceof SpotLight) {
+        this.setUniform(uniformName + ".pointLight", light.getPointLight());
+        this.setUniform(uniformName + ".direction", light.getDirection());
+        this.setUniformf(uniformName + ".cutoff", light.getCutoff());
     } else {
         Shader.prototype.setUniform.apply(this, arguments);
     }

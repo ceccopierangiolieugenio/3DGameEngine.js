@@ -40,7 +40,9 @@ BasicShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
     this.setUniform("color", material.getColor());
 };
 
-BasicShader.instance = new BasicShader();
+Util.addPostLoadCallback(function () {
+    BasicShader.instance = new BasicShader();
+});
 
 BasicShader.getInstance = function () 
 {

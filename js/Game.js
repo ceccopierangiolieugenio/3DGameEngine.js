@@ -22,9 +22,11 @@ function Game() {
     this.camera = new Camera();
     this.transform = new Transform();
 
-    this.pLight1 = new PointLight(new BaseLight(new Vector3f(1, 0.5, 0), 0.8), new Attenuation(0, 0, 1), new Vector3f(-2, 0, 5));
-    this.pLight2 = new PointLight(new BaseLight(new Vector3f(0, 0.5, 1), 0.8), new Attenuation(0, 0, 1), new Vector3f(2, 0, 7));
+    this.pLight1 = new PointLight(new BaseLight(new Vector3f(1, 0.5, 0), 0.8), new Attenuation(0, 0, 1), new Vector3f(-2, 0, 5), 10);
+    this.pLight2 = new PointLight(new BaseLight(new Vector3f(0, 0.5, 1), 0.8), new Attenuation(0, 0, 1), new Vector3f(2, 0, 7), 10);
 
+    this.sLight1 = new SpotLight(new PointLight(new BaseLight(new Vector3f(0,1,1), 0.8), new Attenuation(0,0,0.1), new Vector3f(-2,0,5), 30), new Vector3f(1,1,1), 0.7);
+    
     this.temp = 0.0;
 
     /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
@@ -80,7 +82,8 @@ function Game() {
     PhongShader.setAmbientLight(new Vector3f(0.1, 0.1, 0.1));
     //PhongShader.setDirectionalLight(new DirectionalLight(new BaseLight(new Vector3f(1, 1, 1), 0.8), new Vector3f(1, 1, 1)));
     
-    PhongShader.setPointLight([this.pLight1, this.pLight2]);
+    //PhongShader.setPointLight([this.pLight1, this.pLight2]);
+    PhongShader.setSpotLights([this.sLight1]);
 
     /* Added a "bind()" here to avoid the warning:
      *       WebGL: UniformXXX: no program is currently bound
@@ -114,6 +117,8 @@ Game.prototype.update = function () {
     this.pLight2.setPosition(new Vector3f(7, 0, 8.0 * (Math.cos(this.temp) + 1.0 / 2.0) + 10));
 
     //this.transform.setScale(0.7 * sinTemp, 0.7 * sinTemp, 0.7 * sinTemp);
+    this.sLight1.getPointLight().setPosition(this.camera.getPos());
+    this.sLight1.setDirection(this.camera.getForward());
 };
 
 Game.prototype.render = function () {
