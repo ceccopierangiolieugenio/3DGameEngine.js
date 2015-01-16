@@ -15,51 +15,8 @@
  */
 "use strict";
 
-function GameObject()
-{
-    this.children = [];
-    this.components = [];
-    this.transform = new Transform();
-}
+function GameComponent(){}
 
-GameObject.prototype.addChild = function (child)
-{
-    this.children.push(child);
-};
-
-GameObject.prototype.addComponent = function (component)
-{
-    this.components.push(component);
-};
-
-GameObject.prototype.input = function ()
-{
-    for (var i = 0; i < this.components.length; i++)
-        this.components[i].input(this.transform);
-
-    for (var i = 0; i < this.children.length; i++)
-        this.children[i].input();
-};
-
-GameObject.prototype.update = function ()
-{
-    for (var i = 0; i < this.components.length; i++)
-        this.components[i].update(this.transform);
-
-    for (var i = 0; i < this.children.length; i++)
-        this.children[i].update();
-};
-
-GameObject.prototype.render = function ()
-{
-    for (var i = 0; i < this.components.length; i++)
-        this.components[i].render(this.transform);
-
-    for (var i = 0; i < this.children.length; i++)
-        this.children[i].render();
-};
-
-GameObject.prototype.getTransform = function ()
-{
-    return this.transform;
-};
+GameComponent.prototype.input = function(){};
+GameComponent.prototype.update = function(){};
+GameComponent.prototype.render = function(){};
