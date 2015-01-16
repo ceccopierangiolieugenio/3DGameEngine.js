@@ -8,31 +8,34 @@
     <body onload="main_3DGameEngine();"></body>
     <script type="text/javascript">
         Loader.include("js/engine/core/CoreEngine.js");
+        Loader.include("js/engine/core/Game.js");        
+        Loader.include("js/engine/core/GameComponent.js");
+        Loader.include("js/engine/core/GameObject.js");
+        Loader.include("js/engine/core/Input.js");
+        Loader.include("js/engine/core/Matrix4f.js");
+        Loader.include("js/engine/core/Quaternion.js");
         Loader.include("js/engine/core/Time.js");
         Loader.include("js/engine/core/Transform.js");
         Loader.include("js/engine/core/Util.js");
-        Loader.include("js/engine/core/Input.js");
         Loader.include("js/engine/core/Vector2f.js");
         Loader.include("js/engine/core/Vector3f.js");
-        Loader.include("js/engine/core/Matrix4f.js");
-        Loader.include("js/engine/core/Quaternion.js");
 
-        Loader.include("js/engine/rendering/RenderUtil.js");
-        Loader.include("js/engine/rendering/Vertex.js");
-        Loader.include("js/engine/rendering/Mesh.js");
-        Loader.include("js/engine/rendering/Shader.js");
-        Loader.include("js/engine/rendering/Camera.js");
-        Loader.include("js/engine/rendering/Texture.js");
-        Loader.include("js/engine/rendering/Material.js");
-        Loader.include("js/engine/rendering/BasicShader.js");
-        Loader.include("js/engine/rendering/PhongShader.js");
-        Loader.include("js/engine/rendering/BaseLight.js");
-        Loader.include("js/engine/rendering/DirectionalLight.js");
-        Loader.include("js/engine/rendering/PointLight.js");
-        Loader.include("js/engine/rendering/SpotLight.js");
         Loader.include("js/engine/rendering/Attenuation.js");
-        
-        Loader.include("js/game/Game.js");
+        Loader.include("js/engine/rendering/BaseLight.js");
+        Loader.include("js/engine/rendering/BasicShader.js");
+        Loader.include("js/engine/rendering/Camera.js");
+        Loader.include("js/engine/rendering/DirectionalLight.js");
+        Loader.include("js/engine/rendering/Mesh.js");
+        Loader.include("js/engine/rendering/MeshRenderer.js");
+        Loader.include("js/engine/rendering/Material.js");
+        Loader.include("js/engine/rendering/PhongShader.js");
+        Loader.include("js/engine/rendering/PointLight.js");
+        Loader.include("js/engine/rendering/RenderUtil.js");
+        Loader.include("js/engine/rendering/Shader.js");
+        Loader.include("js/engine/rendering/SpotLight.js");
+        Loader.include("js/engine/rendering/Texture.js");
+        Loader.include("js/engine/rendering/Vertex.js");
+                
         Loader.include("js/game/TestGame.js");
         Loader.include("js/game/Main.js");
 
