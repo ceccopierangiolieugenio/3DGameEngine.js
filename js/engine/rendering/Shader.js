@@ -77,6 +77,11 @@ Shader.prototype.addFragmentShader = function (text)
     this.addProgram(text, gl.FRAGMENT_SHADER);
 };
 
+Shader.prototype.setAttribLocation = function (attributeName, location)
+{
+    gl.bindAttribLocation(this.program, location, attributeName);
+};
+
 Shader.prototype.compileShader = function ()
 {
     gl.linkProgram(this.program);

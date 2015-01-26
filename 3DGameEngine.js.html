@@ -24,6 +24,7 @@
         Loader.include("js/engine/rendering/Shader.js");
         Loader.include("js/engine/rendering/BasicShader.js");
         Loader.include("js/engine/rendering/PhongShader.js");
+        Loader.include("js/engine/rendering/ForwardAmbient.js");
     
         Loader.include("js/engine/rendering/Attenuation.js");
         Loader.include("js/engine/rendering/BaseLight.js");        
@@ -42,6 +43,8 @@
         Loader.include("js/game/TestGame.js");
         Loader.include("js/game/Main.js");
 
+        Loader.loadFile("res/shaders/forward-ambient.fs", "forward-ambient.fs");
+        Loader.loadFile("res/shaders/forward-ambient.vs", "forward-ambient.vs");
         Loader.loadFile("res/shaders/basicFragment.fs", "basicFragment.fs");
         Loader.loadFile("res/shaders/basicVertex.vs", "basicVertex.vs");
         Loader.loadFile("res/shaders/phongFragment.fs", "phongFragment.fs");

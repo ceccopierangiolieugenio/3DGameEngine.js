@@ -29,7 +29,15 @@ function RenderingEngine()
     //gl.enable(gl.TEXTURE_2D);
 
     this.mainCamera = new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0);
+
+    this.ambientLight = new Vector3f(0.2, 0.2, 0.2);
 }
+
+RenderingEngine.prototype.getAmbientLight = function ()
+{
+    return this.ambientLight;
+};
+
 RenderingEngine.prototype.input = function (delta)
 {
     this.mainCamera.input(delta);
@@ -39,10 +47,15 @@ RenderingEngine.prototype.render = function (object)
 {
     RenderingEngine.clearScreen();
     
-    var shader = BasicShader.getInstance();
-    shader.setRenderingEngine(this);
+    var forwardAmbient = ForwardAmbient.getInstance();
+    forwardAmbient.setRenderingEngine(this);
     
-    object.render(BasicShader.getInstance());
+    object.render(forwardAmbient);
+
+//    var shader = BasicShader.getInstance();
+//    shader.setRenderingEngine(this);
+    
+//    object.render(BasicShader.getInstance());
 };
 
 RenderingEngine.clearScreen = function ()
