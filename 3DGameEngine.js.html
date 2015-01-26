@@ -26,6 +26,8 @@
         Loader.include("js/engine/rendering/PhongShader.js");
         Loader.include("js/engine/rendering/ForwardAmbient.js");
         Loader.include("js/engine/rendering/ForwardDirectional.js");
+        Loader.include("js/engine/rendering/ForwardPoint.js");
+        Loader.include("js/engine/rendering/ForwardSpot.js");
     
         Loader.include("js/engine/rendering/Attenuation.js");
         Loader.include("js/engine/rendering/BaseLight.js");        
@@ -48,6 +50,10 @@
         Loader.loadFile("res/shaders/forward-ambient.vs", "forward-ambient.vs");
         Loader.loadFile("res/shaders/forward-directional.fs", "forward-directional.fs");
         Loader.loadFile("res/shaders/forward-directional.vs", "forward-directional.vs");
+        Loader.loadFile("res/shaders/forward-point.fs", "forward-point.fs");
+        Loader.loadFile("res/shaders/forward-point.vs", "forward-point.vs");
+        Loader.loadFile("res/shaders/forward-spot.fs", "forward-spot.fs");
+        Loader.loadFile("res/shaders/forward-spot.vs", "forward-spot.vs");
 
         Loader.loadFile("res/shaders/basicFragment.fs", "basicFragment.fs");
         Loader.loadFile("res/shaders/basicVertex.vs", "basicVertex.vs");
