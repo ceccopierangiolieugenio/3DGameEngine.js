@@ -108,17 +108,17 @@ RenderingEngine.prototype.render = function (object)
     gl.depthMask(false);
     gl.depthFunc(gl.EQUAL);
 
-    object.render(forwardDirectional);
-
-    var temp = this.directionalLight;
-    this.directionalLight = this.directionalLight2;
-    this.directionalLight2 = temp;
-
-    object.render(forwardDirectional);
-
-    temp = this.directionalLight;
-    this.directionalLight = this.directionalLight2;
-    this.directionalLight2 = temp;
+//    object.render(forwardDirectional);
+//
+//    var temp = this.directionalLight;
+//    this.directionalLight = this.directionalLight2;
+//    this.directionalLight2 = temp;
+//
+//    object.render(forwardDirectional);
+//
+//    temp = this.directionalLight;
+//    this.directionalLight = this.directionalLight2;
+//    this.directionalLight2 = temp;
 
     for (var i = 0; i < this.pointLightList.length; i++)
     {
