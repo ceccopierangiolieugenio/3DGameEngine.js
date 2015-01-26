@@ -16,7 +16,19 @@
 "use strict";
 
 function Game() {}
+
 Game.prototype.init = function () {};
-Game.prototype.input = function () {};
-Game.prototype.update = function () {};
-Game.prototype.render = function () {};
+
+Game.prototype.input = function () {
+    this.getRootObject().input();
+};
+
+Game.prototype.update = function () {
+    this.getRootObject().update();
+};
+
+Game.prototype.getRootObject = function () {
+    if (this.root === undefined)
+        this.root = new GameObject();
+    return this.root;
+};

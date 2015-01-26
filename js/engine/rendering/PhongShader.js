@@ -92,12 +92,11 @@ function PhongShader()
 OO.extends(PhongShader, Shader);
 
 
-PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
+PhongShader.prototype.updateUniforms = function (transform, material)
 {
-    if (material.getTexture() !== null)
-        material.getTexture().bind();
-    else
-        RenderUtil.unbindTextures();
+    var worldMatrix = transform.getTransformation();
+    var projectedMatrix = this.getRenderingEngine().getMainCamera().getViewProjection().mul(worldMatrix);
+    material.getTexture().bind();
 
     this.setUniform("transformProjected", projectedMatrix);
     this.setUniform("transform", worldMatrix);
@@ -124,7 +123,7 @@ PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, m
     this.setUniformf("specularIntensity", material.getSpecularIntensity());
     this.setUniformf("specularPower", material.getSpecularPower());
 
-    this.setUniform("eyePos", Transform.getCamera().getPos());
+    this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getPos());
 };
 
 PhongShader.getAmbientLight = function ()

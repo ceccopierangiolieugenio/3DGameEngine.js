@@ -23,22 +23,17 @@ function CoreEngine(width, height, framerate, game) {
     this.frameTime = 1.0 / framerate;
 }
 
-CoreEngine.prototype.initializeRenderingSystem = function ()
-{
-    RenderUtil.initGraphics(this.canv);
-    console.log(RenderUtil.getOpenGLVersion());
-};
-
 CoreEngine.prototype.createWindow = function (title)
 {
     /* TODO: Here the webgl canvas can be handled */
     this.canv = document.createElement('canvas');
     this.canv.id = 'canvas3D';
-    this.canv.setAttribute('width', this.width+'px');
-    this.canv.setAttribute('height', this.height+'px');    
+    this.canv.setAttribute('width', this.width + 'px');
+    this.canv.setAttribute('height', this.height + 'px');
     document.body.appendChild(this.canv); // adds the canvas to the body element
 
-    this.initializeRenderingSystem();
+    InitGL(this.canv);
+    this.renderingEngine = new RenderingEngine();
 };
 
 CoreEngine.prototype.start = function ()
@@ -84,6 +79,7 @@ CoreEngine.prototype.run = function ()
             Time.setDelta(this.frameTime);
 
             this.game.input();
+            this.renderingEngine.input();
             Input.update();
 
             this.game.update();
@@ -95,7 +91,7 @@ CoreEngine.prototype.run = function ()
             }
         }
         if (render) {
-            this.render();
+            this.renderingEngine.render(this.game.getRootObject());
             frames++;
         } else {
             // Sleep 1
@@ -109,10 +105,4 @@ CoreEngine.prototype.run = function ()
     };
 
     requestAnimationFrame(mainLoop.bind(this));
-};
-
-CoreEngine.prototype.render = function ()
-{
-    RenderUtil.clearScreen();
-    this.game.render();
 };

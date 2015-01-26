@@ -21,14 +21,6 @@ function Transform() {
     this.scale = new Vector3f(1, 1, 1);
 }
 
-Transform.camera = null;
-
-Transform.zNear = 0;
-Transform.zFar = 0;
-Transform.width = 0;
-Transform.height = 0;
-Transform.fov = 0;
-
 Transform.prototype.getTransformation = function ()
 {
     var translationMatrix = new Matrix4f().initTranslation(this.translation.getX(), this.translation.getY(), this.translation.getZ());
@@ -36,27 +28,6 @@ Transform.prototype.getTransformation = function ()
     var scaleMatrix = new Matrix4f().initScale(this.scale.getX(), this.scale.getY(), this.scale.getZ());
 
     return translationMatrix.mul(rotationMatrix.mul(scaleMatrix));
-};
-
-Transform.prototype.getProjectedTransformation = function ()
-{
-    var transformationMatrix = this.getTransformation();
-    var projectionMatrix = new Matrix4f().initProjection(Transform.fov, Transform.width, Transform.height, Transform.zNear, Transform.zFar);
-
-    var cameraRotation = new Matrix4f().initCamera(Transform.camera.getForward(), Transform.camera.getUp());
-    var cameraTranslation = new Matrix4f().initTranslation(-Transform.camera.getPos().getX(), -Transform.camera.getPos().getY(), -Transform.camera.getPos().getZ());
-
-    //return projectionMatrix.mul(transformationMatrix);
-    return projectionMatrix.mul(cameraRotation.mul(cameraTranslation.mul(transformationMatrix)));
-};
-
-Transform.setProjection = function (fov, width, height, zNear, zFar)
-{
-    Transform.fov = fov;
-    Transform.width = width;
-    Transform.height = height;
-    Transform.zNear = zNear;
-    Transform.zFar = zFar;
 };
 
 Transform.prototype.getTranslation = function ()
@@ -96,14 +67,4 @@ Transform.prototype.setScale = function (rx, y, z)
         this.scale = rx;
     if (y !== undefined && z !== undefined)
         this.scale = new Vector3f(rx, y, z);
-};
-
-Transform.getCamera = function()
-{
-    return Transform.camera;
-};
-
-Transform.setCamera = function(camera)
-{
-    Transform.camera = camera;
 };

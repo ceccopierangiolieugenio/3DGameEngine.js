@@ -23,7 +23,7 @@ function Shader()
     if (!this.program)
     {
         throw new Error("Shader creation failed: Could not find valid memory location in constructor");
-    }  
+    }
 }
 
 Shader.prototype.bind = function ()
@@ -31,7 +31,7 @@ Shader.prototype.bind = function ()
     gl.useProgram(this.program);
 };
 
-Shader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
+Shader.prototype.updateUniforms = function (transform, material) 
 {
 };
 
@@ -135,8 +135,18 @@ Shader.prototype.setUniform = function (uniformName, value)
         gl.uniformMatrix4fv(this.uniforms[uniformName], false, Util.Matrix4f2Float32ArrayTransposed(value));
 };
 
-/* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-Shader.prototype.getAttribLocation = function(name)
+Shader.prototype.setRenderingEngine = function (renderingEngine)
 {
-    return gl.getAttribLocation(this.program,name);
+    this.renderingEngine = renderingEngine;
+};
+
+Shader.prototype.getRenderingEngine = function ()
+{
+    return this.renderingEngine;
+};
+
+/* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
+Shader.prototype.getAttribLocation = function (name)
+{
+    return gl.getAttribLocation(this.program, name);
 };

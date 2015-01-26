@@ -15,14 +15,13 @@
  */
 "use strict";
 
-function TestGame() {
-}
+function TestGame() {}
+OO.extends(TestGame, Game);
 
 TestGame.prototype.init = function ()
 {
-    this.root = new GameObject();
-    this.camera = new Camera();
- 
+    // this.camera = new Camera();
+
     var fieldDepth = 10.0;
     var fieldWidth = 10.0;
 
@@ -42,25 +41,30 @@ TestGame.prototype.init = function ()
     var material = new Material(new Texture("test.png"), new Vector3f(1, 1, 1), 1, 8);
 
     var meshRenderer = new MeshRenderer(mesh, material);
-    this.root.addComponent(meshRenderer);
 
-    Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
-    Transform.setCamera(this.camera);
+    var planeObject = new GameObject();
+    planeObject.addComponent(meshRenderer);
+    planeObject.getTransform().setTranslation(0, -1, 5);
+
+    this.getRootObject().addChild(planeObject);
+
+    // Transform.setProjection(70, gl.viewportWidth, gl.viewportHeight, 0.1, 1000);
+    // Transform.setCamera(this.camera);
 };
 
-TestGame.prototype.input = function ()
-{
-    this.camera.input();
-    this.root.input();
-};
-
-TestGame.prototype.update = function ()
-{
-    this.root.getTransform().setTranslation(0, -1, 5);
-    this.root.update();
-};
-
-TestGame.prototype.render = function ()
-{
-    this.root.render();
-};
+//TestGame.prototype.input = function ()
+//{
+//    this.camera.input();
+//    this.root.input();
+//};
+//
+//TestGame.prototype.update = function ()
+//{
+//    this.root.getTransform().setTranslation(0, -1, 5);
+//    this.root.update();
+//};
+//
+//TestGame.prototype.render = function ()
+//{
+//    this.root.render();
+//};

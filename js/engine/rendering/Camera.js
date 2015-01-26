@@ -15,25 +15,24 @@
  */
 "use strict";
 
-function Camera(pos, forward, up)
+function Camera(fov, aspect, zNear, zFar)
 {
     this.yAxis = new Vector3f(0, 1, 0);
     this.mouselooked = false;
     this.centerPosition = new Vector2f(gl.viewportWidth / 2, gl.viewportHeight / 2);
-
-    if (pos === undefined)
-    {
-        this.pos = new Vector3f(0, 0, 0);
-        this.forward = new Vector3f(0, 0, 1);
-        this.up = new Vector3f(0, 1, 0);
-    }
-    else
-    {
-        this.pos = pos;
-        this.forward = forward.normalized();
-        this.up = up.normalized();
-    }
+    this.pos = new Vector3f(0, 0, 0);
+    this.forward = new Vector3f(0, 0, 1).normalized();
+    this.up = new Vector3f(0, 1, 0).normalized();
+    this.projection = new Matrix4f().initPerspective(fov, aspect, zNear, zFar);
 }
+
+Camera.prototype.getViewProjection = function ()
+{
+    var cameraRotation = new Matrix4f().initRotation(this.forward, this.up);
+    var cameraTranslation = new Matrix4f().initTranslation(-this.pos.getX(), -this.pos.getY(), -this.pos.getZ());
+    
+    return this.projection.mul(cameraRotation.mul(cameraTranslation));
+};
 
 Camera.prototype.input = function ()
 {

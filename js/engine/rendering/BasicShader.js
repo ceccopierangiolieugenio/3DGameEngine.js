@@ -28,12 +28,11 @@ function BasicShader()
 }
 OO.extends(BasicShader, Shader);
 
-BasicShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
+BasicShader.prototype.updateUniforms = function (transform, material)
 {
-    if (material.getTexture() !== null)
-        material.getTexture().bind();
-    else
-        RenderUtil.unbindTextures();
+    var worldMatrix = transform.getTransformation();
+    var projectedMatrix = this.getRenderingEngine().getMainCamera().getViewProjection().mul(worldMatrix);
+    material.getTexture().bind();
 
     this.setUniform("transform", projectedMatrix);
     this.setUniform("color", material.getColor());

@@ -50,13 +50,13 @@ GameObject.prototype.update = function ()
         this.children[i].update();
 };
 
-GameObject.prototype.render = function ()
+GameObject.prototype.render = function (shader)
 {
     for (var i = 0; i < this.components.length; i++)
-        this.components[i].render(this.transform);
+        this.components[i].render(this.transform, shader);
 
     for (var i = 0; i < this.children.length; i++)
-        this.children[i].render();
+        this.children[i].render(shader);
 };
 
 GameObject.prototype.getTransform = function ()

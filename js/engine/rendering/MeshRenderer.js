@@ -22,13 +22,11 @@ function MeshRenderer(mesh, material)
 }
 MeshRenderer.prototype = new GameComponent();
 
-MeshRenderer.prototype.render = function (transform)
+MeshRenderer.prototype.render = function (transform, shader)
 {
-    var shader = BasicShader.getInstance();
-
     shader.bind();
-    shader.updateUniforms(transform.getTransformation(), transform.getProjectedTransformation(), this.material);
-    
+    shader.updateUniforms(transform, this.material);
+
     /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
     this.mesh.setShader(shader);
     this.mesh.draw();

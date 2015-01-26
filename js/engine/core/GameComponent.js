@@ -15,8 +15,8 @@
  */
 "use strict";
 
-function GameComponent(){}
+function GameComponent() {}
 
-GameComponent.prototype.input = function(){};
-GameComponent.prototype.update = function(){};
-GameComponent.prototype.render = function(){};
+GameComponent.prototype.input = function (transform) {};
+GameComponent.prototype.update = function (transform) {};
+GameComponent.prototype.render = function (transform, shader) {};
