@@ -25,14 +25,7 @@ function CoreEngine(width, height, framerate, game) {
 
 CoreEngine.prototype.createWindow = function (title)
 {
-    /* TODO: Here the webgl canvas can be handled */
-    this.canv = document.createElement('canvas');
-    this.canv.id = 'canvas3D';
-    this.canv.setAttribute('width', this.width + 'px');
-    this.canv.setAttribute('height', this.height + 'px');
-    document.body.appendChild(this.canv); // adds the canvas to the body element
-
-    InitGL(this.canv);
+    Window.createWindow(this.width, this.height, title);
     this.renderingEngine = new RenderingEngine();
 };
 
@@ -69,22 +62,20 @@ CoreEngine.prototype.run = function ()
         var passedTime = startTime - lastTime;
         lastTime = startTime;
 
-        unprocessedTime += passedTime / Time.SECOND;
+        unprocessedTime += passedTime;
         frameCounter += passedTime;
 
         while (unprocessedTime > this.frameTime) {
             render = true;
             unprocessedTime -= this.frameTime;
 
-            Time.setDelta(this.frameTime);
-
-            this.game.input();
-            this.renderingEngine.input();
+            this.game.input(this.frameTime);
+            this.renderingEngine.input(this.frameTime);
             Input.update();
 
-            this.game.update();
+            this.game.update(this.frameTime);
 
-            if (frameCounter >= Time.SECOND) {
+            if (frameCounter >= 1.0) {
                 console.log("FPS:" + frames);
                 frames = 0;
                 frameCounter = 0;

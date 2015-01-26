@@ -67,6 +67,11 @@ Vector3f.prototype.rotate = function (angle, axis)
     return new Vector3f(w.getX(), w.getY(), w.getZ());
 };
 
+Vector3f.prototype.lerp = function (dest, lerpFactor)
+{
+    return dest.sub(this).mul(lerpFactor).add(this);
+};
+
 Vector3f.prototype.add = function (r)
 {
     if (typeof r === 'number') {
@@ -118,6 +123,14 @@ Vector3f.prototype.toString = function ()
     return "(" + this.x + " " + this.y + " " + this.z + ")";
 };
 
+Vector3f.prototype.getXY = function() { return new Vector2f(this.x, this.y); };
+Vector3f.prototype.getYZ = function() { return new Vector2f(this.y, this.z); };
+Vector3f.prototype.getZX = function() { return new Vector2f(this.z, this.x); };
+
+Vector3f.prototype.getYX = function() { return new Vector2f(this.y, this.x); };
+Vector3f.prototype.getZY = function() { return new Vector2f(this.z, this.y); };
+Vector3f.prototype.getXZ = function() { return new Vector2f(this.x, this.z); };
+
 Vector3f.prototype.getX = function () {
     return this.x;
 };
@@ -143,4 +156,8 @@ Vector3f.prototype.getZ = function () {
 Vector3f.prototype.setZ = function (y) {
     this.z = z || 0;
     ;
+};
+
+Vector3f.prototype.equals = function (r) {
+    return this.x === r.getX() && this.y === r.getY() && this.z === r.getZ();
 };

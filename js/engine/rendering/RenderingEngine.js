@@ -15,21 +15,6 @@
  */
 "use strict";
 
-var gl = gl || {};
-
-function InitGL(canv) {
-    try {
-        gl = canv.getContext("webgl");
-        gl.viewportWidth = canv.width;
-        gl.viewportHeight = canv.height;
-    } catch (e) {
-    }
-
-    if (!gl) {
-        alert("Could not initialise WebGL, sorry :-(");
-    }
-}
-
 function RenderingEngine()
 {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -43,11 +28,11 @@ function RenderingEngine()
 
     //gl.enable(gl.TEXTURE_2D);
 
-    this.mainCamera = new Camera(Util.toRadians(70.0), gl.viewportWidth / gl.viewportHeight, 0.01, 1000.0);
+    this.mainCamera = new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0);
 }
-RenderingEngine.prototype.input = function (object)
+RenderingEngine.prototype.input = function (delta)
 {
-    this.mainCamera.input();
+    this.mainCamera.input(delta);
 };
 
 RenderingEngine.prototype.render = function (object)

@@ -17,6 +17,6 @@
 
 function GameComponent() {}
 
-GameComponent.prototype.input = function (transform) {};
-GameComponent.prototype.update = function (transform) {};
+GameComponent.prototype.input = function (transform, delta) {};
+GameComponent.prototype.update = function (transform, delta) {};
 GameComponent.prototype.render = function (transform, shader) {};

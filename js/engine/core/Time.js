@@ -16,19 +16,10 @@
 "use strict";
 
 var Time = Time || {
-    SECOND: 1000,
-    _delta: 0,
+    SECOND: 1000
 };
 
 Time.getTime = function () {
     var dateTime = new Date();
-    return dateTime.getTime();
-};
-
-Time.getDelta = function () {
-    return this._delta;
-};
-
-Time.setDelta = function (delta) {
-    this._delta = delta;
+    return dateTime.getTime()/Time.SECOND;
 };

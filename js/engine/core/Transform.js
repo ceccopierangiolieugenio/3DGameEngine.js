@@ -16,44 +16,44 @@
 "use strict";
 
 function Transform() {
-    this.translation = new Vector3f(0, 0, 0);
-    this.rotation = new Vector3f(0, 0, 0);
+    this.pos = new Vector3f(0, 0, 0);
+    this.rot = new Vector3f(0, 0, 0);
     this.scale = new Vector3f(1, 1, 1);
 }
 
 Transform.prototype.getTransformation = function ()
 {
-    var translationMatrix = new Matrix4f().initTranslation(this.translation.getX(), this.translation.getY(), this.translation.getZ());
-    var rotationMatrix = new Matrix4f().initRotation(this.rotation.getX(), this.rotation.getY(), this.rotation.getZ());
+    var translationMatrix = new Matrix4f().initTranslation(this.pos.getX(), this.pos.getY(), this.pos.getZ());
+    var rotationMatrix = new Matrix4f().initRotation(this.rot.getX(), this.rot.getY(), this.rot.getZ());
     var scaleMatrix = new Matrix4f().initScale(this.scale.getX(), this.scale.getY(), this.scale.getZ());
 
     return translationMatrix.mul(rotationMatrix.mul(scaleMatrix));
 };
 
-Transform.prototype.getTranslation = function ()
+Transform.prototype.getPos = function ()
 {
-    return this.translation;
+    return this.pos;
 };
 
-Transform.prototype.setTranslation = function (rx, y, z)
+Transform.prototype.setPos = function (rx, y, z)
 {
     if (y === undefined)
-        this.translation = rx;
+        this.pos = rx;
     if (y !== undefined && z !== undefined)
-        this.translation = new Vector3f(rx, y, z);
+        this.pos = new Vector3f(rx, y, z);
 };
 
-Transform.prototype.getRotation = function ()
+Transform.prototype.getRot = function ()
 {
-    return this.rotation;
+    return this.rot;
 };
 
-Transform.prototype.setRotation = function (rx, y, z)
+Transform.prototype.setRot = function (rx, y, z)
 {
     if (y === undefined)
-        this.rotation = rx;
+        this.rot = rx;
     if (y !== undefined && z !== undefined)
-        this.rotation = new Vector3f(rx, y, z);
+        this.rot = new Vector3f(rx, y, z);
 };
 
 Transform.prototype.getScale = function ()

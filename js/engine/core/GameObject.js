@@ -32,22 +32,22 @@ GameObject.prototype.addComponent = function (component)
     this.components.push(component);
 };
 
-GameObject.prototype.input = function ()
+GameObject.prototype.input = function (delta)
 {
     for (var i = 0; i < this.components.length; i++)
-        this.components[i].input(this.transform);
+        this.components[i].input(this.transform, delta);
 
     for (var i = 0; i < this.children.length; i++)
-        this.children[i].input();
+        this.children[i].input(delta);
 };
 
-GameObject.prototype.update = function ()
+GameObject.prototype.update = function (delta)
 {
     for (var i = 0; i < this.components.length; i++)
-        this.components[i].update(this.transform);
+        this.components[i].update(this.transform, delta);
 
     for (var i = 0; i < this.children.length; i++)
-        this.children[i].update();
+        this.children[i].update(delta);
 };
 
 GameObject.prototype.render = function (shader)

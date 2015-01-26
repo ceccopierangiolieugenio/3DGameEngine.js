@@ -112,6 +112,20 @@ Matrix4f.prototype.initPerspective = function (fov, aspectRatio, zNear, zFar)
     return this;
 };
 
+Matrix4f.prototype.initOrthographc = function (left, right, bottom, top, near, far)
+{
+    var width = right - left;
+    var height = top - bottom;
+    var depth = far - near;
+
+    this.m[0][0] = 2/width; this.m[0][1] = 0;       this.m[0][2] = 0;       this.m[0][3] = -(right + left)/width;
+    this.m[1][0] = 0;       this.m[1][1] = 2/height;this.m[1][2] = 0;       this.m[1][3] = -(top + bottom)/height;
+    this.m[2][0] = 0;       this.m[2][1] = 0;       this.m[2][2] = 2/depth; this.m[2][3] = -(far + near)/depth;
+    this.m[3][0] = 0;       this.m[3][1] = 0;       this.m[3][2] = 0;       this.m[3][3] = 1;
+
+    return this;
+};
+
 Matrix4f.prototype.mul = function (r)
 {
     var res = new Matrix4f();

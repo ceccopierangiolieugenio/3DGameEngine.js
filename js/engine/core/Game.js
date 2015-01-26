@@ -19,12 +19,12 @@ function Game() {}
 
 Game.prototype.init = function () {};
 
-Game.prototype.input = function () {
-    this.getRootObject().input();
+Game.prototype.input = function (delta) {
+    this.getRootObject().input(delta);
 };
 
-Game.prototype.update = function () {
-    this.getRootObject().update();
+Game.prototype.update = function (delta) {
+    this.getRootObject().update(delta);
 };
 
 Game.prototype.getRootObject = function () {

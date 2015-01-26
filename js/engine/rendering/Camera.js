@@ -19,7 +19,7 @@ function Camera(fov, aspect, zNear, zFar)
 {
     this.yAxis = new Vector3f(0, 1, 0);
     this.mouselooked = false;
-    this.centerPosition = new Vector2f(gl.viewportWidth / 2, gl.viewportHeight / 2);
+    this.centerPosition = new Vector2f(Window.getWidth() / 2, Window.getHeight() / 2);
     this.pos = new Vector3f(0, 0, 0);
     this.forward = new Vector3f(0, 0, 1).normalized();
     this.up = new Vector3f(0, 1, 0).normalized();
@@ -34,10 +34,10 @@ Camera.prototype.getViewProjection = function ()
     return this.projection.mul(cameraRotation.mul(cameraTranslation));
 };
 
-Camera.prototype.input = function ()
+Camera.prototype.input = function (delta)
 {
     var sensitivity = 0.5;
-    var movAmt = 10 * Time.getDelta();
+    var movAmt = 10 * delta;
     //var rotAmt = 100 * Time.getDelta();
 
 
@@ -75,7 +75,7 @@ Camera.prototype.input = function ()
             this.rotateX(deltaPos.getY() * sensitivity);
 
         if (rotY || rotX)
-            Input.setMousePosition(new Vector2f(gl.viewportWidth / 2, gl.viewportHeight / 2));
+            Input.setMousePosition(new Vector2f(Window.getWidth() / 2, Window.getHeight() / 2));
     }
 //    if (Input.getKey(Input.KEY_UP))
 //        this.rotateX(-rotAmt);

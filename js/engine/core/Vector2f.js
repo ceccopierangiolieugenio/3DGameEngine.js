@@ -37,6 +37,16 @@ Vector2f.prototype.normalized = function ()
     return new Vector2f(this.x / length, this.y / length);
 };
 
+Vector2f.prototype.cross = function (r)
+{
+    return this.x * r.getY() - this.y * r.getX();
+};
+
+Vector2f.prototype.lerp = function (dest, lerpFactor)
+{
+    return dest.sub(this).mul(lerpFactor).add(this);
+};
+
 Vector2f.prototype.rotate = function (angle)
 {
     var rad = Util.toRadians(angle);
@@ -105,4 +115,8 @@ Vector2f.prototype.getY = function () {
 
 Vector2f.prototype.setY = function (y) {
     this.y = y || 0;
+};
+
+Vector2f.prototype.equals = function (r) {
+    return this.x === r.getX() && this.y === r.getY();
 };
