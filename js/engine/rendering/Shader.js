@@ -149,9 +149,3 @@ Shader.prototype.getRenderingEngine = function ()
 {
     return this.renderingEngine;
 };
-
-/* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-Shader.prototype.getAttribLocation = function (name)
-{
-    return gl.getAttribLocation(this.program, name);
-};

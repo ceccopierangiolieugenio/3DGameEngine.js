@@ -27,7 +27,5 @@ MeshRenderer.prototype.render = function (transform, shader)
     shader.bind();
     shader.updateUniforms(transform, this.material);
 
-    /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-    this.mesh.setShader(shader);
     this.mesh.draw();
 };

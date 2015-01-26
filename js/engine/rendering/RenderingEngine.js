@@ -31,11 +31,18 @@ function RenderingEngine()
     this.mainCamera = new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0);
 
     this.ambientLight = new Vector3f(0.2, 0.2, 0.2);
+    this.directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 1), 0.4), new Vector3f(1, 1, 1));
+    this.directionalLight2 = new DirectionalLight(new BaseLight(new Vector3f(1, 0, 0), 0.4), new Vector3f(-1, 1, -1));
 }
 
 RenderingEngine.prototype.getAmbientLight = function ()
 {
     return this.ambientLight;
+};
+
+RenderingEngine.prototype.getDirectionalLight = function ()
+{
+    return this.directionalLight;
 };
 
 RenderingEngine.prototype.input = function (delta)
@@ -46,11 +53,34 @@ RenderingEngine.prototype.input = function (delta)
 RenderingEngine.prototype.render = function (object)
 {
     RenderingEngine.clearScreen();
-    
+
     var forwardAmbient = ForwardAmbient.getInstance();
+    var forwardDirectional = ForwardDirectional.getInstance();
     forwardAmbient.setRenderingEngine(this);
-    
+    forwardDirectional.setRenderingEngine(this);
+
     object.render(forwardAmbient);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    gl.depthMask(false);
+    gl.depthFunc(gl.EQUAL);
+
+    object.render(forwardDirectional);
+
+    var temp = this.directionalLight;
+    this.directionalLight = this.directionalLight2;
+    this.directionalLight2 = temp;
+
+    object.render(forwardDirectional);
+
+    temp = this.directionalLight;
+    this.directionalLight = this.directionalLight2;
+    this.directionalLight2 = temp;
+
+    gl.depthFunc(gl.LESS);
+    gl.depthMask(true);
+    gl.disable(gl.BLEND);
 
 //    var shader = BasicShader.getInstance();
 //    shader.setRenderingEngine(this);

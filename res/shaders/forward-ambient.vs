@@ -2,9 +2,6 @@
 
 attribute vec3 position;
 attribute vec2 texCoord;
-attribute vec3 normal;
-// I need this to avoid an optimization issue
-vec3 tmp = normal;
 
 varying vec2 texCoord0;
 

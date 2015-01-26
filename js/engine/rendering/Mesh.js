@@ -56,25 +56,21 @@ Mesh.prototype.addVertices = function (vertices, indices, calcNormals)
 
 Mesh.prototype.draw = function ()
 {
-    /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-    var positionLocation = this.shader.getAttribLocation("position");
-    var texCoordLocation = this.shader.getAttribLocation("texCoord");
-    var normalLocation = this.shader.getAttribLocation("normal");
-    gl.enableVertexAttribArray(positionLocation);
-    gl.enableVertexAttribArray(texCoordLocation);
-    gl.enableVertexAttribArray(normalLocation);
+    gl.enableVertexAttribArray(0);
+    gl.enableVertexAttribArray(1);
+    gl.enableVertexAttribArray(2);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
-    gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, Vertex.SIZE * 4, 0);
-    gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, Vertex.SIZE * 4, 12);
-    gl.vertexAttribPointer(normalLocation, 3, gl.FLOAT, false, Vertex.SIZE * 4, 20);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, Vertex.SIZE * 4, 0);
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, false, Vertex.SIZE * 4, 12);
+    gl.vertexAttribPointer(2, 3, gl.FLOAT, false, Vertex.SIZE * 4, 20);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
     gl.drawElements(gl.TRIANGLES, this.size, gl.UNSIGNED_SHORT, 0);
 
-    gl.disableVertexAttribArray(positionLocation);
-    gl.disableVertexAttribArray(texCoordLocation);
-    gl.disableVertexAttribArray(normalLocation);
+    gl.disableVertexAttribArray(0);
+    gl.disableVertexAttribArray(1);
+    gl.disableVertexAttribArray(2);
 };
 
 Mesh.prototype.calcNormals = function (vertices, indices)
@@ -156,16 +152,4 @@ Mesh.prototype.loadMesh = function (id)
         throw new Error("Error: File format not supported for mesh data: " + id);
     }
 
-};
-
-/* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-Mesh.prototype.setShader = function(shader)
-{
-    this.shader = shader;
-};
-
-/* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-Mesh.prototype.getShader = function()
-{
-    return this.shader;
 };
