@@ -4,6 +4,7 @@
         <title>3DGameEngine.js</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script type="text/javascript" src="js/Loader.js"></script>
+        <script type="text/javascript" src="js/OO.js"></script>
     </head>
     <body onload="main_3DGameEngine();"></body>
     <script type="text/javascript">
@@ -20,18 +21,19 @@
         Loader.include("js/engine/core/Vector2f.js");
         Loader.include("js/engine/core/Vector3f.js");
 
-        Loader.include("js/engine/rendering/Attenuation.js");
-        Loader.include("js/engine/rendering/BaseLight.js");
+        Loader.include("js/engine/rendering/Shader.js");
         Loader.include("js/engine/rendering/BasicShader.js");
+        Loader.include("js/engine/rendering/PhongShader.js");
+    
+        Loader.include("js/engine/rendering/Attenuation.js");
+        Loader.include("js/engine/rendering/BaseLight.js");        
         Loader.include("js/engine/rendering/Camera.js");
         Loader.include("js/engine/rendering/DirectionalLight.js");
         Loader.include("js/engine/rendering/Mesh.js");
         Loader.include("js/engine/rendering/MeshRenderer.js");
-        Loader.include("js/engine/rendering/Material.js");
-        Loader.include("js/engine/rendering/PhongShader.js");
+        Loader.include("js/engine/rendering/Material.js");        
         Loader.include("js/engine/rendering/PointLight.js");
-        Loader.include("js/engine/rendering/RenderUtil.js");
-        Loader.include("js/engine/rendering/Shader.js");
+        Loader.include("js/engine/rendering/RenderUtil.js");        
         Loader.include("js/engine/rendering/SpotLight.js");
         Loader.include("js/engine/rendering/Texture.js");
         Loader.include("js/engine/rendering/Vertex.js");

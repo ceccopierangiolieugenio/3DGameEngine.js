@@ -88,3 +88,4 @@ Loader.waitPendingAndStart = function (cb)
     else
         Loader.startCallback = cb;
 };
+

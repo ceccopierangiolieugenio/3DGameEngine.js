@@ -26,26 +26,22 @@ function BasicShader()
     this.addUniform("transform");
     this.addUniform("color");
 }
+OO.extends(BasicShader, Shader);
 
-/* TODO: I must find a better initializator */
-Loader.addPostLoadCallback(function () {
-    BasicShader.prototype = new Shader();
+BasicShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
+{
+    if (material.getTexture() !== null)
+        material.getTexture().bind();
+    else
+        RenderUtil.unbindTextures();
 
-    BasicShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
-    {
-        if (material.getTexture() !== null)
-            material.getTexture().bind();
-        else
-            RenderUtil.unbindTextures();
-
-        this.setUniform("transform", projectedMatrix);
-        this.setUniform("color", material.getColor());
-    };
-
-    BasicShader.instance = new BasicShader();
-});
+    this.setUniform("transform", projectedMatrix);
+    this.setUniform("color", material.getColor());
+};
 
 BasicShader.getInstance = function ()
 {
+    if (this.instance === undefined)
+        this.instance = new BasicShader();
     return this.instance;
 };

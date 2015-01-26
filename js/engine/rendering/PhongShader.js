@@ -89,109 +89,106 @@ function PhongShader()
         }
     }
 }
+OO.extends(PhongShader, Shader);
 
-/* TODO: I must find a better initializator */
-Loader.addPostLoadCallback(function () {
-    PhongShader.prototype = new Shader();
 
-    PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
+PhongShader.prototype.updateUniforms = function (worldMatrix, projectedMatrix, material)
+{
+    if (material.getTexture() !== null)
+        material.getTexture().bind();
+    else
+        RenderUtil.unbindTextures();
+
+    this.setUniform("transformProjected", projectedMatrix);
+    this.setUniform("transform", worldMatrix);
+    this.setUniform("baseColor", material.getColor());
+    this.setUniform("ambientLight", PhongShader.ambientLight);
+    this.setUniform("directionalLight", PhongShader.directionalLight);
+
+    // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+    //for (var i = 0; i < PhongShader.pointLights.length; i++)
+    //    this.setUniform("pointLights[" + i + "]", PhongShader.pointLights[i]);
+    { // HACK
+        for (var i = 0; i < PhongShader.pointLights.length; i++)
+            this.setUniform("pointLights" + i, PhongShader.pointLights[i]);
+    }
+
+    // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
+    //for (var i = 0; i < PhongShader.spotLights.length; i++)
+    //    this.setUniform("spotLights[" + i + "]", PhongShader.spotLights[i]);
+    { // HACK
+        for (var i = 0; i < PhongShader.spotLights.length; i++)
+            this.setUniform("spotLights" + i, PhongShader.spotLights[i]);
+    }
+
+    this.setUniformf("specularIntensity", material.getSpecularIntensity());
+    this.setUniformf("specularPower", material.getSpecularPower());
+
+    this.setUniform("eyePos", Transform.getCamera().getPos());
+};
+
+PhongShader.getAmbientLight = function ()
+{
+    return PhongShader.ambientLight;
+};
+
+PhongShader.setAmbientLight = function (ambientLight)
+{
+    PhongShader.ambientLight = ambientLight;
+};
+
+PhongShader.setDirectionalLight = function (directionalLight)
+{
+    PhongShader.directionalLight = directionalLight;
+};
+
+PhongShader.setPointLight = function (pointLights)
+{
+    if (pointLights.length > PhongShader.MAX_POINT_LIGHTS)
     {
-        if (material.getTexture() !== null)
-            material.getTexture().bind();
-        else
-            RenderUtil.unbindTextures();
+        throw new Error("Error: You passed in too many point lights. Max allowed is " + PhongShader.MAX_POINT_LIGHTS + ", you passed in " + pointLights.length);
+    }
 
-        this.setUniform("transformProjected", projectedMatrix);
-        this.setUniform("transform", worldMatrix);
-        this.setUniform("baseColor", material.getColor());
-        this.setUniform("ambientLight", PhongShader.ambientLight);
-        this.setUniform("directionalLight", PhongShader.directionalLight);
+    PhongShader.pointLights = pointLights;
+};
 
-        // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
-        //for (var i = 0; i < PhongShader.pointLights.length; i++)
-        //    this.setUniform("pointLights[" + i + "]", PhongShader.pointLights[i]);
-        { // HACK
-            for (var i = 0; i < PhongShader.pointLights.length; i++)
-                this.setUniform("pointLights" + i, PhongShader.pointLights[i]);
-        }
-
-        // This "Hack" is due to an issue I'm having using Firefox + Uniform Array of Structs corruption
-        //for (var i = 0; i < PhongShader.spotLights.length; i++)
-        //    this.setUniform("spotLights[" + i + "]", PhongShader.spotLights[i]);
-        { // HACK
-            for (var i = 0; i < PhongShader.spotLights.length; i++)
-                this.setUniform("spotLights" + i, PhongShader.spotLights[i]);
-        }
-
-        this.setUniformf("specularIntensity", material.getSpecularIntensity());
-        this.setUniformf("specularPower", material.getSpecularPower());
-
-        this.setUniform("eyePos", Transform.getCamera().getPos());
-    };
-
-    PhongShader.getAmbientLight = function ()
+PhongShader.setSpotLights = function (spotLights)
+{
+    if (spotLights.length > PhongShader.MAX_SPOT_LIGHTS)
     {
-        return PhongShader.ambientLight;
-    };
+        throw new Error("Error: You passed in too many spot lights. Max allowed is " + PhongShader.MAX_SPOT_LIGHTS + ", you passed in " + spotLights.length);
+    }
 
-    PhongShader.setAmbientLight = function (ambientLight)
-    {
-        PhongShader.ambientLight = ambientLight;
-    };
+    PhongShader.spotLights = spotLights;
+};
 
-    PhongShader.setDirectionalLight = function (directionalLight)
-    {
-        PhongShader.directionalLight = directionalLight;
-    };
-
-    PhongShader.setPointLight = function (pointLights)
-    {
-        if (pointLights.length > PhongShader.MAX_POINT_LIGHTS)
-        {
-            throw new Error("Error: You passed in too many point lights. Max allowed is " + PhongShader.MAX_POINT_LIGHTS + ", you passed in " + pointLights.length);
-        }
-
-        PhongShader.pointLights = pointLights;
-    };
-
-    PhongShader.setSpotLights = function (spotLights)
-    {
-        if (spotLights.length > PhongShader.MAX_SPOT_LIGHTS)
-        {
-            throw new Error("Error: You passed in too many spot lights. Max allowed is " + PhongShader.MAX_SPOT_LIGHTS + ", you passed in " + spotLights.length);
-        }
-
-        PhongShader.spotLights = spotLights;
-    };
-
-    PhongShader.prototype.setUniform = function (uniformName, light)
-    {
-        if (light instanceof BaseLight) {
-            this.setUniform(uniformName + ".color", light.getColor());
-            this.setUniformf(uniformName + ".intensity", light.getIntensity());
-        } else if (light instanceof DirectionalLight) {
-            this.setUniform(uniformName + ".base", light.getBase());
-            this.setUniform(uniformName + ".direction", light.getDirection());
-        } else if (light instanceof PointLight) {
-            this.setUniform(uniformName + ".base", light.getBaseLight());
-            this.setUniformf(uniformName + ".atten.constant", light.getAtten().getConstant());
-            this.setUniformf(uniformName + ".atten.linear", light.getAtten().getLinear());
-            this.setUniformf(uniformName + ".atten.exponent", light.getAtten().getExponent());
-            this.setUniform(uniformName + ".position", light.getPosition());
-            this.setUniformf(uniformName + ".range", light.getRange());
-        } else if (light instanceof SpotLight) {
-            this.setUniform(uniformName + ".pointLight", light.getPointLight());
-            this.setUniform(uniformName + ".direction", light.getDirection());
-            this.setUniformf(uniformName + ".cutoff", light.getCutoff());
-        } else {
-            Shader.prototype.setUniform.apply(this, arguments);
-        }
-    };
-
-    PhongShader.instance = new PhongShader();
-});
+PhongShader.prototype.setUniform = function (uniformName, light)
+{
+    if (light instanceof BaseLight) {
+        this.setUniform(uniformName + ".color", light.getColor());
+        this.setUniformf(uniformName + ".intensity", light.getIntensity());
+    } else if (light instanceof DirectionalLight) {
+        this.setUniform(uniformName + ".base", light.getBase());
+        this.setUniform(uniformName + ".direction", light.getDirection());
+    } else if (light instanceof PointLight) {
+        this.setUniform(uniformName + ".base", light.getBaseLight());
+        this.setUniformf(uniformName + ".atten.constant", light.getAtten().getConstant());
+        this.setUniformf(uniformName + ".atten.linear", light.getAtten().getLinear());
+        this.setUniformf(uniformName + ".atten.exponent", light.getAtten().getExponent());
+        this.setUniform(uniformName + ".position", light.getPosition());
+        this.setUniformf(uniformName + ".range", light.getRange());
+    } else if (light instanceof SpotLight) {
+        this.setUniform(uniformName + ".pointLight", light.getPointLight());
+        this.setUniform(uniformName + ".direction", light.getDirection());
+        this.setUniformf(uniformName + ".cutoff", light.getCutoff());
+    } else {
+        Shader.prototype.setUniform.apply(this, arguments);
+    }
+};
 
 PhongShader.getInstance = function ()
 {
+    if (this.instance === undefined)
+        this.instance = new PhongShader();
     return this.instance;
 };
