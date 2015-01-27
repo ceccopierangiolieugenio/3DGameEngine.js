@@ -17,8 +17,6 @@
 
 function MeshRenderer(mesh, material)
 {
-    GameComponent.apply(this, arguments);
-
     this.mesh = mesh;
     this.material = material;
 }

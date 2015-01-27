@@ -31,6 +31,8 @@ GameObject.prototype.addComponent = function (component)
 {
     this.components.push(component);
     component.setParent(this);
+    
+    return this;
 };
 
 GameObject.prototype.input = function (delta)

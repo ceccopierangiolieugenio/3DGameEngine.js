@@ -70,7 +70,6 @@ CoreEngine.prototype.run = function ()
             unprocessedTime -= this.frameTime;
 
             this.game.input(this.frameTime);
-            this.renderingEngine.input(this.frameTime);
             Input.update();
 
             this.game.update(this.frameTime);

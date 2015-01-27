@@ -53,7 +53,7 @@ ForwardDirectional.prototype.updateUniforms = function (transform, material)
     this.setUniformf("specularIntensity", material.getSpecularIntensity());
     this.setUniformf("specularPower", material.getSpecularPower());
 
-    this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getPos());
+    this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getTransform().getPos());
     this.setUniformDirectionalLight("directionalLight", this.getRenderingEngine().getActiveLight());
 };
 

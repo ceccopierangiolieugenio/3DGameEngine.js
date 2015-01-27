@@ -48,7 +48,7 @@ Quaternion.prototype.length = function ()
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
 };
 
-Quaternion.prototype.normalize = function ()
+Quaternion.prototype.normalized = function ()
 {
     var length = this.length();
 

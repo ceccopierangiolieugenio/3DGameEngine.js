@@ -65,4 +65,6 @@ TestGame.prototype.init = function ()
     this.getRootObject().addChild(directionalLightObject);
     this.getRootObject().addChild(pointLightObject);
     this.getRootObject().addChild(spotLightObject);
+
+    this.getRootObject().addChild(new GameObject().addComponent(new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0)));
 };

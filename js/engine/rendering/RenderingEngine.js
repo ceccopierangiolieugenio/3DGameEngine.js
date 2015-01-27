@@ -29,7 +29,7 @@ function RenderingEngine()
 
     //gl.enable(gl.TEXTURE_2D);
 
-    this.mainCamera = new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0);
+    //this.mainCamera = new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0);
 
     this.ambientLight = new Vector3f(0.1, 0.1, 0.1);
 //    this.directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 1), 0.4), new Vector3f(1, 1, 1));
@@ -67,11 +67,6 @@ function RenderingEngine()
 RenderingEngine.prototype.getAmbientLight = function ()
 {
     return this.ambientLight;
-};
-
-RenderingEngine.prototype.input = function (delta)
-{
-    this.mainCamera.input(delta);
 };
 
 RenderingEngine.prototype.render = function (object)
@@ -135,6 +130,11 @@ RenderingEngine.getOpenGLVersion = function ()
 RenderingEngine.prototype.addLight = function (light)
 {
     this.lights.push(light);
+};
+
+RenderingEngine.prototype.addCamera = function (camera)
+{
+    this.mainCamera = camera;
 };
 
 RenderingEngine.prototype.getActiveLight = function ()

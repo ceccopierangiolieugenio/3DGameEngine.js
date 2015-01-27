@@ -54,14 +54,25 @@ Vector3f.prototype.normalized = function ()
     return new Vector3f(this.x / length, this.y / length, this.z / length);
 };
 
-Vector3f.prototype.rotate = function (angle, axis)
+Vector3f.prototype.rotate = function (_a, _b)
 {
-    var rotation = new Quaternion().initRotation(axis,angle);
-    var conjugate = rotation.conjugate();
+    if (_a instanceof Vector3f && typeof _b === 'number') {
+        var axis = _a;
+        var angle = _b;
+        var sinAngle = Math.sin(-angle);
+        var cosAngle = Math.cos(-angle);
 
-    var w = rotation.mul(this).mul(conjugate);
+        return this.cross(axis.mul(sinAngle)).add(//Rotation on local X
+                         (this.mul(cosAngle)).add(//Rotation on local Z
+                          axis.mul(this.dot(axis.mul(1 - cosAngle))))); //Rotation on local Y
+    } else if (_a instanceof Quaternion && typeof _b === undefined) {
+        var rotation = _a;
+        var conjugate = rotation.conjugate();
 
-    return new Vector3f(w.getX(), w.getY(), w.getZ());
+        var w = rotation.mul(this).mul(conjugate);
+
+        return new Vector3f(w.getX(), w.getY(), w.getZ());
+    }
 };
 
 Vector3f.prototype.lerp = function (dest, lerpFactor)
