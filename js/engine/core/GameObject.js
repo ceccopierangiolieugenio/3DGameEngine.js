@@ -56,13 +56,13 @@ GameObject.prototype.update = function (delta)
         this.children[i].update(delta);
 };
 
-GameObject.prototype.render = function (shader)
+GameObject.prototype.render = function (shader, renderingEngine)
 {
     for (var i = 0; i < this.components.length; i++)
-        this.components[i].render(shader);
+        this.components[i].render(shader, renderingEngine);
 
     for (var i = 0; i < this.children.length; i++)
-        this.children[i].render(shader);
+        this.children[i].render(shader, renderingEngine);
 };
 
 GameObject.prototype.addToRenderingEngine = function (renderingEngine)

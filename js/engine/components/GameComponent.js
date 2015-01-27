@@ -19,7 +19,7 @@ function GameComponent() {}
 
 GameComponent.prototype.input = function (delta) {};
 GameComponent.prototype.update = function (delta) {};
-GameComponent.prototype.render = function (shader) {};
+GameComponent.prototype.render = function (shader, renderingEngine) {};
 
 GameComponent.prototype.setParent = function (parent)
 {

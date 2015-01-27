@@ -77,9 +77,8 @@ RenderingEngine.prototype.render = function (object)
     object.addToRenderingEngine(this);
 
     var forwardAmbient = ForwardAmbient.getInstance();
-    forwardAmbient.setRenderingEngine(this);
 
-    object.render(forwardAmbient);
+    object.render(forwardAmbient, this);
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE);
@@ -88,11 +87,10 @@ RenderingEngine.prototype.render = function (object)
 
     for (var i = 0; i < this.lights.length; i++)
     {
-        this.lights[i].getShader().setRenderingEngine(this);
         this.activeLight = this.lights[i];
-        object.render(this.lights[i].getShader());
+        object.render(this.lights[i].getShader(), this);
     }
-    
+
     gl.depthFunc(gl.LESS);
     gl.depthMask(true);
     gl.disable(gl.BLEND);

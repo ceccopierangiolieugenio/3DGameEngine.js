@@ -31,7 +31,7 @@ Shader.prototype.bind = function ()
     gl.useProgram(this.program);
 };
 
-Shader.prototype.updateUniforms = function (transform, material) 
+Shader.prototype.updateUniforms = function (transform, material, renderingEngine) 
 {
 };
 
@@ -138,14 +138,4 @@ Shader.prototype.setUniform = function (uniformName, value)
 
     if (value instanceof Matrix4f) /* uniformMatrix4fv transpose parameter must be false in Opengl ES 2.0 */
         gl.uniformMatrix4fv(this.uniforms[uniformName], false, Util.Matrix4f2Float32ArrayTransposed(value));
-};
-
-Shader.prototype.setRenderingEngine = function (renderingEngine)
-{
-    this.renderingEngine = renderingEngine;
-};
-
-Shader.prototype.getRenderingEngine = function ()
-{
-    return this.renderingEngine;
 };

@@ -47,20 +47,20 @@ function ForwardSpot()
 }
 OO.extends(ForwardSpot, Shader);
 
-ForwardSpot.prototype.updateUniforms = function (transform, material)
+ForwardSpot.prototype.updateUniforms = function (transform, material, renderingEngine)
 {
     var worldMatrix = transform.getTransformation();
-    var projectedMatrix = this.getRenderingEngine().getMainCamera().getViewProjection().mul(worldMatrix);
-    material.getTexture().bind();
+    var projectedMatrix = renderingEngine.getMainCamera().getViewProjection().mul(worldMatrix);
+    material.getTexture("diffuse").bind();
 
     this.setUniform("model", worldMatrix);
     this.setUniform("MVP", projectedMatrix);
 
-    this.setUniformf("specularIntensity", material.getSpecularIntensity());
-    this.setUniformf("specularPower", material.getSpecularPower());
+    this.setUniformf("specularIntensity", material.getFloat("specularIntensity"));
+    this.setUniformf("specularPower", material.getFloat("specularPower"));
 
-    this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getTransform().getTransformedPos());
-    this.setUniformSpotLight("spotLight", this.getRenderingEngine().getActiveLight());
+    this.setUniform("eyePos", renderingEngine.getMainCamera().getTransform().getTransformedPos());
+    this.setUniformSpotLight("spotLight", renderingEngine.getActiveLight());
 };
 
 ForwardSpot.prototype.setUniformBaseLight = function (uniformName, baseLight)

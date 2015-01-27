@@ -21,10 +21,10 @@ function ForwardAmbient()
 
     this.addVertexShaderFromFile("forward-ambient.vs");
     this.addFragmentShaderFromFile("forward-ambient.fs");
-    
+
     this.setAttribLocation("position", 0);
     this.setAttribLocation("texCoord", 1);
-    
+
     this.compileShader();
 
     this.addUniform("MVP");
@@ -32,14 +32,14 @@ function ForwardAmbient()
 }
 OO.extends(ForwardAmbient, Shader);
 
-ForwardAmbient.prototype.updateUniforms = function (transform, material)
+ForwardAmbient.prototype.updateUniforms = function (transform, material, renderingEngine)
 {
     var worldMatrix = transform.getTransformation();
-    var projectedMatrix = this.getRenderingEngine().getMainCamera().getViewProjection().mul(worldMatrix);
-    material.getTexture().bind();
+    var projectedMatrix = renderingEngine.getMainCamera().getViewProjection().mul(worldMatrix);
+    material.getTexture("diffuse").bind();
 
     this.setUniform("MVP", projectedMatrix);
-    this.setUniform("ambientIntensity", this.getRenderingEngine().getAmbientLight());
+    this.setUniform("ambientIntensity", renderingEngine.getAmbientLight());
 };
 
 ForwardAmbient.getInstance = function ()

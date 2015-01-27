@@ -27,6 +27,14 @@ Game.prototype.update = function (delta) {
     this.getRootObject().update(delta);
 };
 
+Game.prototype.render = function (renderingEngine) {
+    renderingEngine.render(this.getRootObject());
+};
+
+Game.prototype.addObject = function (object) {
+    this.getRootObject().addChild(object);
+};
+
 Game.prototype.getRootObject = function () {
     if (this.root === undefined)
         this.root = new GameObject();

@@ -50,7 +50,10 @@ TestGame.prototype.init = function ()
 
     var mesh2 = new Mesh(vertices2, indices2, true);
     var mesh = new Mesh(vertices, indices, true);
-    var material = new Material(new Texture("test.png"), new Vector3f(1, 1, 1), 1, 8);
+    var material = new Material();//new Texture("test.png"), new Vector3f(1,1,1), 1, 8);
+    material.addTexture("diffuse", new Texture("test.png"));
+    material.addFloat("specularIntensity", 1);
+    material.addFloat("specularPower", 8);
 
     var meshRenderer = new MeshRenderer(mesh, material);
 
@@ -74,10 +77,10 @@ TestGame.prototype.init = function ()
     spotLightObject.getTransform().getPos().set(5, 0, 5);
     spotLightObject.getTransform().setRot(new Quaternion(new Vector3f(0, 1, 0), Util.toRadians(90.0)));
 
-    this.getRootObject().addChild(planeObject);
-    this.getRootObject().addChild(directionalLightObject);
-    this.getRootObject().addChild(pointLightObject);
-    this.getRootObject().addChild(spotLightObject);
+    this.addObject(planeObject);
+    this.addObject(directionalLightObject);
+    this.addObject(pointLightObject);
+    this.addObject(spotLightObject);
 
     //this.getRootObject().addChild(new GameObject().addComponent(new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0)));
 
@@ -94,7 +97,7 @@ TestGame.prototype.init = function ()
     //this.getRootObject()
             .addChild(new GameObject().addComponent(new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0)));
 
-    this.getRootObject().addChild(testMesh1);
+    this.addObject(testMesh1);
 
     directionalLight.getTransform().setRot(new Quaternion(new Vector3f(1, 0, 0), Util.toRadians(-45)));
 };

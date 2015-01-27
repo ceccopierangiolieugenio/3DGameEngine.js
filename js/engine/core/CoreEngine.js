@@ -81,7 +81,8 @@ CoreEngine.prototype.run = function ()
             }
         }
         if (render) {
-            this.renderingEngine.render(this.game.getRootObject());
+            this.game.render(this.renderingEngine);
+            Window.render();
             frames++;
         } else {
             // Sleep 1

@@ -15,62 +15,40 @@
  */
 "use strict";
 
-function Material(texture, color, specularIntensity, specularPower)
+function Material()
 {
-    this.texture = texture;
-
-    if (color === undefined)
-        this.color = new Vector3f(1, 1, 1);
-    else
-        this.color = color;
-
-    if (specularIntensity === undefined)
-        this.specularIntensity = 2;
-    else
-        this.specularIntensity = specularIntensity;
-
-    if (specularPower === undefined)
-        this.specularPower = 32;
-    else
-        this.specularPower = specularPower;
+    this.textureHashMap = {};
+    this.vector3fHashMap = {};
+    this.floatHashMap = {};
 }
 
-Material.prototype.getTexture = function ()
+Material.prototype.addTexture  = function(name, texture)    { this.textureHashMap[name] = texture;    };
+Material.prototype.addVector3f = function(name, vector3f)   { this.vector3fHashMap[name]= vector3f;   };
+Material.prototype.addFloat    = function(name, floatValue) { this.floatHashMap[name]   = floatValue; };
+
+Material.prototype.getTexture = function (name)
 {
-    return this.texture;
+    var result = this.textureHashMap[name];
+    if (result !== undefined)
+        return result;
+
+    return new Texture("test.png");
 };
 
-Material.prototype.setTexture = function (texture)
+Material.prototype.getVector3f = function (name)
 {
-    this.texture = texture;
+    var result = this.vector3fHashMap[name];
+    if (result !== undefined)
+        return result;
+
+    return new Vector3f(0, 0, 0);
 };
 
-Material.prototype.getColor = function ()
+Material.prototype.getFloat = function (name)
 {
-    return this.color;
-};
+    var result = this.floatHashMap[name];
+    if (result !== undefined)
+        return result;
 
-Material.prototype.setColor = function (color)
-{
-    this.color = color;
-};
-
-Material.prototype.getSpecularIntensity = function ()
-{
-    return this.specularIntensity;
-};
-
-Material.prototype.setSpecularIntensity = function (specularIntensity)
-{
-    this.specularIntensity = specularIntensity;
-};
-
-Material.prototype.getSpecularPower = function ()
-{
-    return this.specularPower;
-};
-
-Material.prototype.setSpecularPower = function (specularPower)
-{
-    this.specularPower = specularPower;
+    return 0;
 };

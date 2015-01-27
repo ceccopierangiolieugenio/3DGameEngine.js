@@ -22,9 +22,9 @@ function MeshRenderer(mesh, material)
 }
 OO.extends(MeshRenderer, GameComponent);
 
-MeshRenderer.prototype.render = function (shader)
+MeshRenderer.prototype.render = function (shader, renderingEngine)
 {
     shader.bind();
-    shader.updateUniforms(this.getTransform(), this.material);
+    shader.updateUniforms(this.getTransform(), this.material, renderingEngine);
     this.mesh.draw();
 };
