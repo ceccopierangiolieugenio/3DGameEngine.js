@@ -28,6 +28,11 @@ Vector3f.prototype.length = function ()
     return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 };
 
+Vector3f.prototype.max = function ()
+{
+    return Math.max(this.x, Math.max(this.y, this.z));
+};
+
 Vector3f.prototype.dot = function (r)
 {
     return this.x * r.getX() + this.y * r.getY() + this.z * r.getZ();

@@ -73,7 +73,7 @@ ForwardPoint.prototype.setUniformPointLight = function (uniformName, pointLight)
     this.setUniformf(uniformName + ".atten.constant", pointLight.getConstant());
     this.setUniformf(uniformName + ".atten.linear", pointLight.getLinear());
     this.setUniformf(uniformName + ".atten.exponent", pointLight.getExponent());
-    this.setUniform(uniformName + ".position", pointLight.getPosition());
+    this.setUniform(uniformName + ".position", pointLight.getTransform().getPos());
     this.setUniformf(uniformName + ".range", pointLight.getRange());
 };
 

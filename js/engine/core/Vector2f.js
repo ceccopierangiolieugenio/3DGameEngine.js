@@ -26,6 +26,11 @@ Vector2f.prototype.length = function ()
     return Math.sqrt(this.x * this.x + this.y * this.y);
 };
 
+Vector2f.prototype.max = function ()
+{
+    return Math.max(this.x, this.y);
+};
+
 Vector2f.prototype.dot = function (r)
 {
     return this.x * r.getX() + this.y * r.getY();

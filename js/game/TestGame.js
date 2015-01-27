@@ -50,15 +50,16 @@ TestGame.prototype.init = function ()
     directionalLightObject.addComponent(directionalLight);
 
     var pointLightObject = new GameObject();
-    pointLightObject.addComponent(new PointLight(new Vector3f(0, 1, 0), 0.4, 0, 0, 1, new Vector3f(5, 0, 5), 100));
+    pointLightObject.addComponent(new PointLight(new Vector3f(0, 1, 0), 0.4, new Vector3f(0, 0, 1)));
 
     var spotLight = new SpotLight(new Vector3f(0, 1, 1), 0.4,
-            0, 0, 0.1,
-            new Vector3f(5, 0, 5), 100,
+            new Vector3f(0, 0, 0.1),
             new Vector3f(1, 0, 0), 0.7);
 
     var spotLightObject = new GameObject();
     spotLightObject.addComponent(spotLight);
+
+    spotLightObject.getTransform().setPos(5, 0, 5);
 
     this.getRootObject().addChild(planeObject);
     this.getRootObject().addChild(directionalLightObject);

@@ -17,8 +17,18 @@
 
 function GameComponent() {}
 
-GameComponent.prototype.input = function (transform, delta) {};
-GameComponent.prototype.update = function (transform, delta) {};
-GameComponent.prototype.render = function (transform, shader) {};
+GameComponent.prototype.input = function (delta) {};
+GameComponent.prototype.update = function (delta) {};
+GameComponent.prototype.render = function (shader) {};
 
-GameComponent.prototype.addToRenderingEngine = function (renderingEngine){};
+GameComponent.prototype.setParent = function (parent)
+{
+    this.parent = parent;
+};
+
+GameComponent.prototype.getTransform = function ()
+{
+    return this.parent.getTransform();
+};
+
+GameComponent.prototype.addToRenderingEngine = function (renderingEngine) {};

@@ -30,12 +30,13 @@ GameObject.prototype.addChild = function (child)
 GameObject.prototype.addComponent = function (component)
 {
     this.components.push(component);
+    component.setParent(this);
 };
 
 GameObject.prototype.input = function (delta)
 {
     for (var i = 0; i < this.components.length; i++)
-        this.components[i].input(this.transform, delta);
+        this.components[i].input(delta);
 
     for (var i = 0; i < this.children.length; i++)
         this.children[i].input(delta);
@@ -44,7 +45,7 @@ GameObject.prototype.input = function (delta)
 GameObject.prototype.update = function (delta)
 {
     for (var i = 0; i < this.components.length; i++)
-        this.components[i].update(this.transform, delta);
+        this.components[i].update(delta);
 
     for (var i = 0; i < this.children.length; i++)
         this.children[i].update(delta);
@@ -53,7 +54,7 @@ GameObject.prototype.update = function (delta)
 GameObject.prototype.render = function (shader)
 {
     for (var i = 0; i < this.components.length; i++)
-        this.components[i].render(this.transform, shader);
+        this.components[i].render(shader);
 
     for (var i = 0; i < this.children.length; i++)
         this.children[i].render(shader);

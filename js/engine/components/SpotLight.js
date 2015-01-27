@@ -15,10 +15,10 @@
  */
 "use strict";
 
-function SpotLight(color, intensity, constant, linear, exponent, position, range, direction, cutoff)
+function SpotLight(color, intensity, attenuation, direction, cutoff)
 {
-    PointLight.apply(this,[color, intensity, constant, linear, exponent, position, range]);
-    this.direction = direction;
+    PointLight.apply(this, [color, intensity, attenuation]);
+    this.direction = direction.normalized();
     this.cutoff = cutoff;
     this.setShader(ForwardSpot.getInstance());
 }

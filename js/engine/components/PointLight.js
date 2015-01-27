@@ -15,37 +15,22 @@
  */
 "use strict";
 
-function PointLight(color, intensity, constant, linear, exponent, position, range)
+function PointLight(color, intensity, attenuation)
 {
     BaseLight.apply(this, [color, intensity]);
-    this.constant = constant;
-    this.linear = linear;
-    this.exponent = exponent;
-    this.position = position;
-    this.range = range;
+    this.attenuation = attenuation;
+
+    var a = attenuation.getZ();
+    var b = attenuation.getY();
+    var c = attenuation.getX() - PointLight.COLOR_DEPTH * this.getIntensity() * this.getColor().max();
+
+    this.range = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
+
     this.setShader(ForwardPoint.getInstance());
 }
 OO.extends(PointLight, BaseLight);
 
-PointLight.prototype.getBaseLight = function ()
-{
-    return this.baseLight;
-};
-
-PointLight.prototype.setBaseLight = function (baseLight)
-{
-    this.baseLight = baseLight;
-};
-
-PointLight.prototype.getPosition = function ()
-{
-    return this.position;
-};
-
-PointLight.prototype.setPosition = function (position)
-{
-    this.position = position;
-};
+PointLight.COLOR_DEPTH = 256;
 
 PointLight.prototype.getRange = function ()
 {
@@ -59,30 +44,30 @@ PointLight.prototype.setRange = function (range)
 
 PointLight.prototype.getConstant = function ()
 {
-    return this.constant;
+    return this.attenuation.getX();
 };
 
 PointLight.prototype.setConstant = function (constant)
 {
-    this.constant = constant;
+    this.attenuation.setX(constant);
 };
 
 PointLight.prototype.getLinear = function ()
 {
-    return this.linear;
+    return this.attenuation.getY();
 };
 
 PointLight.prototype.setLinear = function (linear)
 {
-    this.linear = linear;
+    this.attenuation.setY(linear);
 };
 
 PointLight.prototype.getExponent = function ()
 {
-    return this.exponent;
+    return this.attenuation.getZ();
 };
 
 PointLight.prototype.setExponent = function (exponent)
 {
-    this.exponent = exponent;
+    this.attenuation.setZ(exponent);
 };
