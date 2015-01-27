@@ -59,6 +59,15 @@ GameObject.prototype.render = function (shader)
         this.children[i].render(shader);
 };
 
+GameObject.prototype.addToRenderingEngine = function (renderingEngine)
+{
+    for (var i = 0; i < this.components.length; i++)
+        this.components[i].addToRenderingEngine(renderingEngine);
+
+    for (var i = 0; i < this.children.length; i++)
+        this.children[i].addToRenderingEngine(renderingEngine);
+};
+
 GameObject.prototype.getTransform = function ()
 {
     return this.transform;

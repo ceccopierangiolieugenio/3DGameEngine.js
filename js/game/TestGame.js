@@ -15,7 +15,8 @@
  */
 "use strict";
 
-function TestGame() {}
+function TestGame() {
+}
 OO.extends(TestGame, Game);
 
 TestGame.prototype.init = function ()
@@ -44,5 +45,14 @@ TestGame.prototype.init = function ()
     planeObject.addComponent(meshRenderer);
     planeObject.getTransform().setPos(0, -1, 5);
 
+    var directionalLightObject = new GameObject();
+    var directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 1), 0.4), new Vector3f(1, 1, 1));
+    directionalLightObject.addComponent(directionalLight);
+
+    var pointLightObject = new GameObject();
+    pointLightObject.addComponent(new PointLight(new BaseLight(new Vector3f(0, 1, 0), 0.4), new Attenuation(0, 0, 1), new Vector3f(5, 0, 5), 100));
+
     this.getRootObject().addChild(planeObject);
+    this.getRootObject().addChild(directionalLightObject);
+    this.getRootObject().addChild(pointLightObject);
 };

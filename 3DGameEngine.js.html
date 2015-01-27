@@ -10,7 +10,6 @@
     <script type="text/javascript">
         Loader.include("js/engine/core/CoreEngine.js");
         Loader.include("js/engine/core/Game.js");        
-        Loader.include("js/engine/core/GameComponent.js");
         Loader.include("js/engine/core/GameObject.js");
         Loader.include("js/engine/core/Input.js");
         Loader.include("js/engine/core/Matrix4f.js");
@@ -21,6 +20,11 @@
         Loader.include("js/engine/core/Vector2f.js");
         Loader.include("js/engine/core/Vector3f.js");
 
+        Loader.include("js/engine/components/GameComponent.js");
+        Loader.include("js/engine/components/MeshRenderer.js");
+        Loader.include("js/engine/components/DirectionalLight.js");
+        Loader.include("js/engine/components/PointLight.js");
+
         Loader.include("js/engine/rendering/Shader.js");
         Loader.include("js/engine/rendering/BasicShader.js");
         Loader.include("js/engine/rendering/PhongShader.js");
@@ -28,21 +32,18 @@
         Loader.include("js/engine/rendering/ForwardDirectional.js");
         Loader.include("js/engine/rendering/ForwardPoint.js");
         Loader.include("js/engine/rendering/ForwardSpot.js");
-    
+
         Loader.include("js/engine/rendering/Attenuation.js");
         Loader.include("js/engine/rendering/BaseLight.js");        
         Loader.include("js/engine/rendering/Camera.js");
-        Loader.include("js/engine/rendering/DirectionalLight.js");
         Loader.include("js/engine/rendering/Mesh.js");
-        Loader.include("js/engine/rendering/MeshRenderer.js");
         Loader.include("js/engine/rendering/Material.js");        
-        Loader.include("js/engine/rendering/PointLight.js");
         Loader.include("js/engine/rendering/RenderingEngine.js");        
         Loader.include("js/engine/rendering/SpotLight.js");
         Loader.include("js/engine/rendering/Texture.js");
         Loader.include("js/engine/rendering/Vertex.js");        
         Loader.include("js/engine/rendering/Window.js");
-                
+
         Loader.include("js/game/TestGame.js");
         Loader.include("js/game/Main.js");
 
@@ -60,7 +61,7 @@
         Loader.loadFile("res/shaders/phongFragment.fs", "phongFragment.fs");
         Loader.loadFile("res/shaders/phongVertex.vs", "phongVertex.vs");
         Loader.loadFile("res/models/box.obj", "box.obj");
-        
+
         Loader.loadTextures("res/textures/test.png", "test.png");
     </script>
 </html>

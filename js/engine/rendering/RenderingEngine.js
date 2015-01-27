@@ -17,6 +17,8 @@
 
 function RenderingEngine()
 {
+    this.directionalLights = [];
+    this.pointLights = [];
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     gl.frontFace(gl.CW);
@@ -30,37 +32,37 @@ function RenderingEngine()
 
     this.mainCamera = new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0);
 
-    this.ambientLight = new Vector3f(0.0, 0.0, 0.0);
-    this.directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 1), 0.4), new Vector3f(1, 1, 1));
-    this.directionalLight2 = new DirectionalLight(new BaseLight(new Vector3f(1, 0, 0), 0.4), new Vector3f(-1, 1, -1));
-
-
-    var lightFieldWidth = 5;
-    var lightFieldDepth = 5;
-
-    var lightFieldStartX = 0;
-    var lightFieldStartY = 0;
-    var lightFieldStepX = 7;
-    var lightFieldStepY = 7;
-
-    this.pointLightList = [];
-
-    for (var i = 0; i < lightFieldWidth; i++)
-    {
-        for (var j = 0; j < lightFieldDepth; j++)
-        {
-            this.pointLightList[i * lightFieldWidth + j] = new PointLight(new BaseLight(new Vector3f(0, 1, 0), 0.4),
-                            new Attenuation(0, 0, 1),
-                            new Vector3f(lightFieldStartX + lightFieldStepX * i, 0, lightFieldStartY + lightFieldStepY * j), 100);
-        }
-    }
-
-    this.pointLight = this.pointLightList[0];//new PointLight(new BaseLight(new Vector3f(0,1,0), 0.4f), new Attenuation(0,0,1), new Vector3f(5,0,5), 100);
-
-    this.spotLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, 1, 1), 0.4),
-                            new Attenuation(0, 0, 0.1),
-                            new Vector3f(lightFieldStartX, 0, lightFieldStartY), 100),
-                            new Vector3f(1, 0, 0), 0.7);
+    this.ambientLight = new Vector3f(0.1, 0.1, 0.1);
+//    this.directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 1), 0.4), new Vector3f(1, 1, 1));
+//    this.directionalLight2 = new DirectionalLight(new BaseLight(new Vector3f(1, 0, 0), 0.4), new Vector3f(-1, 1, -1));
+//
+//
+//    var lightFieldWidth = 5;
+//    var lightFieldDepth = 5;
+//
+//    var lightFieldStartX = 0;
+//    var lightFieldStartY = 0;
+//    var lightFieldStepX = 7;
+//    var lightFieldStepY = 7;
+//
+//    this.pointLightList = [];
+//
+//    for (var i = 0; i < lightFieldWidth; i++)
+//    {
+//        for (var j = 0; j < lightFieldDepth; j++)
+//        {
+//            this.pointLightList[i * lightFieldWidth + j] = new PointLight(new BaseLight(new Vector3f(0, 1, 0), 0.4),
+//                            new Attenuation(0, 0, 1),
+//                            new Vector3f(lightFieldStartX + lightFieldStepX * i, 0, lightFieldStartY + lightFieldStepY * j), 100);
+//        }
+//    }
+//
+//    this.pointLight = this.pointLightList[0];//new PointLight(new BaseLight(new Vector3f(0,1,0), 0.4f), new Attenuation(0,0,1), new Vector3f(5,0,5), 100);
+//
+//    this.spotLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, 1, 1), 0.4),
+//                            new Attenuation(0, 0, 0.1),
+//                            new Vector3f(lightFieldStartX, 0, lightFieldStartY), 100),
+//                            new Vector3f(1, 0, 0), 0.7);
 }
 
 RenderingEngine.prototype.getAmbientLight = function ()
@@ -68,14 +70,14 @@ RenderingEngine.prototype.getAmbientLight = function ()
     return this.ambientLight;
 };
 
-RenderingEngine.prototype.getDirectionalLight = function ()
+RenderingEngine.prototype.getActiveDirectionalLight = function ()
 {
-    return this.directionalLight;
+    return this.activeDirectionalLight;
 };
 
-RenderingEngine.prototype.getPointLight = function ()
+RenderingEngine.prototype.getActivePointLight = function ()
 {
-    return this.pointLight;
+    return this.activePointLight;
 };
 
 RenderingEngine.prototype.getSpotLight = function ()
@@ -91,6 +93,9 @@ RenderingEngine.prototype.input = function (delta)
 RenderingEngine.prototype.render = function (object)
 {
     RenderingEngine.clearScreen();
+
+    this.clearLightList();
+    object.addToRenderingEngine(this);
 
     var forwardAmbient = ForwardAmbient.getInstance();
     var forwardDirectional = ForwardDirectional.getInstance();
@@ -108,29 +113,27 @@ RenderingEngine.prototype.render = function (object)
     gl.depthMask(false);
     gl.depthFunc(gl.EQUAL);
 
-//    object.render(forwardDirectional);
-//
-//    var temp = this.directionalLight;
-//    this.directionalLight = this.directionalLight2;
-//    this.directionalLight2 = temp;
-//
-//    object.render(forwardDirectional);
-//
-//    temp = this.directionalLight;
-//    this.directionalLight = this.directionalLight2;
-//    this.directionalLight2 = temp;
-
-    for (var i = 0; i < this.pointLightList.length; i++)
+    for (var i = 0; i < this.directionalLights.length; i++)
     {
-        this.pointLight = this.pointLightList[i];
+        this.activeDirectionalLight = this.directionalLights[i];
+        object.render(forwardDirectional);
+    }
+
+    for (var i = 0; i < this.pointLights.length; i++)
+    {
+        this.activePointLight = this.pointLights[i];
         object.render(forwardPoint);
     }
-    
-    object.render(forwardSpot);
 
     gl.depthFunc(gl.LESS);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
+};
+
+RenderingEngine.prototype.clearLightList = function ()
+{
+    this.directionalLights = [];
+    this.pointLights = [];
 };
 
 RenderingEngine.clearScreen = function ()
@@ -160,6 +163,16 @@ RenderingEngine.setClearColor = function (color)
 RenderingEngine.getOpenGLVersion = function ()
 {
     return gl.getParameter(gl.VERSION);
+};
+
+RenderingEngine.prototype.addDirectionalLight = function (directionalLight)
+{
+    this.directionalLights.push(directionalLight);
+};
+
+RenderingEngine.prototype.addPointLight = function (pointLight)
+{
+    this.pointLights.push(pointLight);
 };
 
 RenderingEngine.prototype.getMainCamera = function ()

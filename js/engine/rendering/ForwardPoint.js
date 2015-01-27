@@ -58,7 +58,7 @@ ForwardPoint.prototype.updateUniforms = function (transform, material)
     this.setUniformf("specularPower", material.getSpecularPower());
 
     this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getPos());
-    this.setUniform("pointLight", this.getRenderingEngine().getPointLight());
+    this.setUniform("pointLight", this.getRenderingEngine().getActivePointLight());
 };
 
 ForwardPoint.prototype.setUniform = function (uniformName, light)
