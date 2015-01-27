@@ -15,39 +15,31 @@
  */
 "use strict";
 
-function Attenuation(constant, linear, exponent)
+function SpotLight(color, intensity, constant, linear, exponent, position, range, direction, cutoff)
 {
-    this.constant = constant;
-    this.linear = linear;
-    this.exponent = exponent;
+    PointLight.apply(this,[color, intensity, constant, linear, exponent, position, range]);
+    this.direction = direction;
+    this.cutoff = cutoff;
+    this.setShader(ForwardSpot.getInstance());
 }
+OO.extends(SpotLight, PointLight);
 
-Attenuation.prototype.getConstant = function ()
+SpotLight.prototype.getDirection = function ()
 {
-    return this.constant;
+    return this.direction;
 };
 
-Attenuation.prototype.setConstant = function (constant)
+SpotLight.prototype.setDirection = function (direction)
 {
-    this.constant = constant;
+    this.direction = direction;
 };
 
-Attenuation.prototype.getLinear = function ()
+SpotLight.prototype.getCutoff = function ()
 {
-    return this.linear;
+    return this.cutoff;
 };
 
-Attenuation.prototype.setLinear = function (linear)
+SpotLight.prototype.setCutoff = function (cutoff)
 {
-    this.linear = linear;
-};
-
-Attenuation.prototype.getExponent = function ()
-{
-    return this.exponent;
-};
-
-Attenuation.prototype.setExponent = function (exponent)
-{
-    this.exponent = exponent;
+    this.cutoff = cutoff;
 };

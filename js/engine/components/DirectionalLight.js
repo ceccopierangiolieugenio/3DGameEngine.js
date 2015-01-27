@@ -15,29 +15,13 @@
  */
 "use strict";
 
-function DirectionalLight(base, direction)
+function DirectionalLight(color, intensity, direction)
 {
-    GameComponent.apply(this, arguments);
-
-    this.base = base;
+    BaseLight.apply(this, [color, intensity]);
     this.direction = direction.normalized();
+    this.setShader(ForwardDirectional.getInstance());
 }
-OO.extends(DirectionalLight, GameComponent);
-
-DirectionalLight.prototype.addToRenderingEngine = function (renderingEngine)
-{
-    renderingEngine.addDirectionalLight(this);
-};
-
-DirectionalLight.prototype.getBase = function ()
-{
-    return this.base;
-};
-
-DirectionalLight.prototype.setBase = function (base)
-{
-    this.base = base;
-};
+OO.extends(DirectionalLight, BaseLight);
 
 DirectionalLight.prototype.getDirection = function ()
 {

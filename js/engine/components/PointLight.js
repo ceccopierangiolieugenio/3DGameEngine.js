@@ -15,21 +15,17 @@
  */
 "use strict";
 
-function PointLight(baseLight, atten, position, range)
+function PointLight(color, intensity, constant, linear, exponent, position, range)
 {
-    GameComponent.apply(this, arguments);
-
-    this.baseLight = baseLight;
-    this.atten = atten;
+    BaseLight.apply(this, [color, intensity]);
+    this.constant = constant;
+    this.linear = linear;
+    this.exponent = exponent;
     this.position = position;
     this.range = range;
+    this.setShader(ForwardPoint.getInstance());
 }
-OO.extends(PointLight, GameComponent);
-
-PointLight.prototype.addToRenderingEngine = function (renderingEngine)
-{
-    renderingEngine.addPointLight(this);
-};
+OO.extends(PointLight, BaseLight);
 
 PointLight.prototype.getBaseLight = function ()
 {
@@ -39,16 +35,6 @@ PointLight.prototype.getBaseLight = function ()
 PointLight.prototype.setBaseLight = function (baseLight)
 {
     this.baseLight = baseLight;
-};
-
-PointLight.prototype.getAtten = function ()
-{
-    return this.atten;
-};
-
-PointLight.prototype.setAtten = function (atten)
-{
-    this.atten = atten;
 };
 
 PointLight.prototype.getPosition = function ()
@@ -69,4 +55,34 @@ PointLight.prototype.getRange = function ()
 PointLight.prototype.setRange = function (range)
 {
     this.range = range;
-}
+};
+
+PointLight.prototype.getConstant = function ()
+{
+    return this.constant;
+};
+
+PointLight.prototype.setConstant = function (constant)
+{
+    this.constant = constant;
+};
+
+PointLight.prototype.getLinear = function ()
+{
+    return this.linear;
+};
+
+PointLight.prototype.setLinear = function (linear)
+{
+    this.linear = linear;
+};
+
+PointLight.prototype.getExponent = function ()
+{
+    return this.exponent;
+};
+
+PointLight.prototype.setExponent = function (exponent)
+{
+    this.exponent = exponent;
+};

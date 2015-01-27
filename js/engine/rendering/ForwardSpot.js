@@ -60,28 +60,30 @@ ForwardSpot.prototype.updateUniforms = function (transform, material)
     this.setUniformf("specularPower", material.getSpecularPower());
 
     this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getPos());
-    this.setUniform("spotLight", this.getRenderingEngine().getSpotLight());
+    this.setUniformSpotLight("spotLight", this.getRenderingEngine().getActiveLight());
 };
 
-ForwardSpot.prototype.setUniform = function (uniformName, light)
+ForwardSpot.prototype.setUniformBaseLight = function (uniformName, baseLight)
 {
-    if (light instanceof BaseLight) {
-        this.setUniform(uniformName + ".color", light.getColor());
-        this.setUniformf(uniformName + ".intensity", light.getIntensity());
-    } else if (light instanceof PointLight) {
-        this.setUniform(uniformName + ".base", light.getBaseLight());
-        this.setUniformf(uniformName + ".atten.constant", light.getAtten().getConstant());
-        this.setUniformf(uniformName + ".atten.linear", light.getAtten().getLinear());
-        this.setUniformf(uniformName + ".atten.exponent", light.getAtten().getExponent());
-        this.setUniform(uniformName + ".position", light.getPosition());
-        this.setUniformf(uniformName + ".range", light.getRange());
-    } else if (light instanceof SpotLight) {
-        this.setUniform(uniformName + ".pointLight", light.getPointLight());
-        this.setUniform(uniformName + ".direction", light.getDirection());
-        this.setUniformf(uniformName + ".cutoff", light.getCutoff());
-    } else {
-        Shader.prototype.setUniform.apply(this, arguments);
-    }
+    this.setUniform(uniformName + ".color", baseLight.getColor());
+    this.setUniformf(uniformName + ".intensity", baseLight.getIntensity());
+};
+
+ForwardSpot.prototype.setUniformPointLight = function (uniformName, pointLight)
+{
+    this.setUniformBaseLight(uniformName + ".base", pointLight);
+    this.setUniformf(uniformName + ".atten.constant", pointLight.getConstant());
+    this.setUniformf(uniformName + ".atten.linear", pointLight.getLinear());
+    this.setUniformf(uniformName + ".atten.exponent", pointLight.getExponent());
+    this.setUniform(uniformName + ".position", pointLight.getPosition());
+    this.setUniformf(uniformName + ".range", pointLight.getRange());
+};
+
+ForwardSpot.prototype.setUniformSpotLight = function (uniformName, spotLight)
+{
+    this.setUniformPointLight(uniformName + ".pointLight", spotLight);
+    this.setUniform(uniformName + ".direction", spotLight.getDirection());
+    this.setUniformf(uniformName + ".cutoff", spotLight.getCutoff());
 };
 
 ForwardSpot.getInstance = function ()

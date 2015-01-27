@@ -21,11 +21,11 @@ function ForwardDirectional()
 
     this.addVertexShaderFromFile("forward-directional.vs");
     this.addFragmentShaderFromFile("forward-directional.fs");
-    
+
     this.setAttribLocation("position", 0);
     this.setAttribLocation("texCoord", 1);
     this.setAttribLocation("normal", 2);
-    
+
     this.compileShader();
 
     this.addUniform("model");
@@ -54,20 +54,19 @@ ForwardDirectional.prototype.updateUniforms = function (transform, material)
     this.setUniformf("specularPower", material.getSpecularPower());
 
     this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getPos());
-    this.setUniform("directionalLight", this.getRenderingEngine().getActiveDirectionalLight());
+    this.setUniformDirectionalLight("directionalLight", this.getRenderingEngine().getActiveLight());
 };
 
-ForwardDirectional.prototype.setUniform = function (uniformName, light)
+ForwardDirectional.prototype.setUniformBaseLight = function (uniformName, baseLight)
 {
-    if (light instanceof BaseLight) {
-        this.setUniform(uniformName + ".color", light.getColor());
-        this.setUniformf(uniformName + ".intensity", light.getIntensity());
-    } else if (light instanceof DirectionalLight) {
-        this.setUniform(uniformName + ".base", light.getBase());
-        this.setUniform(uniformName + ".direction", light.getDirection());
-    } else {
-        Shader.prototype.setUniform.apply(this, arguments);
-    }
+    this.setUniform(uniformName + ".color", baseLight.getColor());
+    this.setUniformf(uniformName + ".intensity", baseLight.getIntensity());
+};
+
+ForwardDirectional.prototype.setUniformDirectionalLight = function (uniformName, directionalLight)
+{
+    this.setUniformBaseLight(uniformName + ".base", directionalLight);
+    this.setUniform(uniformName + ".direction", directionalLight.getDirection());
 };
 
 ForwardDirectional.getInstance = function ()

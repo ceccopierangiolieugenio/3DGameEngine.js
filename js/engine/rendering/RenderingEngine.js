@@ -17,8 +17,7 @@
 
 function RenderingEngine()
 {
-    this.directionalLights = [];
-    this.pointLights = [];
+    this.lights = [];
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     gl.frontFace(gl.CW);
@@ -70,21 +69,6 @@ RenderingEngine.prototype.getAmbientLight = function ()
     return this.ambientLight;
 };
 
-RenderingEngine.prototype.getActiveDirectionalLight = function ()
-{
-    return this.activeDirectionalLight;
-};
-
-RenderingEngine.prototype.getActivePointLight = function ()
-{
-    return this.activePointLight;
-};
-
-RenderingEngine.prototype.getSpotLight = function ()
-{
-    return this.spotLight;
-};
-
 RenderingEngine.prototype.input = function (delta)
 {
     this.mainCamera.input(delta);
@@ -94,17 +78,11 @@ RenderingEngine.prototype.render = function (object)
 {
     RenderingEngine.clearScreen();
 
-    this.clearLightList();
+    this.lights = [];
     object.addToRenderingEngine(this);
 
     var forwardAmbient = ForwardAmbient.getInstance();
-    var forwardDirectional = ForwardDirectional.getInstance();
-    var forwardPoint = ForwardPoint.getInstance();
-    var forwardSpot = ForwardSpot.getInstance();
     forwardAmbient.setRenderingEngine(this);
-    forwardDirectional.setRenderingEngine(this);
-    forwardPoint.setRenderingEngine(this);
-    forwardSpot.setRenderingEngine(this);
 
     object.render(forwardAmbient);
 
@@ -113,27 +91,16 @@ RenderingEngine.prototype.render = function (object)
     gl.depthMask(false);
     gl.depthFunc(gl.EQUAL);
 
-    for (var i = 0; i < this.directionalLights.length; i++)
+    for (var i = 0; i < this.lights.length; i++)
     {
-        this.activeDirectionalLight = this.directionalLights[i];
-        object.render(forwardDirectional);
+        this.lights[i].getShader().setRenderingEngine(this);
+        this.activeLight = this.lights[i];
+        object.render(this.lights[i].getShader());
     }
-
-    for (var i = 0; i < this.pointLights.length; i++)
-    {
-        this.activePointLight = this.pointLights[i];
-        object.render(forwardPoint);
-    }
-
+    
     gl.depthFunc(gl.LESS);
     gl.depthMask(true);
     gl.disable(gl.BLEND);
-};
-
-RenderingEngine.prototype.clearLightList = function ()
-{
-    this.directionalLights = [];
-    this.pointLights = [];
 };
 
 RenderingEngine.clearScreen = function ()
@@ -165,14 +132,14 @@ RenderingEngine.getOpenGLVersion = function ()
     return gl.getParameter(gl.VERSION);
 };
 
-RenderingEngine.prototype.addDirectionalLight = function (directionalLight)
+RenderingEngine.prototype.addLight = function (light)
 {
-    this.directionalLights.push(directionalLight);
+    this.lights.push(light);
 };
 
-RenderingEngine.prototype.addPointLight = function (pointLight)
+RenderingEngine.prototype.getActiveLight = function ()
 {
-    this.pointLights.push(pointLight);
+    return this.activeLight;
 };
 
 RenderingEngine.prototype.getMainCamera = function ()
