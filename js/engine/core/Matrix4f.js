@@ -79,7 +79,12 @@ Matrix4f.prototype.initRotation = function (_a, _b, _c)
         r = r.cross(f);
 
         var u = f.cross(r);
-    
+        return this.initRotation(f, u, r);
+    } else if (_a instanceof Vector3f && _b instanceof Vector3f && _c instanceof Vector3f) {
+        var f = _a;
+        var r = _c;
+        var u = _b;
+        
         this.m[0][0] = r.getX();    this.m[0][1] = r.getY();    this.m[0][2] = r.getZ();    this.m[0][3] = 0;
         this.m[1][0] = u.getX();    this.m[1][1] = u.getY();    this.m[1][2] = u.getZ();    this.m[1][3] = 0;
         this.m[2][0] = f.getX();    this.m[2][1] = f.getY();    this.m[2][2] = f.getZ();    this.m[2][3] = 0;

@@ -15,10 +15,9 @@
  */
 "use strict";
 
-function SpotLight(color, intensity, attenuation, direction, cutoff)
+function SpotLight(color, intensity, attenuation, cutoff)
 {
-    PointLight.apply(this, [color, intensity, attenuation]);
-    this.direction = direction.normalized();
+    PointLight.apply(this, [color, intensity, attenuation]);    
     this.cutoff = cutoff;
     this.setShader(ForwardSpot.getInstance());
 }
@@ -26,12 +25,7 @@ OO.extends(SpotLight, PointLight);
 
 SpotLight.prototype.getDirection = function ()
 {
-    return this.direction;
-};
-
-SpotLight.prototype.setDirection = function (direction)
-{
-    this.direction = direction;
+    return this.getTransform().getRot().getForward();
 };
 
 SpotLight.prototype.getCutoff = function ()

@@ -56,15 +56,7 @@ Vector3f.prototype.normalized = function ()
 
 Vector3f.prototype.rotate = function (angle, axis)
 {
-    var sinHalfAngle = Math.sin(Util.toRadians(angle / 2));
-    var cosHalfAngle = Math.cos(Util.toRadians(angle / 2));
-
-    var rX = axis.getX() * sinHalfAngle;
-    var rY = axis.getY() * sinHalfAngle;
-    var rZ = axis.getZ() * sinHalfAngle;
-    var rW = cosHalfAngle;
-
-    var rotation = new Quaternion(rX, rY, rZ, rW);
+    var rotation = new Quaternion().initRotation(axis,angle);
     var conjugate = rotation.conjugate();
 
     var w = rotation.mul(this).mul(conjugate);
@@ -135,6 +127,8 @@ Vector3f.prototype.getZX = function() { return new Vector2f(this.z, this.x); };
 Vector3f.prototype.getYX = function() { return new Vector2f(this.y, this.x); };
 Vector3f.prototype.getZY = function() { return new Vector2f(this.z, this.y); };
 Vector3f.prototype.getXZ = function() { return new Vector2f(this.x, this.z); };
+
+Vector3f.prototype.set = function(x,y,z) { this.x = x; this.y = y; this.z = z; };
 
 Vector3f.prototype.getX = function () {
     return this.x;

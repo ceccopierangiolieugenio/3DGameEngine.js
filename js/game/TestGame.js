@@ -43,7 +43,7 @@ TestGame.prototype.init = function ()
 
     var planeObject = new GameObject();
     planeObject.addComponent(meshRenderer);
-    planeObject.getTransform().setPos(0, -1, 5);
+    planeObject.getTransform().getPos().set(0, -1, 5);
 
     var directionalLightObject = new GameObject();
     var directionalLight = new DirectionalLight(new Vector3f(0, 0, 1), 0.4, new Vector3f(1, 1, 1));
@@ -53,13 +53,13 @@ TestGame.prototype.init = function ()
     pointLightObject.addComponent(new PointLight(new Vector3f(0, 1, 0), 0.4, new Vector3f(0, 0, 1)));
 
     var spotLight = new SpotLight(new Vector3f(0, 1, 1), 0.4,
-            new Vector3f(0, 0, 0.1),
-            new Vector3f(1, 0, 0), 0.7);
+            new Vector3f(0, 0, 0.1), 0.7);
 
     var spotLightObject = new GameObject();
     spotLightObject.addComponent(spotLight);
 
-    spotLightObject.getTransform().setPos(5, 0, 5);
+    spotLightObject.getTransform().getPos().set(5, 0, 5);
+    spotLightObject.getTransform().setRot(new Quaternion().initRotation(new Vector3f(0, 1, 0), Util.toRadians(-90.0)));
 
     this.getRootObject().addChild(planeObject);
     this.getRootObject().addChild(directionalLightObject);

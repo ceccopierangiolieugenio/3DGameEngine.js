@@ -70,9 +70,9 @@ Camera.prototype.input = function (delta)
         var rotX = deltaPos.getY() !== 0;
 
         if (rotY)
-            this.rotateY(deltaPos.getX() * sensitivity);
+            this.rotateY(Util.toRadians(deltaPos.getX() * sensitivity));
         if (rotX)
-            this.rotateX(deltaPos.getY() * sensitivity);
+            this.rotateX(Util.toRadians(deltaPos.getY() * sensitivity));
 
         if (rotY || rotX)
             Input.setMousePosition(new Vector2f(Window.getWidth() / 2, Window.getHeight() / 2));
