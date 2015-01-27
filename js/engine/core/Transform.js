@@ -19,7 +19,44 @@ function Transform() {
     this.pos = new Vector3f(0, 0, 0);
     this.rot = new Quaternion(0, 0, 0, 1);
     this.scale = new Vector3f(1, 1, 1);
+
+    this.parentMatrix = new Matrix4f().initIdentity();
 }
+
+Transform.prototype.update = function ()
+{
+    if (this.oldPos !== undefined) {
+        this.oldPos.set(this.pos);
+        this.oldRot.set(this.rot);
+        this.oldScale.set(this.scale);
+    } else {
+        this.oldPos = new Vector3f(0, 0, 0).set(this.pos);
+        this.oldRot = new Quaternion(0, 0, 0, 0).set(this.rot);
+        this.oldScale = new Vector3f(0, 0, 0).set(this.scale);
+    }
+};
+
+Transform.prototype.rotate = function (axis, angle)
+{
+    this.rot = new Quaternion(axis, angle).mul(this.rot).normalized();
+};
+
+Transform.prototype.hasChanged = function ()
+{
+    if (this.parent !== undefined && this.parent.hasChanged())
+        return true;
+
+    if (!this.pos.equals(this.oldPos))
+        return true;
+
+    if (!this.rot.equals(this.oldRot))
+        return true;
+
+    if (!this.scale.equals(this.oldScale))
+        return true;
+
+    return false;
+};
 
 Transform.prototype.getTransformation = function ()
 {
@@ -27,7 +64,35 @@ Transform.prototype.getTransformation = function ()
     var rotationMatrix = this.rot.toRotationMatrix();
     var scaleMatrix = new Matrix4f().initScale(this.scale.getX(), this.scale.getY(), this.scale.getZ());
 
-    return translationMatrix.mul(rotationMatrix.mul(scaleMatrix));
+    return this.getParentMatrix().mul(translationMatrix.mul(rotationMatrix.mul(scaleMatrix)));
+};
+
+Transform.prototype.getParentMatrix = function ()
+{
+    if (this.parent !== undefined && this.parent.hasChanged())
+        this.parentMatrix = this.parent.getTransformation();
+
+    return this.parentMatrix;
+};
+
+Transform.prototype.setParent = function (parent)
+{
+    this.parent = parent;
+};
+
+Transform.prototype.getTransformedPos = function ()
+{
+    return this.getParentMatrix().transform(this.pos);
+};
+
+Transform.prototype.getTransformedRot = function ()
+{
+    var parentRotation = new Quaternion(0, 0, 0, 1);
+
+    if (this.parent !== undefined)
+        this.parentRotation = this.parent.getTransformedRot();
+
+    return parentRotation.mul(this.rot);
 };
 
 Transform.prototype.getPos = function ()

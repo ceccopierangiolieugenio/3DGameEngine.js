@@ -25,7 +25,7 @@ OO.extends(SpotLight, PointLight);
 
 SpotLight.prototype.getDirection = function ()
 {
-    return this.getTransform().getRot().getForward();
+    return this.getTransform().getTransformedRot().getForward();
 };
 
 SpotLight.prototype.getCutoff = function ()

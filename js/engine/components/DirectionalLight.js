@@ -15,20 +15,15 @@
  */
 "use strict";
 
-function DirectionalLight(color, intensity, direction)
+function DirectionalLight(color, intensity)
 {
     BaseLight.apply(this, [color, intensity]);
-    this.direction = direction.normalized();
+
     this.setShader(ForwardDirectional.getInstance());
 }
 OO.extends(DirectionalLight, BaseLight);
 
 DirectionalLight.prototype.getDirection = function ()
 {
-    return this.direction;
-};
-
-DirectionalLight.prototype.setDirection = function (direction)
-{
-    this.direction = direction.normalized();
+    return this.getTransform().getTransformedRot().getForward();
 };

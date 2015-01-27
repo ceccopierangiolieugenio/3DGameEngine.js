@@ -15,33 +15,24 @@
  */
 "use strict";
 
-function Quaternion(x, y, z, w)
-{
-    if (x === undefined) {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
-        this.w = 1;
-    } else {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
+function Quaternion(_a, _b, _c, _d) {
+    if (typeof _a === 'number' && typeof _b === 'number' && typeof _c === 'number' && typeof _d === 'number') {
+        this.x = _a;
+        this.y = _b;
+        this.z = _c;
+        this.w = _d;
+    } else if (_a instanceof Vector3f && typeof _b === 'number' && typeof _c === 'undefined' && typeof _d === 'undefined') {
+        var axis = _a;
+        var angle = _b;
+        var sinHalfAngle = Math.sin(angle / 2);
+        var cosHalfAngle = Math.cos(angle / 2);
+
+        this.x = axis.getX() * sinHalfAngle;
+        this.y = axis.getY() * sinHalfAngle;
+        this.z = axis.getZ() * sinHalfAngle;
+        this.w = cosHalfAngle;
     }
 }
-
-Quaternion.prototype.initRotation = function (axis, angle)
-{
-    var sinHalfAngle = Math.sin(angle / 2);
-    var cosHalfAngle = Math.cos(angle / 2);
-
-    this.x = axis.getX() * sinHalfAngle;
-    this.y = axis.getY() * sinHalfAngle;
-    this.z = axis.getZ() * sinHalfAngle;
-    this.w = cosHalfAngle;
-
-    return this;
-};
 
 Quaternion.prototype.length = function ()
 {
@@ -62,6 +53,9 @@ Quaternion.prototype.conjugate = function ()
 
 Quaternion.prototype.mul = function (r)
 {
+    if (typeof r === 'number') {
+        return new Quaternion(this.x * r, this.y * r, this.z * r, this.w * r);
+    }
     if (r instanceof Quaternion) {
         var w_ = this.w * r.getW() - this.x * r.getX() - this.y * r.getY() - this.z * r.getZ();
         var x_ = this.x * r.getW() + this.w * r.getX() + this.y * r.getZ() - this.z * r.getY();
@@ -80,37 +74,56 @@ Quaternion.prototype.mul = function (r)
 
 Quaternion.prototype.toRotationMatrix = function ()
 {
-    return new Matrix4f().initRotation(this.getForward(), this.getUp(), this.getRight());
+    var forward = new Vector3f(2.0 * (this.x * this.z - this.w * this.y), 2.0 * (this.y * this.z + this.w * this.x), 1.0 - 2.0 * (this.x * this.x + this.y * this.y));
+    var up = new Vector3f(2.0 * (this.x * this.y + this.w * this.z), 1.0 - 2.0 * (this.x * this.x + this.z * this.z), 2.0 * (this.y * this.z - this.w * this.x));
+    var right = new Vector3f(1.0 - 2.0 * (this.y * this.y + this.z * this.z), 2.0 * (this.x * this.y - this.w * this.z), 2.0 * (this.x * this.z + this.w * this.y));
+    return new Matrix4f().initRotation(forward, up, right);
 };
 
 Quaternion.prototype.getForward = function ()
 {
-    return new Vector3f(2.0 * (this.x * this.z - this.w * this.y), 2.0 * (this.y * this.z + this.w * this.x), 1.0 - 2.0 * (this.x * this.x + this.y * this.y));
+    return new Vector3f(0, 0, 1).rotate(this);
 };
 
 Quaternion.prototype.getBack = function ()
 {
-    return new Vector3f(-2.0 * (this.x * this.z - this.w * this.y), -2.0 * (this.y * this.z + this.w * this.x), -(1.0 - 2.0 * (this.x * this.x + this.y * this.y)));
+    return new Vector3f(0, 0, -1).rotate(this);
 };
 
 Quaternion.prototype.getUp = function ()
 {
-    return new Vector3f(2.0 * (this.x * this.y + this.w * this.z), 1.0 - 2.0 * (this.x * this.x + this.z * this.z), 2.0 * (this.y * this.z - this.w * this.x));
+    return new Vector3f(0, 1, 0).rotate(this);
 };
 
 Quaternion.prototype.getDown = function ()
 {
-    return new Vector3f(-2.0 * (this.x * this.y + this.w * this.z), -(1.0 - 2.0 * (this.x * this.x + this.z * this.z)), -2.0 * (this.y * this.z - this.w * this.x));
+    return new Vector3f(0, -1, 0).rotate(this);
 };
 
 Quaternion.prototype.getRight = function ()
 {
-    return new Vector3f(1.0 - 2.0 * (this.y * this.y + this.z * this.z), 2.0 * (this.x * this.y - this.w * this.z), 2.0 * (this.x * this.z + this.w * this.y));
+    return new Vector3f(1, 0, 0).rotate(this);
 };
 
 Quaternion.prototype.getLeft = function ()
 {
-    return new Vector3f(-(1.0 - 2.0 * (this.y * this.y + this.z * this.z)), -2.0 * (this.x * this.y - this.w * this.z), -2.0 * (this.x * this.z + this.w * this.y));
+    return new Vector3f(-1, 0, 0).rotate(this);
+};
+
+Quaternion.prototype.set = function (_a, _b, _c, _d)
+{
+    if (typeof _a === 'number' && typeof _b === 'number' && typeof _c === 'number' && typeof _d === 'number') {
+        this.x = _a;
+        this.y = _b;
+        this.z = _c;
+        this.w = _d;
+        return this;
+    }
+    if (_a instanceof Quaternion && typeof _b === 'undefined' && typeof _c === 'undefined' && typeof _d === 'undefined') {
+        var r = _a;
+        this.set(r.getX(), r.getY(), r.getZ(), r.getW());
+        return this;
+    }
 };
 
 Quaternion.prototype.getX = function ()
@@ -151,4 +164,9 @@ Quaternion.prototype.getW = function ()
 Quaternion.prototype.setW = function (w)
 {
     this.w = w;
+};
+
+Quaternion.prototype.equals = function (r)
+{
+    return this.x === r.getX() && this.y === r.getY() && this.z === r.getZ() && this.w === r.getW();
 };

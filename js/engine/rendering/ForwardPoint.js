@@ -57,7 +57,7 @@ ForwardPoint.prototype.updateUniforms = function (transform, material)
     this.setUniformf("specularIntensity", material.getSpecularIntensity());
     this.setUniformf("specularPower", material.getSpecularPower());
 
-    this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getTransform().getPos());
+    this.setUniform("eyePos", this.getRenderingEngine().getMainCamera().getTransform().getTransformedPos());
     this.setUniformPointLight("pointLight", this.getRenderingEngine().getActiveLight());
 };
 
@@ -73,7 +73,7 @@ ForwardPoint.prototype.setUniformPointLight = function (uniformName, pointLight)
     this.setUniformf(uniformName + ".atten.constant", pointLight.getConstant());
     this.setUniformf(uniformName + ".atten.linear", pointLight.getLinear());
     this.setUniformf(uniformName + ".atten.exponent", pointLight.getExponent());
-    this.setUniform(uniformName + ".position", pointLight.getTransform().getPos());
+    this.setUniform(uniformName + ".position", pointLight.getTransform().getTransformedPos());
     this.setUniformf(uniformName + ".range", pointLight.getRange());
 };
 

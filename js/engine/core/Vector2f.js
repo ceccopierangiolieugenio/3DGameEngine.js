@@ -106,6 +106,20 @@ Vector2f.prototype.toString = function ()
     return "(" + this.x + " " + this.y + ")";
 };
 
+Vector2f.prototype.set = function (_a, _b)
+{
+    if (typeof _a === 'number' && typeof _b === 'number') {
+        this.x = _a;
+        this.y = _b;
+        return this;
+    }
+    if (_a instanceof Vector2f && typeof _b === 'undefined') {
+        var r = _a;
+        this.set(r.getX(), r.getY());
+        return this;
+    }
+};
+
 Vector2f.prototype.getX = function () {
     return this.x;
 };

@@ -26,8 +26,10 @@ OO.extends(Camera, GameComponent);
 
 Camera.prototype.getViewProjection = function ()
 {
-    var cameraRotation = this.getTransform().getRot().toRotationMatrix();
-    var cameraTranslation = new Matrix4f().initTranslation(-this.getTransform().getPos().getX(), -this.getTransform().getPos().getY(), -this.getTransform().getPos().getZ());
+    var cameraRotation = this.getTransform().getTransformedRot().conjugate().toRotationMatrix();
+    var cameraPos = this.getTransform().getTransformedPos().mul(-1);
+
+    var cameraTranslation = new Matrix4f().initTranslation(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
 
     return this.projection.mul(cameraRotation.mul(cameraTranslation));
 };
@@ -39,7 +41,7 @@ Camera.prototype.addToRenderingEngine = function (renderingEngine)
 
 Camera.prototype.input = function (delta)
 {
-    var sensitivity = -0.5;
+    var sensitivity = 0.5;
     var movAmt = 10 * delta;
     //var rotAmt = 100 * Time.getDelta();
 
@@ -72,9 +74,10 @@ Camera.prototype.input = function (delta)
         var rotX = deltaPos.getY() !== 0;
 
         if (rotY)
-            this.getTransform().setRot(this.getTransform().getRot().mul(new Quaternion().initRotation(this.yAxis, Util.toRadians(deltaPos.getX() * sensitivity))).normalized());
+            this.getTransform().rotate(this.yAxis, Util.toRadians(deltaPos.getX() * sensitivity));
+
         if (rotX)
-            this.getTransform().setRot(this.getTransform().getRot().mul(new Quaternion().initRotation(this.getTransform().getRot().getRight(), (Util.toRadians(deltaPos.getY() * sensitivity)))).normalized());
+            this.getTransform().rotate(this.getTransform().getRot().getRight(), Util.toRadians(deltaPos.getY() * sensitivity));
 
         if (rotY || rotX)
             Input.setMousePosition(new Vector2f(Window.getWidth() / 2, Window.getHeight() / 2));

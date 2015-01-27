@@ -131,6 +131,13 @@ Matrix4f.prototype.initOrthographc = function (left, right, bottom, top, near, f
     return this;
 };
 
+Matrix4f.prototype.transform = function (r)
+{
+    return new Vector3f(this.m[0][0] * r.getX() + this.m[0][1] * r.getY() + this.m[0][2] * r.getZ() + this.m[0][3],
+                        this.m[1][0] * r.getX() + this.m[1][1] * r.getY() + this.m[1][2] * r.getZ() + this.m[1][3],
+                        this.m[2][0] * r.getX() + this.m[2][1] * r.getY() + this.m[2][2] * r.getZ() + this.m[2][3]);
+};
+
 Matrix4f.prototype.mul = function (r)
 {
     var res = new Matrix4f();

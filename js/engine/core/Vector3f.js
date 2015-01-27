@@ -65,7 +65,7 @@ Vector3f.prototype.rotate = function (_a, _b)
         return this.cross(axis.mul(sinAngle)).add(//Rotation on local X
                          (this.mul(cosAngle)).add(//Rotation on local Z
                           axis.mul(this.dot(axis.mul(1 - cosAngle))))); //Rotation on local Y
-    } else if (_a instanceof Quaternion && typeof _b === undefined) {
+    } else if (_a instanceof Quaternion && typeof _b === 'undefined') {
         var rotation = _a;
         var conjugate = rotation.conjugate();
 
@@ -139,7 +139,20 @@ Vector3f.prototype.getYX = function() { return new Vector2f(this.y, this.x); };
 Vector3f.prototype.getZY = function() { return new Vector2f(this.z, this.y); };
 Vector3f.prototype.getXZ = function() { return new Vector2f(this.x, this.z); };
 
-Vector3f.prototype.set = function(x,y,z) { this.x = x; this.y = y; this.z = z; };
+Vector3f.prototype.set = function (_a, _b, _c)
+{
+    if (typeof _a === 'number' && typeof _b === 'number' && typeof _c === 'number') {
+        this.x = _a;
+        this.y = _b;
+        this.z = _c;
+        return this;
+    }
+    if (_a instanceof Vector3f && typeof _b === 'undefined' && typeof _c === 'undefined') {
+        var r = _a;
+        this.set(r.getX(), r.getY(), r.getZ());
+        return this;
+    }
+};
 
 Vector3f.prototype.getX = function () {
     return this.x;

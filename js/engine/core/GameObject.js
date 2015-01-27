@@ -25,6 +25,7 @@ function GameObject()
 GameObject.prototype.addChild = function (child)
 {
     this.children.push(child);
+    child.getTransform().setParent(this.transform);
 };
 
 GameObject.prototype.addComponent = function (component)
@@ -37,6 +38,8 @@ GameObject.prototype.addComponent = function (component)
 
 GameObject.prototype.input = function (delta)
 {
+    this.transform.update();
+    
     for (var i = 0; i < this.components.length; i++)
         this.components[i].input(delta);
 
