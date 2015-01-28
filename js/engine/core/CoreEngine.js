@@ -65,7 +65,7 @@ CoreEngine.prototype.run = function ()
         unprocessedTime += passedTime;
         frameCounter += passedTime;
 
-        while (unprocessedTime > this.frameTime) {
+        //while (unprocessedTime > this.frameTime) {
             render = true;
             unprocessedTime -= this.frameTime;
 
@@ -79,7 +79,7 @@ CoreEngine.prototype.run = function ()
                 frames = 0;
                 frameCounter = 0;
             }
-        }
+        //}
         if (render) {
             this.game.render(this.renderingEngine);
             Window.render();

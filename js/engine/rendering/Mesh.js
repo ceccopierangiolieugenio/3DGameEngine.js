@@ -15,31 +15,48 @@
  */
 "use strict";
 
-function Mesh(arg0, indices, calcNormals) {
+function Mesh(_a, _b, _c) {
     /* TODO: 
      *    define a better Mesh Constructor 
      */
-    if (arg0 === undefined && indices === undefined && calcNormals === undefined) {
-        this.initMeshData();
-    } else if (indices === undefined && calcNormals === undefined) {
-        var fileName = arg0;
-        this.initMeshData();
-        this.loadMesh(fileName);
-    } else {
-        var vertices = arg0;
+    if (typeof _a === 'string' && _b === undefined && _c === undefined) {
+        this.fileName = _a;
+        var oldResource = Mesh.loadedModels[this.fileName];
+
+        if (oldResource !== undefined)
+        {
+            this.resource = oldResource;
+            this.resource.addReference();
+        }
+        else
+        {
+            this.loadMesh(this.fileName);
+            Mesh.loadedModels[this.fileName] = this.resource;
+        }
+        return;
+    }
+    else
+    {
+        var vertices = _a;
+        var indices = _b;
+        var calcNormals = _c;
         if (calcNormals === undefined) {
             calcNormals = false;
         }
-        this.initMeshData();
+        this.fileName = undefined;
         this.addVertices(vertices, indices, calcNormals);
+        return;
     }
 }
 
-Mesh.prototype.initMeshData = function ()
+Mesh.loadedModels = {};
+
+Mesh.prototype.finalize = function ()
 {
-    this.vbo = gl.createBuffer();
-    this.ibo = gl.createBuffer();
-    this.size = 0;
+    if (this.resource.removeReference() && this.fileName !== undefined)
+    {
+        delete this.loadedModels[this.fileName];
+    }
 };
 
 Mesh.prototype.addVertices = function (vertices, indices, calcNormals)
@@ -48,12 +65,12 @@ Mesh.prototype.addVertices = function (vertices, indices, calcNormals)
     {
         this.calcNormals(vertices, indices);
     }
-    this.size = indices.length;
+    this.resource = new MeshResource(indices.length);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.resource.getVbo());
     gl.bufferData(gl.ARRAY_BUFFER, Util.Vertices2Float32Array(vertices), gl.STATIC_DRAW);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.resource.getIbo());
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 };
 
@@ -63,13 +80,13 @@ Mesh.prototype.draw = function ()
     gl.enableVertexAttribArray(1);
     gl.enableVertexAttribArray(2);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.resource.getVbo());
     gl.vertexAttribPointer(0, 3, gl.FLOAT, false, Vertex.SIZE * 4, 0);
     gl.vertexAttribPointer(1, 2, gl.FLOAT, false, Vertex.SIZE * 4, 12);
     gl.vertexAttribPointer(2, 3, gl.FLOAT, false, Vertex.SIZE * 4, 20);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
-    gl.drawElements(gl.TRIANGLES, this.size, gl.UNSIGNED_SHORT, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.resource.getIbo());
+    gl.drawElements(gl.TRIANGLES, this.resource.getSize(), gl.UNSIGNED_SHORT, 0);
 
     gl.disableVertexAttribArray(0);
     gl.disableVertexAttribArray(1);
@@ -116,62 +133,11 @@ Mesh.prototype.loadMesh = function (fileName)
                 model.getNormals()[i]));
     }
 
-    var vertexData = vertices;    
+    var vertexData = vertices;
 
     var indexData = model.getIndices();
 
     this.addVertices(vertexData, indexData, false);
 
-//        var vertices = [];
-//        var indices = [];
-//        var textCoords = [];
-//
-//        var lines = Loader.files[id].split("\n");
-//        for (var i = 0; i < lines.length; i++)
-//        {
-//            var line = lines[i];
-//            var tokens = line.split(" ");
-//
-//            tokens = Util.removeEmptyStrings(tokens);
-//            if (tokens.length === 0 || tokens[0] === "#")
-//                continue;
-//            else if (tokens[0] === "v")
-//            {
-//                vertices.push(new Vertex(new Vector3f(
-//                        parseFloat(tokens[1]),
-//                        parseFloat(tokens[2]),
-//                        parseFloat(tokens[3]))));
-//            }
-//            else if (tokens[0] === "vt")
-//            {
-//                /* TODO: At the current stage of the Tutorial
-//                 * it is not possible to use this information (vt)
-//                 * because the texture coordinate should not be
-//                 * included in the Vertex object but int the face definition.
-//                 */
-//                textCoords.push(new Vector2f(
-//                        parseFloat(tokens[1]),
-//                        parseFloat(tokens[2])));
-//            }
-//            else if (tokens[0] === "f")
-//            {
-//                indices.push(parseInt(tokens[1].split("/")[0]) - 1);
-//                indices.push(parseInt(tokens[2].split("/")[0]) - 1);
-//                indices.push(parseInt(tokens[3].split("/")[0]) - 1);
-//                
-//                if (tokens.length > 4)
-//                {
-//                    indices.push(parseInt(tokens[1].split("/")[0]) - 1);
-//                    indices.push(parseInt(tokens[3].split("/")[0]) - 1);
-//                    indices.push(parseInt(tokens[4].split("/")[0]) - 1);
-//                }
-//            }
-//        }
-//        var res = new Mesh();
-//        res.addVertices(vertices, indices, true);
-//        
-//        return res;
-//    } else {
-//        throw new Error("Error: File format not supported for mesh data: " + id);
-//    }
+    return null;
 };

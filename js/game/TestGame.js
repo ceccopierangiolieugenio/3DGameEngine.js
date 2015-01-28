@@ -55,6 +55,11 @@ TestGame.prototype.init = function ()
     material.addFloat("specularIntensity", 1);
     material.addFloat("specularPower", 8);
 
+    var material2 = new Material();//new Texture("test.png"), new Vector3f(1,1,1), 1, 8);
+    material2.addTexture("diffuse", new Texture("bricks.jpg"));
+    material2.addFloat("specularIntensity", 1);
+    material2.addFloat("specularPower", 8);
+
     var tempMesh = new Mesh("monkey3.obj");
 
     var meshRenderer = new MeshRenderer(mesh, material);
@@ -97,7 +102,7 @@ TestGame.prototype.init = function ()
 
     testMesh1.addChild(testMesh2);
     testMesh2
-    //this.getRootObject()
+            //this.getRootObject()
             .addChild(new GameObject().addComponent(new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0)));
 
     this.addObject(testMesh1);
@@ -105,6 +110,8 @@ TestGame.prototype.init = function ()
 
     testMesh3.getTransform().getPos().set(5, 5, 5);
     testMesh3.getTransform().setRot(new Quaternion(new Vector3f(0, 1, 0), Util.toRadians(-70.0)));
+
+    this.addObject(new GameObject().addComponent(new MeshRenderer(new Mesh("monkey3.obj"), material2)));
 
     directionalLight.getTransform().setRot(new Quaternion(new Vector3f(1, 0, 0), Util.toRadians(-45)));
 };

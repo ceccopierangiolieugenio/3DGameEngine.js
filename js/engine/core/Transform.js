@@ -30,9 +30,9 @@ Transform.prototype.update = function ()
         this.oldRot.set(this.rot);
         this.oldScale.set(this.scale);
     } else {
-        this.oldPos = new Vector3f(0, 0, 0).set(this.pos);
-        this.oldRot = new Quaternion(0, 0, 0, 0).set(this.rot);
-        this.oldScale = new Vector3f(0, 0, 0).set(this.scale);
+        this.oldPos = new Vector3f(0, 0, 0).set(this.pos).add(1);
+        this.oldRot = new Quaternion(0, 0, 0, 0).set(this.rot).mul(0.5);
+        this.oldScale = new Vector3f(0, 0, 0).set(this.scale).add(1);
     }
 };
 
@@ -90,7 +90,7 @@ Transform.prototype.getTransformedRot = function ()
     var parentRotation = new Quaternion(0, 0, 0, 1);
 
     if (this.parent !== undefined)
-        this.parentRotation = this.parent.getTransformedRot();
+        parentRotation = this.parent.getTransformedRot();
 
     return parentRotation.mul(this.rot);
 };
