@@ -18,9 +18,28 @@
 function IndexedModel() {
     this.positions = [];
     this.texCoords = [];
-    this.normals = new [];
+    this.normals = [];
     this.indices = [];
 }
+
+IndexedModel.prototype.calcNormals = function ()
+{
+    for (var i = 0; i < this.indices.length; i += 3)
+    {
+        var i0 = this.indices[i];
+        var i1 = this.indices[i + 1];
+        var i2 = this.indices[i + 2];
+        var v1 = this.positions[i1].sub(this.positions[i0]);
+        var v2 = this.positions[i2].sub(this.positions[i0]);
+        var normal = v1.cross(v2).normalized();
+        this.normals[i0].set(this.normals[i0].add(normal));
+        this.normals[i1].set(this.normals[i1].add(normal));
+        this.normals[i2].set(this.normals[i2].add(normal));
+    }
+
+    for (var i = 0; i < this.normals.length; i++)
+        this.normals[i].set(this.normals[i].normalized());
+};
 
 IndexedModel.prototype.getPositions = function () { return this.positions; };
 IndexedModel.prototype.getTexCoords = function () { return this.texCoords; };

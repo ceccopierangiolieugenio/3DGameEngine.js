@@ -35,10 +35,10 @@ function OBJModel(fileName)
             continue;
         else if (tokens[0] === "v")
         {
-            this.positions.push(new Vertex(new Vector3f(
+            this.positions.push(new Vector3f(
                     parseFloat(tokens[1]),
                     parseFloat(tokens[2]),
-                    parseFloat(tokens[3]))));
+                    parseFloat(tokens[3])));
         }
         else if (tokens[0] === "vt")
         {
@@ -48,7 +48,7 @@ function OBJModel(fileName)
         }
         else if (tokens[0] === "vn")
         {
-            this.normals.push(new Vector2f(
+            this.normals.push(new Vector3f(
                     parseFloat(tokens[1]),
                     parseFloat(tokens[2]),
                     parseFloat(tokens[3])));
@@ -64,6 +64,64 @@ function OBJModel(fileName)
         }
     }
 }
+
+OBJModel.prototype.toIndexedModel = function ()
+{
+    var result = new IndexedModel();
+    var indexMap = {};
+
+    var currentVertexIndex = 0;
+    for (var i = 0; i < this.indices.length; i++)
+    {
+        var currentIndex = this.indices[i];
+
+        var currentPosition = this.positions[currentIndex.vertexIndex];
+        var currentTexCoord;
+        var currentNormal;
+
+        if (this.hasTexCoords)
+            currentTexCoord = this.texCoords[currentIndex.texCoordIndex];
+        else
+            currentTexCoord = new Vector2f(0, 0);
+
+        if (this.hasNormals)
+            currentNormal = this.normals[currentIndex.normalIndex];
+        else
+            currentNormal = new Vector3f(0, 0, 0);
+
+        var previousVertexIndex = -1;
+        
+/* Removed because javascript took too much time to rocess this
+        for (var j = 0; j < i; j++)
+        {
+            var oldIndex = this.indices[j];
+
+            if (currentIndex.vertexIndex === oldIndex.vertexIndex
+                    && currentIndex.texCoordIndex === oldIndex.texCoordIndex
+                    && currentIndex.normalIndex === oldIndex.normalIndex)
+            {
+                previousVertexIndex = j;
+                break;
+            }
+        }
+*/
+
+        if (previousVertexIndex === -1)
+        {
+            indexMap[i] = currentVertexIndex;
+
+            result.getPositions().push(currentPosition);
+            result.getTexCoords().push(currentTexCoord);
+            result.getNormals().push(currentNormal);
+            result.getIndices().push(currentVertexIndex);
+            currentVertexIndex++;
+        }
+        else
+            result.getIndices().push(indexMap[previousVertexIndex]);
+    }
+
+    return result;
+};
 
 OBJModel.prototype.parseOBJIndex = function (token)
 {
@@ -87,15 +145,7 @@ OBJModel.prototype.parseOBJIndex = function (token)
     return result;
 };
 
-OBJModel.prototype.getPositions = function () {
-    return positions;
-};
-OBJModel.prototype.getTexCoords = function () {
-    return texCoords;
-};
-OBJModel.prototype.getNormals = function () {
-    return normals;
-};
-OBJModel.prototype.getIndices = function () {
-    return indices;
-};
+//OBJModel.prototype.getPositions = function () { return positions; };
+//OBJModel.prototype.getTexCoords = function () { return texCoords; };
+//OBJModel.prototype.getNormals = function () { return normals; };
+//OBJModel.prototype.getIndices = function () { return indices; };

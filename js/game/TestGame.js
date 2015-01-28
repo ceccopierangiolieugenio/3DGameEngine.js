@@ -88,6 +88,7 @@ TestGame.prototype.init = function ()
 
     var testMesh1 = new GameObject().addComponent(new MeshRenderer(mesh2, material));
     var testMesh2 = new GameObject().addComponent(new MeshRenderer(mesh2, material));
+    var testMesh3 = new GameObject().addComponent(new MeshRenderer(tempMesh, material));
 
     testMesh1.getTransform().getPos().set(0, 2, 0);
     testMesh1.getTransform().setRot(new Quaternion(new Vector3f(0, 1, 0), 0.4));
@@ -100,6 +101,7 @@ TestGame.prototype.init = function ()
             .addChild(new GameObject().addComponent(new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0)));
 
     this.addObject(testMesh1);
+    this.addObject(testMesh3);
 
     directionalLight.getTransform().setRot(new Quaternion(new Vector3f(1, 0, 0), Util.toRadians(-45)));
 };

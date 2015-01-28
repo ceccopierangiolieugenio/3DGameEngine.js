@@ -31,7 +31,7 @@ function Mesh(arg0, indices, calcNormals) {
             calcNormals = false;
         }
         this.initMeshData();
-        this.addVertices(vertices,indices,calcNormals);
+        this.addVertices(vertices, indices, calcNormals);
     }
 }
 
@@ -48,11 +48,11 @@ Mesh.prototype.addVertices = function (vertices, indices, calcNormals)
     {
         this.calcNormals(vertices, indices);
     }
-    this.size = indices.length;    
+    this.size = indices.length;
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
     gl.bufferData(gl.ARRAY_BUFFER, Util.Vertices2Float32Array(vertices), gl.STATIC_DRAW);
-    
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 };
@@ -98,63 +98,80 @@ Mesh.prototype.calcNormals = function (vertices, indices)
         vertices[i].setNormal(vertices[i].getNormal().normalized());
 };
 
-Mesh.prototype.loadMesh = function (id)
+Mesh.prototype.loadMesh = function (fileName)
 {
-    var test = new OBJModel(id);
-    
-    if (id.match("\.obj$") == "\.obj") {
-
-        var vertices = [];
-        var indices = [];
-        var textCoords = [];
-
-        var lines = Loader.files[id].split("\n");
-        for (var i = 0; i < lines.length; i++)
-        {
-            var line = lines[i];
-            var tokens = line.split(" ");
-
-            tokens = Util.removeEmptyStrings(tokens);
-            if (tokens.length === 0 || tokens[0] === "#")
-                continue;
-            else if (tokens[0] === "v")
-            {
-                vertices.push(new Vertex(new Vector3f(
-                        parseFloat(tokens[1]),
-                        parseFloat(tokens[2]),
-                        parseFloat(tokens[3]))));
-            }
-            else if (tokens[0] === "vt")
-            {
-                /* TODO: At the current stage of the Tutorial
-                 * it is not possible to use this information (vt)
-                 * because the texture coordinate should not be
-                 * included in the Vertex object but int the face definition.
-                 */
-                textCoords.push(new Vector2f(
-                        parseFloat(tokens[1]),
-                        parseFloat(tokens[2])));
-            }
-            else if (tokens[0] === "f")
-            {
-                indices.push(parseInt(tokens[1].split("/")[0]) - 1);
-                indices.push(parseInt(tokens[2].split("/")[0]) - 1);
-                indices.push(parseInt(tokens[3].split("/")[0]) - 1);
-                
-                if (tokens.length > 4)
-                {
-                    indices.push(parseInt(tokens[1].split("/")[0]) - 1);
-                    indices.push(parseInt(tokens[3].split("/")[0]) - 1);
-                    indices.push(parseInt(tokens[4].split("/")[0]) - 1);
-                }
-            }
-        }
-        var res = new Mesh();
-        res.addVertices(vertices, indices, true);
-        
-        return res;
-    } else {
-        throw new Error("Error: File format not supported for mesh data: " + id);
+    if (fileName.match("\.obj$") != "\.obj") {
+        throw new Error("Error: File format not supported for mesh data: " + fileName);
     }
 
+    var test = new OBJModel(fileName);
+    var model = test.toIndexedModel();
+    model.calcNormals();
+    var vertices = [];
+
+    for (var i = 0; i < model.getPositions().length; i++)
+    {
+        vertices.push(new Vertex(model.getPositions()[i],
+                model.getTexCoords()[i],
+                model.getNormals()[i]));
+    }
+
+    var vertexData = vertices;    
+
+    var indexData = model.getIndices();
+
+    this.addVertices(vertexData, indexData, false);
+
+//        var vertices = [];
+//        var indices = [];
+//        var textCoords = [];
+//
+//        var lines = Loader.files[id].split("\n");
+//        for (var i = 0; i < lines.length; i++)
+//        {
+//            var line = lines[i];
+//            var tokens = line.split(" ");
+//
+//            tokens = Util.removeEmptyStrings(tokens);
+//            if (tokens.length === 0 || tokens[0] === "#")
+//                continue;
+//            else if (tokens[0] === "v")
+//            {
+//                vertices.push(new Vertex(new Vector3f(
+//                        parseFloat(tokens[1]),
+//                        parseFloat(tokens[2]),
+//                        parseFloat(tokens[3]))));
+//            }
+//            else if (tokens[0] === "vt")
+//            {
+//                /* TODO: At the current stage of the Tutorial
+//                 * it is not possible to use this information (vt)
+//                 * because the texture coordinate should not be
+//                 * included in the Vertex object but int the face definition.
+//                 */
+//                textCoords.push(new Vector2f(
+//                        parseFloat(tokens[1]),
+//                        parseFloat(tokens[2])));
+//            }
+//            else if (tokens[0] === "f")
+//            {
+//                indices.push(parseInt(tokens[1].split("/")[0]) - 1);
+//                indices.push(parseInt(tokens[2].split("/")[0]) - 1);
+//                indices.push(parseInt(tokens[3].split("/")[0]) - 1);
+//                
+//                if (tokens.length > 4)
+//                {
+//                    indices.push(parseInt(tokens[1].split("/")[0]) - 1);
+//                    indices.push(parseInt(tokens[3].split("/")[0]) - 1);
+//                    indices.push(parseInt(tokens[4].split("/")[0]) - 1);
+//                }
+//            }
+//        }
+//        var res = new Mesh();
+//        res.addVertices(vertices, indices, true);
+//        
+//        return res;
+//    } else {
+//        throw new Error("Error: File format not supported for mesh data: " + id);
+//    }
 };
