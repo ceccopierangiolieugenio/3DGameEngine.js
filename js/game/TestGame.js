@@ -103,5 +103,8 @@ TestGame.prototype.init = function ()
     this.addObject(testMesh1);
     this.addObject(testMesh3);
 
+    testMesh3.getTransform().getPos().set(5, 5, 5);
+    testMesh3.getTransform().setRot(new Quaternion(new Vector3f(0, 1, 0), Util.toRadians(-70.0)));
+
     directionalLight.getTransform().setRot(new Quaternion(new Vector3f(1, 0, 0), Util.toRadians(-45)));
 };

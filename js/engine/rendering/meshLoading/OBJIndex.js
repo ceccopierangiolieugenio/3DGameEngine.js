@@ -16,3 +16,13 @@
 "use strict";
 
 function OBJIndex(){}
+
+OBJIndex.prototype.vertexIndex = 0;
+OBJIndex.prototype.texCoordIndex = 0;
+OBJIndex.prototype.normalIndex = 0;
+
+OBJIndex.prototype.hashCode = function ()
+{
+    /* It is somewhat better here to use a string instead of a number as hash index  */
+    return "" + this.vertexIndex + "_" + this.texCoordIndex + "_" + this.normalIndex;
+};

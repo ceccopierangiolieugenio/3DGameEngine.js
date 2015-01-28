@@ -68,9 +68,11 @@ function OBJModel(fileName)
 OBJModel.prototype.toIndexedModel = function ()
 {
     var result = new IndexedModel();
+    var normalModel = new IndexedModel();
+    var resultIndexMap = {};
+    var normalIndexMap = {};
     var indexMap = {};
 
-    var currentVertexIndex = 0;
     for (var i = 0; i < this.indices.length; i++)
     {
         var currentIndex = this.indices[i];
@@ -90,34 +92,43 @@ OBJModel.prototype.toIndexedModel = function ()
             currentNormal = new Vector3f(0, 0, 0);
 
         var previousVertexIndex = -1;
-        
-/* Removed because javascript took too much time to rocess this
-        for (var j = 0; j < i; j++)
-        {
-            var oldIndex = this.indices[j];
 
-            if (currentIndex.vertexIndex === oldIndex.vertexIndex
-                    && currentIndex.texCoordIndex === oldIndex.texCoordIndex
-                    && currentIndex.normalIndex === oldIndex.normalIndex)
-            {
-                previousVertexIndex = j;
-                break;
-            }
-        }
-*/
+        var modelVertexIndex = resultIndexMap[currentIndex.hashCode()];
 
-        if (previousVertexIndex === -1)
+        if (modelVertexIndex === undefined)
         {
-            indexMap[i] = currentVertexIndex;
+            modelVertexIndex = result.getPositions().length;
+            resultIndexMap[currentIndex.hashCode()] = modelVertexIndex;
 
             result.getPositions().push(currentPosition);
             result.getTexCoords().push(currentTexCoord);
-            result.getNormals().push(currentNormal);
-            result.getIndices().push(currentVertexIndex);
-            currentVertexIndex++;
+            if (this.hasNormals)
+                result.getNormals().push(currentNormal);
         }
-        else
-            result.getIndices().push(indexMap[previousVertexIndex]);
+
+        var normalModelIndex = normalIndexMap[currentIndex.vertexIndex];
+
+        if (normalModelIndex === undefined)
+        {
+            normalModelIndex = normalModel.getPositions().length;
+            normalIndexMap[currentIndex.vertexIndex] = normalModelIndex;
+
+            normalModel.getPositions().push(currentPosition);
+            normalModel.getTexCoords().push(currentTexCoord);
+            normalModel.getNormals().push(currentNormal);
+        }
+
+        result.getIndices().push(modelVertexIndex);
+        normalModel.getIndices().push(normalModelIndex);
+        indexMap[modelVertexIndex] = normalModelIndex;
+    }
+
+    if (!this.hasNormals)
+    {
+        normalModel.calcNormals();
+
+        for (var i = 0; i < result.getPositions().length; i++)
+            result.getNormals().push(normalModel.getNormals()[indexMap[i]]);
     }
 
     return result;
