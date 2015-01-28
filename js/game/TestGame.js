@@ -55,6 +55,8 @@ TestGame.prototype.init = function ()
     material.addFloat("specularIntensity", 1);
     material.addFloat("specularPower", 8);
 
+    var tempMesh = new Mesh("monkey3.obj");
+
     var meshRenderer = new MeshRenderer(mesh, material);
 
     var planeObject = new GameObject();

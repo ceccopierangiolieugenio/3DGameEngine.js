@@ -42,6 +42,10 @@
         Loader.include("js/engine/rendering/Texture.js");
         Loader.include("js/engine/rendering/Vertex.js");        
         Loader.include("js/engine/rendering/Window.js");
+        
+        Loader.include("js/engine/rendering/meshLoading/IndexedModel.js");
+        Loader.include("js/engine/rendering/meshLoading/OBJIndex.js");
+        Loader.include("js/engine/rendering/meshLoading/OBJModel.js");
 
         Loader.include("js/game/TestGame.js");
         Loader.include("js/game/Main.js");
@@ -59,7 +63,10 @@
         Loader.loadFile("res/shaders/basicVertex.vs", "basicVertex.vs");
         Loader.loadFile("res/shaders/phongFragment.fs", "phongFragment.fs");
         Loader.loadFile("res/shaders/phongVertex.vs", "phongVertex.vs");
+
         Loader.loadFile("res/models/box.obj", "box.obj");
+        Loader.loadFile("res/models/plane3.obj", "plane3.obj");
+        Loader.loadFile("res/models/monkey3.obj", "monkey3.obj");
 
         Loader.loadTextures("res/textures/test.png", "test.png");
     </script>

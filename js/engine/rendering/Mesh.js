@@ -16,10 +16,15 @@
 "use strict";
 
 function Mesh(arg0, indices, calcNormals) {
-    if (indices === undefined && calcNormals === undefined) {
+    /* TODO: 
+     *    define a better Mesh Constructor 
+     */
+    if (arg0 === undefined && indices === undefined && calcNormals === undefined) {
+        this.initMeshData();
+    } else if (indices === undefined && calcNormals === undefined) {
         var fileName = arg0;
         this.initMeshData();
-        this.loadMesh(filename);
+        this.loadMesh(fileName);
     } else {
         var vertices = arg0;
         if (calcNormals === undefined) {
@@ -35,8 +40,6 @@ Mesh.prototype.initMeshData = function ()
     this.vbo = gl.createBuffer();
     this.ibo = gl.createBuffer();
     this.size = 0;
-    /* NOTE (Eugenio): Addition to fix a problem with the Shader Attrib */
-    this.shader = null;
 };
 
 Mesh.prototype.addVertices = function (vertices, indices, calcNormals)
@@ -97,13 +100,15 @@ Mesh.prototype.calcNormals = function (vertices, indices)
 
 Mesh.prototype.loadMesh = function (id)
 {
+    var test = new OBJModel(id);
+    
     if (id.match("\.obj$") == "\.obj") {
 
         var vertices = [];
         var indices = [];
         var textCoords = [];
 
-        var lines = Util.files[id].split("\n");
+        var lines = Loader.files[id].split("\n");
         for (var i = 0; i < lines.length; i++)
         {
             var line = lines[i];
