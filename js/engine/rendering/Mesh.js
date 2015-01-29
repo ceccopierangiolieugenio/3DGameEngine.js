@@ -55,7 +55,7 @@ Mesh.prototype.finalize = function ()
 {
     if (this.resource.removeReference() && this.fileName !== undefined)
     {
-        delete this.loadedModels[this.fileName];
+        delete Mesh.loadedModels[this.fileName];
     }
 };
 

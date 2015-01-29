@@ -17,27 +17,54 @@
 
 function Texture(fileName)
 {
-    this.loadTexture(fileName);
+    this.fileName = fileName;
+    var oldResource = Texture.loadedTextures[this.fileName];
+
+    if (oldResource !== undefined)
+    {
+        this.resource = oldResource;
+        this.resource.addReference();
+    }
+    else
+    {
+        this.resource = new TextureResource(this.loadTexture(this.fileName));
+        Texture.loadedTextures[this.fileName] = this.resource;
+    }
 }
+
+Texture.loadedTextures = {};
+
+Texture.prototype.finalize = function ()
+{
+    if (this.resource.removeReference() && this.fileName !== undefined)
+    {
+        delete Texture.loadedTextures[this.fileName];
+    }
+};
 
 Texture.prototype.bind = function ()
 {
-    gl.bindTexture(gl.TEXTURE_2D, this.id);
+    gl.bindTexture(gl.TEXTURE_2D, this.resource.getId());
 };
 
-Texture.prototype.getId = function()
+Texture.prototype.getId = function ()
 {
-    return this.id;
+    return this.resource.getId();
 };
 
-Texture.prototype.loadTexture = function(imageName)
+Texture.prototype.loadTexture = function (imageName)
 {
     this.id = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.id);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, Loader.images[imageName]);
-    /* OpenGL ES 2.0.24 spec section 3.8.2 */
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    return;
+
+    return this.id;
 };

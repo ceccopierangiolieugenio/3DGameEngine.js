@@ -15,40 +15,26 @@
  */
 "use strict";
 
-function MeshResource(size)
+function TextureResource(id)
 {
-    this.vbo = gl.createBuffer();
-    this.ibo = gl.createBuffer();
-    this.size = size;
+    this.id = id;
     this.refCount = 1;
 }
 
-MeshResource.prototype.finalize = function ()
+TextureResource.prototype.finalize = function ()
 {
-    gl.deleteBuffers(this.vbo);
-    gl.deleteBuffers(this.ibo);
+    gl.deleteBuffers(this.id);
 };
 
-MeshResource.prototype.addReference = function ()
+TextureResource.prototype.addReference = function ()
 {
     this.refCount++;
 };
 
-MeshResource.prototype.removeReference = function ()
+TextureResource.prototype.removeReference = function ()
 {
     this.refCount--;
     return this.refCount === 0;
 };
 
-MeshResource.prototype.getVbo = function () {
-    return this.vbo;
-};
-
-MeshResource.prototype.getIbo = function () {
-    return this.ibo;
-};
-
-MeshResource.prototype.getSize = function () {
-    return this.size;
-};
-
+TextureResource.prototype.getId = function () { return this.id; };
