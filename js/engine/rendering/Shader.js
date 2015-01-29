@@ -116,9 +116,21 @@ Shader.prototype.addProgram = function (text, type)
     gl.attachShader(this.program, shader);
 };
 
-Shader.prototype.loadShader = function (id)
+Shader.prototype.loadShader = function (fileName)
 {
-    return Loader.files[id];
+    var ret = "";
+    var lines = Loader.files[fileName].split("\n");
+    for (var li = 0; li < lines.length; li++)
+    {
+        var line = lines[li];
+        if (line.indexOf("#include ") === 0){
+            var includeName = line.split(" ")[1];
+            ret += this.loadShader(includeName.substring(1,includeName.length-2)) + "\n";
+        }else{
+            ret += line + "\n";
+        }
+    }
+    return ret;
 };
 
 Shader.prototype.setUniformi = function (uniformName, value)
