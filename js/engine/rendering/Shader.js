@@ -120,13 +120,15 @@ Shader.prototype.loadShader = function (fileName)
 {
     var ret = "";
     var lines = Loader.files[fileName].split("\n");
+
     for (var li = 0; li < lines.length; li++)
     {
         var line = lines[li];
-        if (line.indexOf("#include ") === 0){
-            var includeName = line.split(" ")[1];
-            ret += this.loadShader(includeName.substring(1,includeName.length-2)) + "\n";
-        }else{
+        var regex = /#include\s*"([^"]+)"/;
+        var match = line.match(regex);
+        if (match !== null){
+            ret += this.loadShader( match[1] ) + "\n";
+        } else {
             ret += line + "\n";
         }
     }
