@@ -17,27 +17,7 @@
 
 function ForwardDirectional()
 {
-    Shader.apply(this, arguments);
-
-    this.addVertexShaderFromFile("forward-directional.vs");
-    this.addFragmentShaderFromFile("forward-directional.fs");
-
-    this.setAttribLocation("position", 0);
-    this.setAttribLocation("texCoord", 1);
-    this.setAttribLocation("normal", 2);
-
-    this.compileShader();
-
-    this.addUniform("model");
-    this.addUniform("MVP");
-
-    this.addUniform("specularIntensity");
-    this.addUniform("specularPower");
-    this.addUniform("eyePos");
-
-    this.addUniform("directionalLight.base.color");
-    this.addUniform("directionalLight.base.intensity");
-    this.addUniform("directionalLight.direction");
+    Shader.apply(this, ["forward-directional"]);
 }
 OO.extends(ForwardDirectional, Shader);
 

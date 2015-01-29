@@ -17,31 +17,7 @@
 
 function ForwardPoint()
 {
-    Shader.apply(this, arguments);
-
-    this.addVertexShaderFromFile("forward-point.vs");
-    this.addFragmentShaderFromFile("forward-point.fs");
-
-    this.setAttribLocation("position", 0);
-    this.setAttribLocation("texCoord", 1);
-    this.setAttribLocation("normal", 2);
-
-    this.compileShader();
-
-    this.addUniform("model");
-    this.addUniform("MVP");
-
-    this.addUniform("specularIntensity");
-    this.addUniform("specularPower");
-    this.addUniform("eyePos");
-
-    this.addUniform("pointLight.base.color");
-    this.addUniform("pointLight.base.intensity");
-    this.addUniform("pointLight.atten.constant");
-    this.addUniform("pointLight.atten.linear");
-    this.addUniform("pointLight.atten.exponent");
-    this.addUniform("pointLight.position");
-    this.addUniform("pointLight.range");
+    Shader.apply(this, ["forward-point"]);
 }
 OO.extends(ForwardPoint, Shader);
 

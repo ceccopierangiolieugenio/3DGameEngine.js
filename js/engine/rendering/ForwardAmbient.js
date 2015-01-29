@@ -17,18 +17,7 @@
 
 function ForwardAmbient()
 {
-    Shader.apply(this, arguments);
-
-    this.addVertexShaderFromFile("forward-ambient.vs");
-    this.addFragmentShaderFromFile("forward-ambient.fs");
-
-    this.setAttribLocation("position", 0);
-    this.setAttribLocation("texCoord", 1);
-
-    this.compileShader();
-
-    this.addUniform("MVP");
-    this.addUniform("ambientIntensity");
+    Shader.apply(this, ["forward-ambient"]);
 }
 OO.extends(ForwardAmbient, Shader);
 

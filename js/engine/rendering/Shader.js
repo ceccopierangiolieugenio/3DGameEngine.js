@@ -15,7 +15,7 @@
  */
 "use strict";
 
-function Shader()
+function Shader(fileName)
 {
     this.program = gl.createProgram();
     this.uniforms = {};
@@ -24,6 +24,19 @@ function Shader()
     {
         throw new Error("Shader creation failed: Could not find valid memory location in constructor");
     }
+
+    var vertexShaderText = this.loadShader(fileName + ".vs");
+    var fragmentShaderText = this.loadShader(fileName + ".fs");
+
+    this.addVertexShader(vertexShaderText);
+    this.addFragmentShader(fragmentShaderText);
+
+    this.addAllAttributes(vertexShaderText);
+
+    this.compileShader();
+
+    this.addAllUniforms(vertexShaderText);
+    this.addAllUniforms(fragmentShaderText);
 }
 
 Shader.prototype.bind = function ()
@@ -31,8 +44,125 @@ Shader.prototype.bind = function ()
     gl.useProgram(this.program);
 };
 
-Shader.prototype.updateUniforms = function (transform, material, renderingEngine) 
+Shader.prototype.updateUniforms = function (transform, material, renderingEngine)
 {
+};
+
+Shader.prototype.addAllAttributes = function (shaderText)
+{
+    var ATTRIBUTE_KEYWORD = "attribute";
+    var attributeStartLocation = shaderText.indexOf(ATTRIBUTE_KEYWORD);
+    var attribNumber = 0;
+    while (attributeStartLocation !== -1)
+    {
+        var begin = attributeStartLocation + ATTRIBUTE_KEYWORD.length + 1;
+        var end = shaderText.indexOf(";", begin);
+
+        var attributeLine = shaderText.substring(begin, end);
+        var attributeName = attributeLine.substring(attributeLine.indexOf(' ') + 1, attributeLine.length);
+
+        this.setAttribLocation(attributeName, attribNumber);
+        attribNumber++;
+
+        attributeStartLocation = shaderText.indexOf(ATTRIBUTE_KEYWORD, attributeStartLocation + ATTRIBUTE_KEYWORD.length);
+    }
+};
+
+function GLSLStruct()
+{
+    this.name = "";
+    this.type = "";
+}
+
+Shader.prototype.findUniformStructs = function (shaderText)
+{
+    var result = {};
+
+    var STRUCT_KEYWORD = "struct";
+    var structStartLocation = shaderText.indexOf(STRUCT_KEYWORD);
+    while (structStartLocation != -1)
+    {
+        var nameBegin = structStartLocation + STRUCT_KEYWORD.length + 1;
+        var braceBegin = shaderText.indexOf("{", nameBegin);
+        var braceEnd = shaderText.indexOf("}", braceBegin);
+
+        var structName = shaderText.substring(nameBegin, braceBegin).trim();
+        var glslStructs = [];
+
+        var componentSemicolonPos = shaderText.indexOf(";", braceBegin);
+        while (componentSemicolonPos != -1 && componentSemicolonPos < braceEnd)
+        {
+            var componentNameStart = componentSemicolonPos;
+
+            while (!/\s/.test(shaderText.charAt(componentNameStart - 1)))
+                componentNameStart--;
+
+            var componentTypeEnd = componentNameStart - 1;
+            var componentTypeStart = componentTypeEnd;
+
+            while (!/\s/.test(shaderText.charAt(componentTypeStart - 1)))
+                componentTypeStart--;
+
+            var componentName = shaderText.substring(componentNameStart, componentSemicolonPos);
+            var componentType = shaderText.substring(componentTypeStart, componentTypeEnd);
+
+            var glslStruct = new GLSLStruct();
+            glslStruct.name = componentName;
+            glslStruct.type = componentType;
+
+            glslStructs.push(glslStruct);
+
+            componentSemicolonPos = shaderText.indexOf(";", componentSemicolonPos + 1);
+        }
+
+        result[structName] = glslStructs;
+
+        structStartLocation = shaderText.indexOf(STRUCT_KEYWORD, structStartLocation + STRUCT_KEYWORD.length);
+    }
+
+    return result;
+};
+
+Shader.prototype.addAllUniforms = function (shaderText)
+{
+    var structs = this.findUniformStructs(shaderText);
+
+    var UNIFORM_KEYWORD = "uniform";
+    var uniformStartLocation = shaderText.indexOf(UNIFORM_KEYWORD);
+    while (uniformStartLocation != -1)
+    {
+        var begin = uniformStartLocation + UNIFORM_KEYWORD.length + 1;
+        var end = shaderText.indexOf(";", begin);
+
+        var uniformLine = shaderText.substring(begin, end);
+
+        var whiteSpacePos = uniformLine.indexOf(' ');
+        var uniformName = uniformLine.substring(whiteSpacePos + 1, uniformLine.length);
+        var uniformType = uniformLine.substring(0, whiteSpacePos);
+
+        this.addUniformWithStructCheck(uniformName, uniformType, structs);
+
+        uniformStartLocation = shaderText.indexOf(UNIFORM_KEYWORD, uniformStartLocation + UNIFORM_KEYWORD.length);
+    }
+};
+
+Shader.prototype.addUniformWithStructCheck = function (uniformName, uniformType, structs)
+{
+    var addThis = true;
+    var structComponents = structs[uniformType];
+
+    if (structComponents != null)
+    {
+        addThis = false;
+        for (var i = 0; i < structComponents.length; i++)
+        {
+            var struct = structComponents[i]
+            this.addUniformWithStructCheck(uniformName + "." + struct.name, struct.type, structs);
+        }
+    }
+
+    if (addThis)
+        this.addUniform(uniformName);
 };
 
 Shader.prototype.addUniform = function (uniform)
@@ -123,10 +253,10 @@ Shader.prototype.loadShader = function (fileName)
     for (var li = 0; li < lines.length; li++)
     {
         var line = lines[li];
-        if (line.indexOf("#include ") === 0){
+        if (line.indexOf("#include ") === 0) {
             var includeName = line.split(" ")[1];
-            ret += this.loadShader(includeName.substring(1,includeName.length-2)) + "\n";
-        }else{
+            ret += this.loadShader(includeName.substring(1, includeName.length - 2)) + "\n";
+        } else {
             ret += line + "\n";
         }
     }
