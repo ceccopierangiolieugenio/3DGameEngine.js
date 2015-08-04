@@ -27,7 +27,7 @@ function Texture(fileName)
     }
     else
     {
-        this.resource = new TextureResource(this.loadTexture(this.fileName));
+        this.resource = this.loadTexture(this.fileName);
         Texture.loadedTextures[this.fileName] = this.resource;
     }
 }
@@ -42,8 +42,12 @@ Texture.prototype.finalize = function ()
     }
 };
 
-Texture.prototype.bind = function ()
+Texture.prototype.bind = function (samplerSlot)
 {
+    if (samplerSlot === undefined) samplerSlot = 0;
+    
+    if (!(samplerSlot >= 0 && samplerSlot <= 31))throw new Error("ASSERT: samplerSlot >= 0 && samplerSlot <= 31")
+    gl.activeTexture(gl.TEXTURE0 + samplerSlot);
     gl.bindTexture(gl.TEXTURE_2D, this.resource.getId());
 };
 
@@ -54,8 +58,8 @@ Texture.prototype.getId = function ()
 
 Texture.prototype.loadTexture = function (imageName)
 {
-    this.id = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.id);
+    var resource = new TextureResource();
+    gl.bindTexture(gl.TEXTURE_2D, resource.getId());
 
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
@@ -66,5 +70,5 @@ Texture.prototype.loadTexture = function (imageName)
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, Loader.images[imageName]);
 
-    return this.id;
+    return resource;
 };

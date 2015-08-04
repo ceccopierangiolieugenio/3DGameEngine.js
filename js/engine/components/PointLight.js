@@ -26,7 +26,7 @@ function PointLight(color, intensity, attenuation)
 
     this.range = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
 
-    this.setShader(ForwardPoint.getInstance());
+    this.setShader(new Shader("forward-point"));
 }
 OO.extends(PointLight, BaseLight);
 

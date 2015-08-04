@@ -15,25 +15,29 @@
  */
 "use strict";
 
-function ForwardAmbient()
+function MappedValues()
 {
-    Shader.apply(this, ["forward-ambient"]);
+    this.vector3fHashMap = {};
+    this.floatHashMap = {};
 }
-OO.extends(ForwardAmbient, Shader);
 
-ForwardAmbient.prototype.updateUniforms = function (transform, material, renderingEngine)
+MappedValues.prototype.addVector3f = function(name, vector3f)   { this.vector3fHashMap[name]= vector3f;   };
+MappedValues.prototype.addFloat    = function(name, floatValue) { this.floatHashMap[name]   = floatValue; };
+
+MappedValues.prototype.getVector3f = function (name)
 {
-    var worldMatrix = transform.getTransformation();
-    var projectedMatrix = renderingEngine.getMainCamera().getViewProjection().mul(worldMatrix);
-    material.getTexture("diffuse").bind();
+    var result = this.vector3fHashMap[name];
+    if (result !== undefined)
+        return result;
 
-    this.setUniform("MVP", projectedMatrix);
-    this.setUniform("ambientIntensity", renderingEngine.getAmbientLight());
+    return new Vector3f(0, 0, 0);
 };
 
-ForwardAmbient.getInstance = function ()
+MappedValues.prototype.getFloat = function (name)
 {
-    if (this.instance === undefined)
-        this.instance = new ForwardAmbient();
-    return this.instance;
+    var result = this.floatHashMap[name];
+    if (result !== undefined)
+        return result;
+
+    return 0;
 };

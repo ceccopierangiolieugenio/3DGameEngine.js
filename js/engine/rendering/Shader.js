@@ -17,35 +17,99 @@
 
 function Shader(fileName)
 {
-    this.program = gl.createProgram();
-    this.uniforms = {};
+    this.filename = fileName;
+    
+    var oldResource = Shader.loadedShaders[fileName];
 
-    if (!this.program)
+    if(oldResource !== undefined)
     {
-        throw new Error("Shader creation failed: Could not find valid memory location in constructor");
+        this.resource = oldResource;
+        this.resource.addReference();
     }
+    else
+    {
+        this.resource = new ShaderResource();
+        
+        var vertexShaderText = this.loadShader(fileName + ".vs");
+        var fragmentShaderText = this.loadShader(fileName + ".fs");
 
-    var vertexShaderText = this.loadShader(fileName + ".vs");
-    var fragmentShaderText = this.loadShader(fileName + ".fs");
+        this.addVertexShader(vertexShaderText);
+        this.addFragmentShader(fragmentShaderText);
 
-    this.addVertexShader(vertexShaderText);
-    this.addFragmentShader(fragmentShaderText);
+        this.addAllAttributes(vertexShaderText);
 
-    this.addAllAttributes(vertexShaderText);
+        this.compileShader();
 
-    this.compileShader();
-
-    this.addAllUniforms(vertexShaderText);
-    this.addAllUniforms(fragmentShaderText);
+        this.addAllUniforms(vertexShaderText);
+        this.addAllUniforms(fragmentShaderText);
+    }
 }
+
+Shader.loadedShaders = {};
 
 Shader.prototype.bind = function ()
 {
-    gl.useProgram(this.program);
+    gl.useProgram(this.resource.getProgram());
 };
 
 Shader.prototype.updateUniforms = function (transform, material, renderingEngine)
 {
+    var worldMatrix = transform.getTransformation();
+    var MVPMatrix = renderingEngine.getMainCamera().getViewProjection().mul(worldMatrix);
+
+    for (var i = 0; i < this.resource.getUniformNames().length; i++)
+    {
+        var uniformName = this.resource.getUniformNames()[i];
+        var uniformType = this.resource.getUniformTypes()[i];
+
+        if (uniformType === ("sampler2D"))
+        {
+            var samplerSlot = renderingEngine.getSamplerSlot(uniformName);
+            material.getTexture(uniformName).bind(samplerSlot);
+            this.setUniformi(uniformName, samplerSlot);
+        }
+        else if (uniformName.startsWith("T_"))
+        {
+            if (uniformName === "T_MVP")
+                this.setUniform(uniformName, MVPMatrix);
+            else if (uniformName === "T_model")
+                this.setUniform(uniformName, worldMatrix);
+            else
+                throw new Error(uniformName + " is not a valid component of Transform");
+        }
+        else if (uniformName.startsWith("R_"))
+        {
+            var unprefixedUniformName = uniformName.substring(2);
+            if (uniformType === "vec3")
+                this.setUniform(uniformName, renderingEngine.getVector3f(unprefixedUniformName));
+            else if (uniformType === "float")
+                this.setUniformf(uniformName, renderingEngine.getFloat(unprefixedUniformName));
+            else if (uniformType === "DirectionalLight")
+                this.setUniformDirectionalLight(uniformName, renderingEngine.getActiveLight());
+            else if (uniformType === "PointLight")
+                this.setUniformPointLight(uniformName, renderingEngine.getActiveLight());
+            else if (uniformType === "SpotLight")
+                this.setUniformSpotLight(uniformName, renderingEngine.getActiveLight());
+            else
+                renderingEngine.updateUniformStruct(transform, material, this, uniformName, uniformType);
+        }
+        else if (uniformName.startsWith("C_"))
+        {
+            if (uniformName === "C_eyePos")
+                this.setUniform(uniformName, renderingEngine.getMainCamera().getTransform().getTransformedPos());
+            else
+                throw new Error(uniformName + " is not a valid component of Camera");
+        }
+        else
+        {
+            if (uniformType === "vec3")
+                this.setUniform(uniformName, material.getVector3f(uniformName));
+            else if (uniformType === "float")
+                this.setUniformf(uniformName, material.getFloat(uniformName));
+            else
+                throw new Error(uniformType + " is not a supported type in Material");
+        }
+    }
 };
 
 Shader.prototype.addAllAttributes = function (shaderText)
@@ -140,13 +204,15 @@ Shader.prototype.addAllUniforms = function (shaderText)
         var uniformName = uniformLine.substring(whiteSpacePos + 1, uniformLine.length);
         var uniformType = uniformLine.substring(0, whiteSpacePos);
 
-        this.addUniformWithStructCheck(uniformName, uniformType, structs);
+        this.resource.getUniformNames().push(uniformName);
+        this.resource.getUniformTypes().push(uniformType);
+        this.addUniform(uniformName, uniformType, structs);
 
         uniformStartLocation = shaderText.indexOf(UNIFORM_KEYWORD, uniformStartLocation + UNIFORM_KEYWORD.length);
     }
 };
 
-Shader.prototype.addUniformWithStructCheck = function (uniformName, uniformType, structs)
+Shader.prototype.addUniform = function (uniformName, uniformType, structs)
 {
     var addThis = true;
     var structComponents = structs[uniformType];
@@ -157,24 +223,21 @@ Shader.prototype.addUniformWithStructCheck = function (uniformName, uniformType,
         for (var i = 0; i < structComponents.length; i++)
         {
             var struct = structComponents[i]
-            this.addUniformWithStructCheck(uniformName + "." + struct.name, struct.type, structs);
+            this.addUniform(uniformName + "." + struct.name, struct.type, structs);
         }
     }
 
-    if (addThis)
-        this.addUniform(uniformName);
-};
-
-Shader.prototype.addUniform = function (uniform)
-{
-    var uniformLocation = gl.getUniformLocation(this.program, uniform);
+    if (!addThis)
+        return;
+    
+    var uniformLocation = gl.getUniformLocation(this.resource.getProgram(), uniformName);
 
     if (uniformLocation === 0xFFFFFFFF)
     {
-        throw new Error("Error: Could not find uniform: " + uniform);
+        throw new Error("Error: Could not find uniform: " + uniformName);
     }
 
-    this.uniforms[uniform] = uniformLocation;
+    this.resource.getUniforms()[uniformName] = uniformLocation;
 };
 
 Shader.prototype.addVertexShaderFromFile = function (text)
@@ -209,21 +272,21 @@ Shader.prototype.addFragmentShader = function (text)
 
 Shader.prototype.setAttribLocation = function (attributeName, location)
 {
-    gl.bindAttribLocation(this.program, location, attributeName);
+    gl.bindAttribLocation(this.resource.getProgram(), location, attributeName);
 };
 
 Shader.prototype.compileShader = function ()
 {
-    gl.linkProgram(this.program);
-    if (!gl.getProgramParameter(this.program, gl.LINK_STATUS))
+    gl.linkProgram(this.resource.getProgram());
+    if (!gl.getProgramParameter(this.resource.getProgram(), gl.LINK_STATUS))
     {
-        throw new Error(gl.getProgramInfoLog(this.program, 1024));
+        throw new Error(gl.getProgramInfoLog(this.resource.getProgram(), 1024));
     }
 
-    gl.validateProgram(this.program);
-    if (!gl.getProgramParameter(this.program, gl.VALIDATE_STATUS))
+    gl.validateProgram(this.resource.getProgram());
+    if (!gl.getProgramParameter(this.resource.getProgram(), gl.VALIDATE_STATUS))
     {
-        throw new Error(gl.getProgramInfoLog(this.program, 1024));
+        throw new Error(gl.getProgramInfoLog(this.resource.getProgram(), 1024));
     }
 };
 
@@ -243,7 +306,7 @@ Shader.prototype.addProgram = function (text, type)
         throw new Error(gl.getShaderInfoLog(shader, 1024));
     }
 
-    gl.attachShader(this.program, shader);
+    gl.attachShader(this.resource.getProgram(), shader);
 };
 
 Shader.prototype.loadShader = function (fileName)
@@ -267,19 +330,48 @@ Shader.prototype.loadShader = function (fileName)
 
 Shader.prototype.setUniformi = function (uniformName, value)
 {
-    gl.uniform1i(this.uniforms[uniformName], value);
+    gl.uniform1i(this.resource.getUniforms()[uniformName], value);
 };
 
 Shader.prototype.setUniformf = function (uniformName, value)
 {
-    gl.uniform1f(this.uniforms[uniformName], value);
+    gl.uniform1f(this.resource.getUniforms()[uniformName], value);
 };
 
 Shader.prototype.setUniform = function (uniformName, value)
 {
     if (value instanceof Vector3f)
-        gl.uniform3f(this.uniforms[uniformName], value.getX(), value.getY(), value.getZ());
+        gl.uniform3f(this.resource.getUniforms()[uniformName], value.getX(), value.getY(), value.getZ());
 
     if (value instanceof Matrix4f) /* uniformMatrix4fv transpose parameter must be false in Opengl ES 2.0 */
-        gl.uniformMatrix4fv(this.uniforms[uniformName], false, Util.Matrix4f2Float32ArrayTransposed(value));
+        gl.uniformMatrix4fv(this.resource.getUniforms()[uniformName], false, Util.Matrix4f2Float32ArrayTransposed(value));
+};
+
+Shader.prototype.setUniformBaseLight = function (uniformName, baseLight)
+{
+    this.setUniform(uniformName + ".color", baseLight.getColor());
+    this.setUniformf(uniformName + ".intensity", baseLight.getIntensity());
+};
+
+Shader.prototype.setUniformDirectionalLight = function (uniformName, directionalLight)
+{
+    this.setUniformBaseLight(uniformName + ".base", directionalLight);
+    this.setUniform(uniformName + ".direction", directionalLight.getDirection());
+};
+
+Shader.prototype.setUniformPointLight = function (uniformName, pointLight)
+{
+    this.setUniformBaseLight(uniformName + ".base", pointLight);
+    this.setUniformf(uniformName + ".atten.constant", pointLight.getConstant());
+    this.setUniformf(uniformName + ".atten.linear", pointLight.getLinear());
+    this.setUniformf(uniformName + ".atten.exponent", pointLight.getExponent());
+    this.setUniform(uniformName + ".position", pointLight.getTransform().getTransformedPos());
+    this.setUniformf(uniformName + ".range", pointLight.getRange());
+};
+
+Shader.prototype.setUniformSpotLight = function (uniformName, spotLight)
+{
+    this.setUniformPointLight(uniformName + ".pointLight", spotLight);
+    this.setUniform(uniformName + ".direction", spotLight.getDirection());
+    this.setUniformf(uniformName + ".cutoff", spotLight.getCutoff());
 };

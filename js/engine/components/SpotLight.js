@@ -19,7 +19,7 @@ function SpotLight(color, intensity, attenuation, cutoff)
 {
     PointLight.apply(this, [color, intensity, attenuation]);    
     this.cutoff = cutoff;
-    this.setShader(ForwardSpot.getInstance());
+    this.setShader(new Shader("forward-spot"));
 }
 OO.extends(SpotLight, PointLight);
 

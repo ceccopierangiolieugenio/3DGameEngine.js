@@ -19,7 +19,7 @@ function DirectionalLight(color, intensity)
 {
     BaseLight.apply(this, [color, intensity]);
 
-    this.setShader(ForwardDirectional.getInstance());
+    this.setShader(new Shader("forward-directional"));
 }
 OO.extends(DirectionalLight, BaseLight);
 

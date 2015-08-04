@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+//"use strict";
 
 function RenderingEngine()
 {
+    MappedValues.apply(this, []);
     this.lights = [];
+    this.sampleMap = {};
+    this.sampleMap["diffuse"] = 0;
+    
+    this.addVector3f("ambient", new Vector3f(0.1, 0.1, 0.1));
+    
+    this.forwardAmbient = new Shader("forward-ambient");
+    
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     gl.frontFace(gl.CW);
@@ -28,57 +36,22 @@ function RenderingEngine()
     //gl.enable(gl.DEPTH_CLAMP);
 
     //gl.enable(gl.TEXTURE_2D);
+ }
+OO.extends(RenderingEngine, MappedValues);
 
-    //this.mainCamera = new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0);
-
-    this.ambientLight = new Vector3f(0.1, 0.1, 0.1);
-//    this.directionalLight = new DirectionalLight(new BaseLight(new Vector3f(0, 0, 1), 0.4), new Vector3f(1, 1, 1));
-//    this.directionalLight2 = new DirectionalLight(new BaseLight(new Vector3f(1, 0, 0), 0.4), new Vector3f(-1, 1, -1));
-//
-//
-//    var lightFieldWidth = 5;
-//    var lightFieldDepth = 5;
-//
-//    var lightFieldStartX = 0;
-//    var lightFieldStartY = 0;
-//    var lightFieldStepX = 7;
-//    var lightFieldStepY = 7;
-//
-//    this.pointLightList = [];
-//
-//    for (var i = 0; i < lightFieldWidth; i++)
-//    {
-//        for (var j = 0; j < lightFieldDepth; j++)
-//        {
-//            this.pointLightList[i * lightFieldWidth + j] = new PointLight(new BaseLight(new Vector3f(0, 1, 0), 0.4),
-//                            new Attenuation(0, 0, 1),
-//                            new Vector3f(lightFieldStartX + lightFieldStepX * i, 0, lightFieldStartY + lightFieldStepY * j), 100);
-//        }
-//    }
-//
-//    this.pointLight = this.pointLightList[0];//new PointLight(new BaseLight(new Vector3f(0,1,0), 0.4f), new Attenuation(0,0,1), new Vector3f(5,0,5), 100);
-//
-//    this.spotLight = new SpotLight(new PointLight(new BaseLight(new Vector3f(0, 1, 1), 0.4),
-//                            new Attenuation(0, 0, 0.1),
-//                            new Vector3f(lightFieldStartX, 0, lightFieldStartY), 100),
-//                            new Vector3f(1, 0, 0), 0.7);
-}
-
-RenderingEngine.prototype.getAmbientLight = function ()
+RenderingEngine.prototype.updateUniformStruct = function(transform, material, shader, uniformName, uniformType)
 {
-    return this.ambientLight;
+    throw new Error(uniformType + " is not a supported type in RenderingEngine");
 };
 
 RenderingEngine.prototype.render = function (object)
 {
-    RenderingEngine.clearScreen();
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     this.lights = [];
     object.addToRenderingEngine(this);
 
-    var forwardAmbient = ForwardAmbient.getInstance();
-
-    object.render(forwardAmbient, this);
+    object.render(this.forwardAmbient, this);
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE);
@@ -96,30 +69,6 @@ RenderingEngine.prototype.render = function (object)
     gl.disable(gl.BLEND);
 };
 
-RenderingEngine.clearScreen = function ()
-{
-    //TODO: Stencil Buffer
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-};
-
-RenderingEngine.setTexture = function (enabled)
-{
-    if (enabled)
-        gl.enable(gl.TEXTURE_2D);
-    else
-        gl.disable(gl.TEXTURE_2D);
-};
-
-RenderingEngine.unbindTextures = function ()
-{
-    gl.bindTexture(GL_TEXTURE_2D, 0);
-};
-
-RenderingEngine.setClearColor = function (color)
-{
-    gl.clearColor(color.getX(), color.getY(), color.getZ(), 1.0);
-};
-
 RenderingEngine.getOpenGLVersion = function ()
 {
     return gl.getParameter(gl.VERSION);
@@ -133,6 +82,11 @@ RenderingEngine.prototype.addLight = function (light)
 RenderingEngine.prototype.addCamera = function (camera)
 {
     this.mainCamera = camera;
+};
+
+RenderingEngine.prototype.getSamplerSlot = function (samplerName)
+{
+    return this.sampleMap[samplerName];
 };
 
 RenderingEngine.prototype.getActiveLight = function ()

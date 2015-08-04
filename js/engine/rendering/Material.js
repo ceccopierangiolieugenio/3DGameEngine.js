@@ -17,14 +17,12 @@
 
 function Material()
 {
+    MappedValues.apply(this, []);
     this.textureHashMap = {};
-    this.vector3fHashMap = {};
-    this.floatHashMap = {};
 }
+OO.extends(Material, MappedValues);
 
 Material.prototype.addTexture  = function(name, texture)    { this.textureHashMap[name] = texture;    };
-Material.prototype.addVector3f = function(name, vector3f)   { this.vector3fHashMap[name]= vector3f;   };
-Material.prototype.addFloat    = function(name, floatValue) { this.floatHashMap[name]   = floatValue; };
 
 Material.prototype.getTexture = function (name)
 {
@@ -33,22 +31,4 @@ Material.prototype.getTexture = function (name)
         return result;
 
     return new Texture("test.png");
-};
-
-Material.prototype.getVector3f = function (name)
-{
-    var result = this.vector3fHashMap[name];
-    if (result !== undefined)
-        return result;
-
-    return new Vector3f(0, 0, 0);
-};
-
-Material.prototype.getFloat = function (name)
-{
-    var result = this.floatHashMap[name];
-    if (result !== undefined)
-        return result;
-
-    return 0;
 };

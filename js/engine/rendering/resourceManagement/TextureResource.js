@@ -15,9 +15,9 @@
  */
 "use strict";
 
-function TextureResource(id)
+function TextureResource()
 {
-    this.id = id;
+    this.id = gl.createTexture();
     this.refCount = 1;
 }
 
