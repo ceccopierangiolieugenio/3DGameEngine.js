@@ -119,11 +119,16 @@ Shader.prototype.addAllAttributes = function (shaderText)
     var attribNumber = 0;
     while (attributeStartLocation !== -1)
     {
+        if (!(attributeStartLocation !== 0
+                && (/\s/.test(shaderText.charAt(attributeStartLocation - 1)) || shaderText.charAt(attributeStartLocation - 1) === ';')
+                && /\s/.test(shaderText.charAt(attributeStartLocation + ATTRIBUTE_KEYWORD.length))))
+            continue;
+
         var begin = attributeStartLocation + ATTRIBUTE_KEYWORD.length + 1;
         var end = shaderText.indexOf(";", begin);
 
-        var attributeLine = shaderText.substring(begin, end);
-        var attributeName = attributeLine.substring(attributeLine.indexOf(' ') + 1, attributeLine.length);
+        var attributeLine = shaderText.substring(begin, end).trim();
+        var attributeName = attributeLine.substring(attributeLine.indexOf(' ') + 1, attributeLine.length).trim();
 
         this.setAttribLocation(attributeName, attribNumber);
         attribNumber++;
@@ -144,8 +149,13 @@ Shader.prototype.findUniformStructs = function (shaderText)
 
     var STRUCT_KEYWORD = "struct";
     var structStartLocation = shaderText.indexOf(STRUCT_KEYWORD);
-    while (structStartLocation != -1)
+    while (structStartLocation !== -1)
     {
+        if (!(structStartLocation !== 0
+                && (/\s/.test(shaderText.charAt(structStartLocation - 1)) || shaderText.charAt(structStartLocation - 1) === ';')
+                && /\s/.test(shaderText.charAt(structStartLocation + STRUCT_KEYWORD.length))))
+            continue;
+
         var nameBegin = structStartLocation + STRUCT_KEYWORD.length + 1;
         var braceBegin = shaderText.indexOf("{", nameBegin);
         var braceEnd = shaderText.indexOf("}", braceBegin);
@@ -154,20 +164,29 @@ Shader.prototype.findUniformStructs = function (shaderText)
         var glslStructs = [];
 
         var componentSemicolonPos = shaderText.indexOf(";", braceBegin);
-        while (componentSemicolonPos != -1 && componentSemicolonPos < braceEnd)
+        while (componentSemicolonPos !== -1 && componentSemicolonPos < braceEnd)
         {
+            var componentNameEnd = componentSemicolonPos + 1;
+
+            while (/\s/.test(shaderText.charAt(componentNameEnd - 1)) || shaderText.charAt(componentNameEnd - 1) === ';')
+                componentNameEnd--;
+
             var componentNameStart = componentSemicolonPos;
 
             while (!/\s/.test(shaderText.charAt(componentNameStart - 1)))
                 componentNameStart--;
 
-            var componentTypeEnd = componentNameStart - 1;
+            var componentTypeEnd = componentNameStart;
+
+            while (/\s/.test(shaderText.charAt(componentTypeEnd - 1)))
+                componentTypeEnd--;
+
             var componentTypeStart = componentTypeEnd;
 
             while (!/\s/.test(shaderText.charAt(componentTypeStart - 1)))
                 componentTypeStart--;
 
-            var componentName = shaderText.substring(componentNameStart, componentSemicolonPos);
+            var componentName = shaderText.substring(componentNameStart, componentNameEnd);
             var componentType = shaderText.substring(componentTypeStart, componentTypeEnd);
 
             var glslStruct = new GLSLStruct();
@@ -193,16 +212,21 @@ Shader.prototype.addAllUniforms = function (shaderText)
 
     var UNIFORM_KEYWORD = "uniform";
     var uniformStartLocation = shaderText.indexOf(UNIFORM_KEYWORD);
-    while (uniformStartLocation != -1)
+    while (uniformStartLocation !== -1)
     {
+        if (!(uniformStartLocation !== 0
+                && (/\s/.test(shaderText.charAt(uniformStartLocation - 1)) || shaderText.charAt(uniformStartLocation - 1) === ';')
+                && /\s/.test(shaderText.charAt(uniformStartLocation + UNIFORM_KEYWORD.length))))
+            continue;
+
         var begin = uniformStartLocation + UNIFORM_KEYWORD.length + 1;
         var end = shaderText.indexOf(";", begin);
 
-        var uniformLine = shaderText.substring(begin, end);
+        var uniformLine = shaderText.substring(begin, end).trim();
 
         var whiteSpacePos = uniformLine.indexOf(' ');
-        var uniformName = uniformLine.substring(whiteSpacePos + 1, uniformLine.length);
-        var uniformType = uniformLine.substring(0, whiteSpacePos);
+        var uniformName = uniformLine.substring(whiteSpacePos + 1, uniformLine.length).trim();
+        var uniformType = uniformLine.substring(0, whiteSpacePos).trim();
 
         this.resource.getUniformNames().push(uniformName);
         this.resource.getUniformTypes().push(uniformType);
@@ -217,12 +241,12 @@ Shader.prototype.addUniform = function (uniformName, uniformType, structs)
     var addThis = true;
     var structComponents = structs[uniformType];
 
-    if (structComponents != null)
+    if (structComponents !== undefined)
     {
         addThis = false;
         for (var i = 0; i < structComponents.length; i++)
         {
-            var struct = structComponents[i]
+            var struct = structComponents[i];
             this.addUniform(uniformName + "." + struct.name, struct.type, structs);
         }
     }
@@ -362,9 +386,9 @@ Shader.prototype.setUniformDirectionalLight = function (uniformName, directional
 Shader.prototype.setUniformPointLight = function (uniformName, pointLight)
 {
     this.setUniformBaseLight(uniformName + ".base", pointLight);
-    this.setUniformf(uniformName + ".atten.constant", pointLight.getConstant());
-    this.setUniformf(uniformName + ".atten.linear", pointLight.getLinear());
-    this.setUniformf(uniformName + ".atten.exponent", pointLight.getExponent());
+    this.setUniformf(uniformName + ".atten.constant", pointLight.getAttenuation().getConstant());
+    this.setUniformf(uniformName + ".atten.linear", pointLight.getAttenuation().getLinear());
+    this.setUniformf(uniformName + ".atten.exponent", pointLight.getAttenuation().getExponent());
     this.setUniform(uniformName + ".position", pointLight.getTransform().getTransformedPos());
     this.setUniformf(uniformName + ".range", pointLight.getRange());
 };

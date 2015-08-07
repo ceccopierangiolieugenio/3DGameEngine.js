@@ -20,11 +20,13 @@ function GameObject()
     this.children = [];
     this.components = [];
     this.transform = new Transform();
+    this.engine = undefined;
 }
 
 GameObject.prototype.addChild = function (child)
 {
     this.children.push(child);
+    child.setEngine(this.engine);
     child.getTransform().setParent(this.transform);
 };
 
@@ -32,49 +34,80 @@ GameObject.prototype.addComponent = function (component)
 {
     this.components.push(component);
     component.setParent(this);
-    
+
     return this;
+};
+
+GameObject.prototype.inputAll = function (delta)
+{
+    this.input(delta);
+
+    for (var i = 0; i < this.children.length; i++)
+        this.children[i].inputAll(delta);
+};
+
+GameObject.prototype.updateAll = function (delta)
+{
+    this.update(delta);
+
+    for (var i = 0; i < this.children.length; i++)
+        this.children[i].updateAll(delta);
+};
+
+GameObject.prototype.renderAll = function (shader, renderingEngine)
+{
+    this.render(shader, renderingEngine);
+
+    for (var i = 0; i < this.children.length; i++)
+        this.children[i].renderAll(shader, renderingEngine);
 };
 
 GameObject.prototype.input = function (delta)
 {
     this.transform.update();
-    
+
     for (var i = 0; i < this.components.length; i++)
         this.components[i].input(delta);
-
-    for (var i = 0; i < this.children.length; i++)
-        this.children[i].input(delta);
 };
 
 GameObject.prototype.update = function (delta)
 {
     for (var i = 0; i < this.components.length; i++)
         this.components[i].update(delta);
-
-    for (var i = 0; i < this.children.length; i++)
-        this.children[i].update(delta);
 };
 
 GameObject.prototype.render = function (shader, renderingEngine)
 {
     for (var i = 0; i < this.components.length; i++)
         this.components[i].render(shader, renderingEngine);
-
-    for (var i = 0; i < this.children.length; i++)
-        this.children[i].render(shader, renderingEngine);
 };
 
-GameObject.prototype.addToRenderingEngine = function (renderingEngine)
+GameObject.prototype.getAllAttached = function ()
 {
-    for (var i = 0; i < this.components.length; i++)
-        this.components[i].addToRenderingEngine(renderingEngine);
-
+    var result = [];
+    
     for (var i = 0; i < this.children.length; i++)
-        this.children[i].addToRenderingEngine(renderingEngine);
+        result.concat(this.children[i].getAllAttached());
+    
+    result.push(this);
+    return result;
 };
 
 GameObject.prototype.getTransform = function ()
 {
     return this.transform;
+};
+
+GameObject.prototype.setEngine = function (engine)
+{
+    if (this.engine !== engine)
+    {
+        this.engine = engine;
+
+        for (var i = 0; i < this.components.length; i++)
+            this.components[i].addToEngine(engine);
+
+        for (var i = 0; i < this.children.length; i++)
+            this.children[i].setEngine(engine);
+    }
 };

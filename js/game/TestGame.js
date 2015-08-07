@@ -73,10 +73,10 @@ TestGame.prototype.init = function ()
     directionalLightObject.addComponent(directionalLight);
 
     var pointLightObject = new GameObject();
-    pointLightObject.addComponent(new PointLight(new Vector3f(0, 1, 0), 0.4, new Vector3f(0, 0, 1)));
+    pointLightObject.addComponent(new PointLight(new Vector3f(0, 1, 0), 0.4, new Attenuation(0, 0, 1)));
 
     var spotLight = new SpotLight(new Vector3f(0, 1, 1), 0.4,
-            new Vector3f(0, 0, 0.1), 0.7);
+            new Attenuation(0, 0, 0.1), 0.7);
 
     var spotLightObject = new GameObject();
     spotLightObject.addComponent(spotLight);
@@ -93,7 +93,7 @@ TestGame.prototype.init = function ()
 
     var testMesh1 = new GameObject().addComponent(new MeshRenderer(mesh2, material));
     var testMesh2 = new GameObject().addComponent(new MeshRenderer(mesh2, material));
-    var testMesh3 = new GameObject().addComponent(new MeshRenderer(tempMesh, material));
+    var testMesh3 = new GameObject().addComponent(new LookAtComponent()).addComponent(new MeshRenderer(tempMesh, material));
 
     testMesh1.getTransform().getPos().set(0, 2, 0);
     testMesh1.getTransform().setRot(new Quaternion(new Vector3f(0, 1, 0), 0.4));
@@ -101,9 +101,9 @@ TestGame.prototype.init = function ()
     testMesh2.getTransform().getPos().set(0, 0, 5);
 
     testMesh1.addChild(testMesh2);
-    testMesh2
-            //this.getRootObject()
-            .addChild(new GameObject().addComponent(new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0)));
+    testMesh2.addChild(
+            //addObject(
+            new GameObject().addComponent(new FreeLook(0.5)).addComponent(new FreeMove(10.0)).addComponent(new Camera(Util.toRadians(70.0), Window.getWidth() / Window.getHeight(), 0.01, 1000.0)));
 
     this.addObject(testMesh1);
     this.addObject(testMesh3);

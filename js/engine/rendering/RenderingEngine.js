@@ -48,10 +48,7 @@ RenderingEngine.prototype.render = function (object)
 {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    this.lights = [];
-    object.addToRenderingEngine(this);
-
-    object.render(this.forwardAmbient, this);
+    object.renderAll(this.forwardAmbient, this);
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE);
@@ -61,7 +58,7 @@ RenderingEngine.prototype.render = function (object)
     for (var i = 0; i < this.lights.length; i++)
     {
         this.activeLight = this.lights[i];
-        object.render(this.lights[i].getShader(), this);
+        object.renderAll(this.lights[i].getShader(), this);
     }
 
     gl.depthFunc(gl.LESS);

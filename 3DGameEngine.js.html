@@ -23,11 +23,13 @@
         Loader.include("js/engine/components/GameComponent.js");
         Loader.include("js/engine/components/Camera.js");
         Loader.include("js/engine/components/MeshRenderer.js");
-        Loader.include("js/engine/components/BaseLight.js");        
+        Loader.include("js/engine/components/BaseLight.js");
         Loader.include("js/engine/components/DirectionalLight.js");
         Loader.include("js/engine/components/PointLight.js");
         Loader.include("js/engine/components/SpotLight.js");
-
+        Loader.include("js/engine/components/FreeLook.js");
+        Loader.include("js/engine/components/FreeMove.js");        
+        
         Loader.include("js/engine/rendering/resourceManagement/MappedValues.js");
         Loader.include("js/engine/rendering/resourceManagement/MeshResource.js");
         Loader.include("js/engine/rendering/resourceManagement/ShaderResource.js");
@@ -50,6 +52,7 @@
 
         Loader.include("js/game/TestGame.js");
         Loader.include("js/game/Main.js");
+        Loader.include("js/game/LookAtComponent.js");
 
         Loader.loadFile("res/shaders/lighting.glh", "lighting.glh");
         Loader.loadFile("res/shaders/forward-ambient.fs", "forward-ambient.fs");

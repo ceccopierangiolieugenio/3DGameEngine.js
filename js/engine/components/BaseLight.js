@@ -24,9 +24,9 @@ function BaseLight(color, intensity)
 }
 OO.extends(BaseLight, GameComponent);
 
-BaseLight.prototype.addToRenderingEngine = function (renderingEngine)
+BaseLight.prototype.addToEngine = function (engine)
 {
-    renderingEngine.addLight(this);
+    engine.getRenderingEngine().addLight(this);
 };
 
 BaseLight.prototype.setShader = function (shader)

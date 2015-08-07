@@ -20,11 +20,11 @@ function Game() {}
 Game.prototype.init = function () {};
 
 Game.prototype.input = function (delta) {
-    this.getRootObject().input(delta);
+    this.getRootObject().inputAll(delta);
 };
 
 Game.prototype.update = function (delta) {
-    this.getRootObject().update(delta);
+    this.getRootObject().updateAll(delta);
 };
 
 Game.prototype.render = function (renderingEngine) {
@@ -40,3 +40,5 @@ Game.prototype.getRootObject = function () {
         this.root = new GameObject();
     return this.root;
 };
+
+Game.prototype.setEngine = function (engine) { this.getRootObject().setEngine(engine); }; 

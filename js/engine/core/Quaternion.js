@@ -31,6 +31,51 @@ function Quaternion(_a, _b, _c, _d) {
         this.y = axis.getY() * sinHalfAngle;
         this.z = axis.getZ() * sinHalfAngle;
         this.w = cosHalfAngle;
+    } else if (_a instanceof Matrix4f) {
+        var rot = _a;
+        var trace = rot.get(0, 0) + rot.get(1, 1) + rot.get(2, 2);
+
+        if (trace > 0)
+        {
+            var s = 0.5 / Math.sqrt(trace + 1.0);
+            this.w = 0.25 / s;
+            this.x = (rot.get(1, 2) - rot.get(2, 1)) * s;
+            this.y = (rot.get(2, 0) - rot.get(0, 2)) * s;
+            this.z = (rot.get(0, 1) - rot.get(1, 0)) * s;
+        }
+        else
+        {
+            if (rot.get(0, 0) > rot.get(1, 1) && rot.get(0, 0) > rot.get(2, 2))
+            {
+                var s = 2.0 * Math.sqrt(1.0 + rot.get(0, 0) - rot.get(1, 1) - rot.get(2, 2));
+                this.w = (rot.get(1, 2) - rot.get(2, 1)) / s;
+                this.x = 0.25 * s;
+                this.y = (rot.get(1, 0) + rot.get(0, 1)) / s;
+                this.z = (rot.get(2, 0) + rot.get(0, 2)) / s;
+            }
+            else if (rot.get(1, 1) > rot.get(2, 2))
+            {
+                var s = 2.0 * Math.sqrt(1.0 + rot.get(1, 1) - rot.get(0, 0) - rot.get(2, 2));
+                this.w = (rot.get(2, 0) - rot.get(0, 2)) / s;
+                this.x = (rot.get(1, 0) + rot.get(0, 1)) / s;
+                this.y = 0.25 * s;
+                this.z = (rot.get(2, 1) + rot.get(1, 2)) / s;
+            }
+            else
+            {
+                var s = 2.0 * Math.sqrt(1.0 + rot.get(2, 2) - rot.get(0, 0) - rot.get(1, 1));
+                this.w = (rot.get(0, 1) - rot.get(1, 0)) / s;
+                this.x = (rot.get(2, 0) + rot.get(0, 2)) / s;
+                this.y = (rot.get(1, 2) + rot.get(2, 1)) / s;
+                this.z = 0.25 * s;
+            }
+        }
+
+        var length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+        this.x /= length;
+        this.y /= length;
+        this.z /= length;
+        this.w /= length;
     }
 }
 
@@ -72,12 +117,64 @@ Quaternion.prototype.mul = function (r)
     }
 };
 
+Quaternion.prototype.sub = function (r)
+{
+    return new Quaternion(this.x - r.getX(), this.y - r.getY(), this.z - r.getZ(), this.w - r.getW());
+};
+
+Quaternion.prototype.add = function (r)
+{
+    return new Quaternion(this.x + r.getX(), this.y + r.getY(), this.z + r.getZ(), this.w + r.getW());
+};
+
 Quaternion.prototype.toRotationMatrix = function ()
 {
     var forward = new Vector3f(2.0 * (this.x * this.z - this.w * this.y), 2.0 * (this.y * this.z + this.w * this.x), 1.0 - 2.0 * (this.x * this.x + this.y * this.y));
     var up = new Vector3f(2.0 * (this.x * this.y + this.w * this.z), 1.0 - 2.0 * (this.x * this.x + this.z * this.z), 2.0 * (this.y * this.z - this.w * this.x));
     var right = new Vector3f(1.0 - 2.0 * (this.y * this.y + this.z * this.z), 2.0 * (this.x * this.y - this.w * this.z), 2.0 * (this.x * this.z + this.w * this.y));
     return new Matrix4f().initRotation(forward, up, right);
+};
+
+
+Quaternion.prototype.dot = function (r)
+{
+    return this.x * r.getX() + this.y * r.getY() + this.z * r.getZ() + this.w * r.getW();
+};
+
+Quaternion.prototype.nlerp = function (dest, lerpFactor, shortest)
+{
+    var correctedDest = dest;
+
+    if (shortest && this.dot(dest) < 0)
+        correctedDest = new Quaternion(-dest.getX(), -dest.getY(), -dest.getZ(), -dest.getW());
+
+    return correctedDest.sub(this).mul(lerpFactor).add(this).normalized();
+};
+
+Quaternion.prototype.slerp = function (dest, lerpFactor, shortest)
+{
+    var EPSILON = 1000.0;
+
+    var cos = this.dot(dest);
+    var correctedDest = dest;
+
+    if (shortest && cos < 0)
+    {
+        cos = -cos;
+        correctedDest = new Quaternion(-dest.getX(), -dest.getY(), -dest.getZ(), -dest.getW());
+    }
+
+    if (Math.abs(cos) >= 1 - EPSILON)
+        return this.nlerp(correctedDest, lerpFactor, false);
+
+    var sin = Math.sqrt(1.0 - cos * cos);
+    var angle = Math.atan2(sin, cos);
+    var invSin = 1.0 / sin;
+
+    var srcFactor = Math.sin((1.0 - lerpFactor) * angle) * invSin;
+    var destFactor = Math.sin((lerpFactor) * angle) * invSin;
+
+    return this.mul(srcFactor).add(correctedDest.mul(destFactor));
 };
 
 Quaternion.prototype.getForward = function ()

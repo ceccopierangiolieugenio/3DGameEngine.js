@@ -21,6 +21,7 @@ function CoreEngine(width, height, framerate, game) {
     this.width = width;
     this.height = height;
     this.frameTime = 1.0 / framerate;
+    game.setEngine(this);
 }
 
 CoreEngine.prototype.createWindow = function (title)
@@ -96,4 +97,9 @@ CoreEngine.prototype.run = function ()
     };
 
     requestAnimationFrame(mainLoop.bind(this));
+};
+
+CoreEngine.prototype.getRenderingEngine = function ()
+{
+    return this.renderingEngine;
 };

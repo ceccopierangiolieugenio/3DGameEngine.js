@@ -15,20 +15,22 @@
  */
 "use strict";
 
-function GameComponent() {}
+function Attenuation(constant, linear, exponent) {
+    Vector3f.apply(this, [constant, linear, exponent]);
+}
+OO.extends(Attenuation, Vector3f);
 
-GameComponent.prototype.input = function (delta) {};
-GameComponent.prototype.update = function (delta) {};
-GameComponent.prototype.render = function (shader, renderingEngine) {};
-
-GameComponent.prototype.setParent = function (parent)
+Attenuation.prototype.getConstant = function ()
 {
-    this.parent = parent;
+    return this.getX();
 };
 
-GameComponent.prototype.getTransform = function ()
+Attenuation.prototype.getLinear = function ()
 {
-    return this.parent.getTransform();
+    return this.getY();
 };
 
-GameComponent.prototype.addToEngine = function (engine) {};
+Attenuation.prototype.getExponent = function ()
+{
+    return this.getZ();
+};

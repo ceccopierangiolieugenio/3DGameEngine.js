@@ -20,9 +20,9 @@ function PointLight(color, intensity, attenuation)
     BaseLight.apply(this, [color, intensity]);
     this.attenuation = attenuation;
 
-    var a = attenuation.getZ();
-    var b = attenuation.getY();
-    var c = attenuation.getX() - PointLight.COLOR_DEPTH * this.getIntensity() * this.getColor().max();
+    var a = attenuation.getExponent();
+    var b = attenuation.getLinear();
+    var c = attenuation.getConstant() - PointLight.COLOR_DEPTH * this.getIntensity() * this.getColor().max();
 
     this.range = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
 
@@ -42,32 +42,7 @@ PointLight.prototype.setRange = function (range)
     this.range = range;
 };
 
-PointLight.prototype.getConstant = function ()
+PointLight.prototype.getAttenuation = function ()
 {
-    return this.attenuation.getX();
-};
-
-PointLight.prototype.setConstant = function (constant)
-{
-    this.attenuation.setX(constant);
-};
-
-PointLight.prototype.getLinear = function ()
-{
-    return this.attenuation.getY();
-};
-
-PointLight.prototype.setLinear = function (linear)
-{
-    this.attenuation.setY(linear);
-};
-
-PointLight.prototype.getExponent = function ()
-{
-    return this.attenuation.getZ();
-};
-
-PointLight.prototype.setExponent = function (exponent)
-{
-    this.attenuation.setZ(exponent);
+    return this.attenuation;
 };

@@ -41,6 +41,16 @@ Transform.prototype.rotate = function (axis, angle)
     this.rot = new Quaternion(axis, angle).mul(this.rot).normalized();
 };
 
+Transform.prototype.lookAt = function (point, up)
+{
+    this.rot = this.getLookAtRotation(point, up);
+};
+
+Transform.prototype.getLookAtRotation = function (point, up)
+{
+    return new Quaternion(new Matrix4f().initRotation(point.sub(this.pos).normalized(), up));
+};
+
 Transform.prototype.hasChanged = function ()
 {
     if (this.parent !== undefined && this.parent.hasChanged())
